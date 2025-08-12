@@ -657,7 +657,12 @@ function ToolsSettings({ isOpen, onClose, projects = [] }: {
             )}
 
             {activeTab === "mcp" && (
-              <McpServerManagement projects={projects}></McpServerManagement>
+              <McpServerManagement 
+              setSaveStatus={setSaveStatus}
+              
+              
+              
+              projects={projects}></McpServerManagement>
             )}
           </div>
         </div>

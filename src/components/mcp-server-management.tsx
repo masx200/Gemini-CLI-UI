@@ -1,6 +1,8 @@
 import { Globe, Plus, Server, Terminal, X, Zap } from "lucide-react";
 //@ts-ignore
 import { Edit3, FolderOpen, Trash2 } from "lucide-react";
+
+//@ts-ignore
 import { Input } from "./ui/input.jsx";
 //@ts-ignore
 import { Badge } from "./ui/badge.jsx";
@@ -14,6 +16,8 @@ import {
   useEffect,
   useState,
 } from "react";
+
+//@ts-ignore
 import { Button } from "./ui/button.jsx";
 export interface Project {
   name: string;
