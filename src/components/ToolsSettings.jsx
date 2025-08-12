@@ -17,7 +17,7 @@ import { useTheme } from "../contexts/ThemeContext";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import McpServerManagement from "./mcp-server-management.js";
-function ToolsSettings({ isOpen, onClose }) {
+function ToolsSettings({ isOpen, onClose ,projects = [] }) {
   const { isDarkMode, toggleDarkMode } = useTheme();
   const [allowedTools, setAllowedTools] = useState([]);
   const [disallowedTools, setDisallowedTools] = useState([]);
@@ -28,30 +28,6 @@ function ToolsSettings({ isOpen, onClose }) {
   const [saveStatus, setSaveStatus] = useState(null);
   const [projectSortOrder, setProjectSortOrder] = useState("name");
 
-  // MCP server management state
-
-  const [showMcpForm, setShowMcpForm] = useState(false);
-  const [editingMcpServer, setEditingMcpServer] = useState(null);
-  const [mcpFormData, setMcpFormData] = useState({
-    name: "",
-    type: "stdio",
-    scope: "user", // Always use user scope
-    config: {
-      command: "",
-      args: [],
-      env: {},
-      url: "",
-      headers: {},
-      timeout: 30000,
-    },
-  });
-  const [mcpLoading, setMcpLoading] = useState(false);
-  const [mcpTestResults, setMcpTestResults] = useState({});
-  const [mcpConfigTestResult, setMcpConfigTestResult] = useState(null);
-  const [mcpConfigTesting, setMcpConfigTesting] = useState(false);
-  const [mcpConfigTested, setMcpConfigTested] = useState(false);
-  const [mcpServerTools, setMcpServerTools] = useState({});
-  const [mcpToolsLoading, setMcpToolsLoading] = useState({});
   const [activeTab, setActiveTab] = useState("tools");
   const [selectedModel, setSelectedModel] = useState("gemini-2.5-flash");
   const [enableNotificationSound, setEnableNotificationSound] = useState(false);
@@ -88,224 +64,8 @@ function ToolsSettings({ isOpen, onClose }) {
     },
   ];
 
-  // MCP API functions
-  const fetchMcpServers = async () => {
-    try {
-      // MCP endpoints are not implemented yet - skip these calls
-      return;
 
-      const token = localStorage.getItem("auth-token");
 
-      // First try to get servers using Gemini CLI
-      const cliResponse = await fetch("/api/mcp/cli/list", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (cliResponse.ok) {
-        const cliData = await cliResponse.json();
-        if (cliData.success && cliData.servers) {
-          // Convert CLI format to our format
-          const servers = cliData.servers.map((server) => ({
-            id: server.name,
-            name: server.name,
-            type: server.type,
-            scope: "user",
-            config: {
-              command: server.command || "",
-              args: server.args || [],
-              env: server.env || {},
-              url: server.url || "",
-              headers: server.headers || {},
-              timeout: 30000,
-            },
-            created: new Date().toISOString(),
-            updated: new Date().toISOString(),
-          }));
-          setMcpServers(servers);
-          return;
-        }
-      }
-
-      // Fallback to direct config reading
-      const response = await fetch("/api/mcp/servers?scope=user", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setMcpServers(data.servers || []);
-      } else {
-        // console.error('Failed to fetch MCP servers');
-      }
-    } catch (error) {
-      // console.error('Error fetching MCP servers:', error);
-    }
-  };
-
-  const saveMcpServer = async (serverData) => {
-    try {
-      const token = localStorage.getItem("auth-token");
-
-      if (editingMcpServer) {
-        // For editing, remove old server and add new one
-        await deleteMcpServer(editingMcpServer.id, "user");
-      }
-
-      // Use Gemini CLI to add the server
-      const response = await fetch("/api/mcp/cli/add", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: serverData.name,
-          type: serverData.type,
-          command: serverData.config?.command,
-          args: serverData.config?.args || [],
-          url: serverData.config?.url,
-          headers: serverData.config?.headers || {},
-          env: serverData.config?.env || {},
-        }),
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        if (result.success) {
-          await fetchMcpServers(); // Refresh the list
-          return true;
-        } else {
-          throw new Error(
-            result.error || "Failed to save server via Gemini CLI",
-          );
-        }
-      } else {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to save server");
-      }
-    } catch (error) {
-      // console.error('Error saving MCP server:', error);
-      throw error;
-    }
-  };
-
-  const deleteMcpServer = async (serverId, scope = "user") => {
-    try {
-      const token = localStorage.getItem("auth-token");
-
-      // Use Gemini CLI to remove the server
-      const response = await fetch(`/api/mcp/cli/remove/${serverId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        if (result.success) {
-          await fetchMcpServers(); // Refresh the list
-          return true;
-        } else {
-          throw new Error(
-            result.error || "Failed to delete server via Gemini CLI",
-          );
-        }
-      } else {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to delete server");
-      }
-    } catch (error) {
-      // console.error('Error deleting MCP server:', error);
-      throw error;
-    }
-  };
-
-  const testMcpServer = async (serverId, scope = "user") => {
-    try {
-      const token = localStorage.getItem("auth-token");
-      const response = await fetch(
-        `/api/mcp/servers/${serverId}/test?scope=${scope}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        return data.testResult;
-      } else {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to test server");
-      }
-    } catch (error) {
-      // console.error('Error testing MCP server:', error);
-      throw error;
-    }
-  };
-
-  const testMcpConfiguration = async (formData) => {
-    try {
-      const token = localStorage.getItem("auth-token");
-      const response = await fetch("/api/mcp/servers/test", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        return data.testResult;
-      } else {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to test configuration");
-      }
-    } catch (error) {
-      // console.error('Error testing MCP configuration:', error);
-      throw error;
-    }
-  };
-
-  const discoverMcpTools = async (serverId, scope = "user") => {
-    try {
-      const token = localStorage.getItem("auth-token");
-      const response = await fetch(
-        `/api/mcp/servers/${serverId}/tools?scope=${scope}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        return data.toolsResult;
-      } else {
-        const error = await response.json();
-        throw new Error(error.error || "Failed to discover tools");
-      }
-    } catch (error) {
-      // console.error('Error discovering MCP tools:', error);
-      throw error;
-    }
-  };
 
   useEffect(() => {
     if (isOpen) {
@@ -411,105 +171,9 @@ function ToolsSettings({ isOpen, onClose }) {
   };
 
   // MCP form handling functions
-  const resetMcpForm = () => {
-    setMcpFormData({
-      name: "",
-      type: "stdio",
-      scope: "user", // Always use user scope
-      config: {
-        command: "",
-        args: [],
-        env: {},
-        url: "",
-        headers: {},
-        timeout: 30000,
-      },
-    });
-    setEditingMcpServer(null);
-    setShowMcpForm(false);
-    setMcpConfigTestResult(null);
-    setMcpConfigTested(false);
-    setMcpConfigTesting(false);
-  };
+ 
 
-  const handleMcpSubmit = async (e) => {
-    e.preventDefault();
 
-    setMcpLoading(true);
-
-    try {
-      await saveMcpServer(mcpFormData);
-      resetMcpForm();
-      setSaveStatus("success");
-    } catch (error) {
-      alert(`Error: ${error.message}`);
-      setSaveStatus("error");
-    } finally {
-      setMcpLoading(false);
-    }
-  };
-
-  const handleMcpDelete = async (serverId, scope) => {
-    if (confirm("Are you sure you want to delete this MCP server?")) {
-      try {
-        await deleteMcpServer(serverId, scope);
-        setSaveStatus("success");
-      } catch (error) {
-        alert(`Error: ${error.message}`);
-        setSaveStatus("error");
-      }
-    }
-  };
-
-  const handleMcpTest = async (serverId, scope) => {
-    try {
-      setMcpTestResults({ ...mcpTestResults, [serverId]: { loading: true } });
-      const result = await testMcpServer(serverId, scope);
-      setMcpTestResults({ ...mcpTestResults, [serverId]: result });
-    } catch (error) {
-      setMcpTestResults({
-        ...mcpTestResults,
-        [serverId]: {
-          success: false,
-          message: error.message,
-          details: [],
-        },
-      });
-    }
-  };
-
-  const handleMcpToolsDiscovery = async (serverId, scope) => {
-    try {
-      setMcpToolsLoading({ ...mcpToolsLoading, [serverId]: true });
-      const result = await discoverMcpTools(serverId, scope);
-      setMcpServerTools({ ...mcpServerTools, [serverId]: result });
-    } catch (error) {
-      setMcpServerTools({
-        ...mcpServerTools,
-        [serverId]: {
-          success: false,
-          tools: [],
-          resources: [],
-          prompts: [],
-        },
-      });
-    } finally {
-      setMcpToolsLoading({ ...mcpToolsLoading, [serverId]: false });
-    }
-  };
-
-  const updateMcpConfig = (key, value) => {
-    setMcpFormData((prev) => ({
-      ...prev,
-      config: {
-        ...prev.config,
-        [key]: value,
-      },
-    }));
-    // Reset test status when configuration changes
-    setMcpConfigTestResult(null);
-    setMcpConfigTested(false);
-  };
 
   const handleTestConfiguration = async () => {
     setMcpConfigTesting(true);
@@ -529,18 +193,7 @@ function ToolsSettings({ isOpen, onClose }) {
     }
   };
 
-  const getTransportIcon = (type) => {
-    switch (type) {
-      case "stdio":
-        return <Terminal className="w-4 h-4" />;
-      case "sse":
-        return <Zap className="w-4 h-4" />;
-      case "http":
-        return <Globe className="w-4 h-4" />;
-      default:
-        return <Server className="w-4 h-4" />;
-    }
-  };
+
 
   if (!isOpen) return null;
 
