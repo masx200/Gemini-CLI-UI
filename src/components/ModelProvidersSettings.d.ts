@@ -1,7 +1,8 @@
-export interface ModelProvidersSettingsProps {
+import React from 'react';
+interface ModelProvidersSettingsProps {
     isOpen: boolean;
     onClose: () => void;
 }
-declare function ModelProvidersSettings({ isOpen, onClose }: ModelProvidersSettingsProps): import("react/jsx-runtime").JSX.Element | null;
+declare const ModelProvidersSettings: React.FC<ModelProvidersSettingsProps>;
 export default ModelProvidersSettings;
 //# sourceMappingURL=ModelProvidersSettings.d.ts.map

@@ -1,9 +1,22 @@
 import { Plus, Edit, Trash2, Key, Globe, Server, X } from "lucide-react";
 import { useEffect, useState } from "react";
-//@ts-ignore
-import { Button } from "./ui/button.jsx";
-//@ts-ignore
-import { Input } from "./ui/input.jsx";
+import {
+  Button,
+  Card,
+  CardHeader, CardContent,
+  TextField,
+  Switch,
+  FormControlLabel,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Typography,
+  Box,
+  Dialog,
+  DialogTitle,
+  DialogContent, IconButton, Grid
+} from "@mui/material";
 export interface ProviderType {
   value: string;
   label: string;
@@ -47,7 +60,14 @@ function ModelProvidersManagement({
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [editingProvider, setEditingProvider] = useState<Provider | null>(null);
   const [showForm, setShowForm] = useState<boolean>(false);
-  const [formData, setFormData] = useState<Record<string, any>>({
+  const [formData, setFormData] = useState<{
+    provider_name: string;
+    provider_type: string;
+    api_key: string;
+    base_url: string;
+    description: string;
+    is_active: boolean;
+  }>({
     provider_name: "",
     provider_type: "",
     api_key: "",
@@ -174,54 +194,59 @@ function ModelProvidersManagement({
   if (!isOpen) return null;
 
   return (
-    <div className="modal-backdrop fixed inset-0 flex items-center justify-center z-[100] md:p-4 bg-background/95">
-      <div className="bg-background border border-border md:rounded-lg shadow-xl w-full md:max-w-6xl h-full md:h-[90vh] flex flex-col">
-        <div className="flex items-center justify-between p-4 md:p-6 border-b border-border flex-shrink-0">
-          <div className="flex items-center gap-3">
-            <Server className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
-            <h2 className="text-lg md:text-xl font-semibold text-foreground">
-              Model Providers
-            </h2>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              onClick={startAdd}
-              className="h-8 md:h-10 touch-manipulation"
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Provider
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="text-muted-foreground hover:text-foreground touch-manipulation"
-            >
-              <X className="w-5 h-5" />
-            </Button>
-          </div>
-        </div>
+    <Dialog
+      open={isOpen}
+      onClose={onClose}
+      maxWidth="lg"
+      fullWidth
+      fullScreen
+      PaperProps={{
+        sx: {
+          height: { xs: '100vh', md: '90vh' },
+          margin: { xs: 0, md: 2 },
+          borderRadius: { xs: 0, md: 2 },
+        },
+      }}
+    >
+      <DialogTitle sx={{ m: 0, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Server className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
+          <Typography variant="h6" component="span">
+            Model Providers
+          </Typography>
+        </Box>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button
+            variant="contained"
+            onClick={startAdd}
+            startIcon={<Plus className="w-4 h-4" />}
+            size="small"
+          >
+            Add Provider
+          </Button>
+          <IconButton onClick={onClose} size="small">
+            <X className="w-5 h-5" />
+          </IconButton>
+        </Box>
+      </DialogTitle>
 
-        <div className="flex-1 overflow-y-auto p-4 md:p-6">
+        <DialogContent dividers sx={{ p: 2 }}>
           {showForm && (
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle>
-                  {editingProvider ? "Edit Provider" : "Add New Provider"}
-                </CardTitle>
-                <CardDescription>
-                  Configure a new AI model provider
-                </CardDescription>
-              </CardHeader>
+            <Card sx={{ mb: 2 }}>
+              <CardHeader
+                title={editingProvider ? "Edit Provider" : "Add New Provider"}
+                subheader="Configure a new AI model provider"
+              />
               <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="provider_name">Provider Name *</Label>
-                      <Input
+                <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
                         id="provider_name"
+                        label="Provider Name *"
                         value={formData.provider_name}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                        onChange={(e) =>
                           setFormData({
                             ...formData,
                             provider_name: e.target.value,
@@ -230,215 +255,215 @@ function ModelProvidersManagement({
                         placeholder="e.g., My OpenAI Provider"
                         required
                       />
-                    </div>
+                    </Grid>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="provider_type">Provider Type *</Label>
-                      <Select
-                        value={formData.provider_type}
-                        onValueChange={(value: string) =>
-                          setFormData({ ...formData, provider_type: value })
-                        }
-                        required
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select provider type" />
-                        </SelectTrigger>
-                        <SelectContent>
+                    <Grid item xs={12} md={6}>
+                      <FormControl fullWidth required>
+                        <InputLabel id="provider_type-label">Provider Type *</InputLabel>
+                        <Select
+                          labelId="provider_type-label"
+                          id="provider_type"
+                          value={formData.provider_type}
+                          onChange={(e) =>
+                            setFormData({ ...formData, provider_type: e.target.value })
+                          }
+                          label="Provider Type *"
+                        >
                           {PROVIDER_TYPES.map((type) => (
-                            <SelectItem key={type.value} value={type.value}>
+                            <MenuItem key={type.value} value={type.value}>
                               {type.icon} {type.label}
-                            </SelectItem>
+                            </MenuItem>
                           ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                        </Select>
+                      </FormControl>
+                    </Grid>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="api_key">API Key *</Label>
-                      <div className="relative">
-                        <Key className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <Input
-                          id="api_key"
-                          type="password"
-                          value={formData.api_key}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setFormData({
-                              ...formData,
-                              api_key: e.target.value,
-                            })
-                          }
-                          placeholder="Enter your API key"
-                          className="pl-10"
-                          required
-                        />
-                      </div>
-                    </div>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        id="api_key"
+                        label="API Key *"
+                        type="password"
+                        value={formData.api_key}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            api_key: e.target.value,
+                          })
+                        }
+                        placeholder="Enter your API key"
+                        required
+                        InputProps={{
+                          startAdornment: <Key className="w-4 h-4 text-gray-400 mr-2" />,
+                        }}
+                      />
+                    </Grid>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="base_url">Base URL</Label>
-                      <div className="relative">
-                        <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <Input
-                          id="base_url"
-                          value={formData.base_url}
-                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                            setFormData({
-                              ...formData,
-                              base_url: e.target.value,
-                            })
-                          }
-                          placeholder="https://api.openai.com/v1"
-                          className="pl-10"
-                        />
-                      </div>
-                    </div>
-                  </div>
+                    <Grid item xs={12} md={6}>
+                      <TextField
+                        fullWidth
+                        id="base_url"
+                        label="Base URL"
+                        value={formData.base_url}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            base_url: e.target.value,
+                          })
+                        }
+                        placeholder="https://api.openai.com/v1"
+                        InputProps={{
+                          startAdornment: <Globe className="w-4 h-4 text-gray-400 mr-2" />,
+                        }}
+                      />
+                    </Grid>
+                  </Grid>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
-                      id="description"
-                      value={formData.description}
-                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                        setFormData({
-                          ...formData,
-                          description: e.target.value,
-                        })
-                      }
-                      placeholder="Optional description for this provider"
-                      rows={3}
-                    />
-                  </div>
+                  <TextField
+                    fullWidth
+                    id="description"
+                    label="Description"
+                    value={formData.description}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        description: e.target.value,
+                      })
+                    }
+                    placeholder="Optional description for this provider"
+                    multiline
+                    rows={3}
+                  />
 
-                  <div className="flex items-center space-x-2">
-                    <Switch
-                      id="is_active"
-                      checked={formData.is_active}
-                      onCheckedChange={(checked: boolean) =>
-                        setFormData({ ...formData, is_active: checked })
-                      }
-                    />
-                    <Label htmlFor="is_active">Active</Label>
-                  </div>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={formData.is_active}
+                        onChange={(e) =>
+                          setFormData({ ...formData, is_active: e.target.checked })
+                        }
+                      />
+                    }
+                    label="Active"
+                  />
 
-                  <div className="flex gap-2 justify-end">
+                  <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
                     <Button
-                      type="button"
-                      variant="outline"
+                      variant="outlined"
                       onClick={resetForm}
                       disabled={isSaving}
                     >
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={isSaving}>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      disabled={isSaving}
+                    >
                       {isSaving
                         ? "Saving..."
                         : editingProvider
                         ? "Update"
                         : "Add"}
                     </Button>
-                  </div>
-                </form>
+                  </Box>
+                </Box>
               </CardContent>
             </Card>
-          )}
+          )
 
           {isLoading ? (
-            <div className="flex items-center justify-center h-64">
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 256 }}>
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            </div>
+            </Box>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Grid container spacing={2}>
               {providers.map((provider) => (
-                <Card key={provider.id} className="relative">
-                  <CardHeader>
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <CardTitle className="text-lg">
-                          {provider.provider_name}
-                        </CardTitle>
-                        <CardDescription>
-                          {PROVIDER_TYPES.find(
-                            (t) => t.value === provider.provider_type
-                          )?.label || provider.provider_type}
-                        </CardDescription>
-                      </div>
-                      <div className="flex items-center gap-2">
+                <Grid item xs={12} md={6} lg={4} key={provider.id}>
+                  <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <CardHeader
+                      title={provider.provider_name}
+                      subheader={PROVIDER_TYPES.find(
+                        (t) => t.value === provider.provider_type
+                      )?.label || provider.provider_type}
+                      action={
                         <Switch
                           checked={provider.is_active}
-                          onCheckedChange={() => handleToggleActive(provider)}
+                          onChange={() => handleToggleActive(provider)}
                         />
-                      </div>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2 text-sm">
-                      <div className="flex items-center gap-2">
-                        <Key className="w-4 h-4 text-gray-400" />
-                        <span className="text-gray-600 dark:text-gray-400">
-                          {provider.api_key ? "••••••••" : "No API key"}
-                        </span>
-                      </div>
-                      {provider.base_url && (
-                        <div className="flex items-center gap-2">
-                          <Globe className="w-4 h-4 text-gray-400" />
-                          <span className="text-gray-600 dark:text-gray-400 truncate">
-                            {provider.base_url}
-                          </span>
-                        </div>
-                      )}
-                      {provider.description && (
-                        <p className="text-gray-600 dark:text-gray-400 text-xs">
-                          {provider.description}
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex gap-2 mt-4">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => startEdit(provider)}
-                        className="flex-1"
-                      >
-                        <Edit className="w-4 h-4 mr-1" />
-                        Edit
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => handleDelete(provider.id)}
-                        className="flex-1"
-                      >
-                        <Trash2 className="w-4 h-4 mr-1" />
-                        Delete
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                      }
+                    />
+                    <CardContent sx={{ flexGrow: 1 }}>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Key className="w-4 h-4 text-gray-400" />
+                          <Typography variant="body2" color="text.secondary">
+                            {provider.api_key ? "••••••••" : "No API key"}
+                          </Typography>
+                        </Box>
+                        {provider.base_url && (
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Globe className="w-4 h-4 text-gray-400" />
+                            <Typography variant="body2" color="text.secondary" noWrap>
+                              {provider.base_url}
+                            </Typography>
+                          </Box>
+                        )}
+                        {provider.description && (
+                          <Typography variant="body2" color="text.secondary">
+                            {provider.description}
+                          </Typography>
+                        )}
+                      </Box>
+                      <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          onClick={() => startEdit(provider)}
+                          startIcon={<Edit className="w-4 h-4" />}
+                          sx={{ flex: 1 }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="error"
+                          size="small"
+                          onClick={() => handleDelete(provider.id)}
+                          startIcon={<Trash2 className="w-4 h-4" />}
+                          sx={{ flex: 1 }}
+                        >
+                          Delete
+                        </Button>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
               ))}
-            </div>
+            </Grid>
           )}
 
           {!isLoading && providers.length === 0 && !showForm && (
-            <div className="text-center py-12">
+            <Box sx={{ textAlign: 'center', py: 6 }}>
               <Server className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+              <Typography variant="h6" gutterBottom>
                 No model providers
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
+              </Typography>
+              <Typography variant="body1" color="text.secondary" gutterBottom>
                 Get started by adding your first model provider.
-              </p>
-              <Button onClick={startAdd}>
-                <Plus className="w-4 h-4 mr-2" />
+              </Typography>
+              <Button
+                variant="contained"
+                onClick={startAdd}
+                startIcon={<Plus className="w-4 h-4" />}
+              >
                 Add Provider
               </Button>
-            </div>
+            </Box>
           )}
-        </div>
-      </div>
-    </div>
-  );
-}
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
 export default ModelProvidersManagement;
