@@ -1,3 +1,7 @@
+import {
+  Globe, Plus,
+  Server, X
+} from "lucide-react";
 export default function McpServerManagement({ mcpServers, openMcpForm }) {
  return <div className="space-y-4">
     <div className="flex items-center gap-3">
