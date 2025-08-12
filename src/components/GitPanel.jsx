@@ -1,28 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
 import {
-  AlertTriangle,
-  Check,
-  ChevronDown,
-  ChevronRight,
-  Download,
-  FileText,
-  GitBranch,
-  GitCommit,
-  History,
-  Info,
-  Mic,
-  MicOff,
-  Minus,
-  Plus,
-  RefreshCw,
-  RotateCcw,
-  Sparkles,
-  Trash2,
-  Upload,
-  X,
+    AlertTriangle,
+    Check,
+    ChevronDown,
+    ChevronRight,
+    Download,
+    FileText,
+    GitBranch,
+    GitCommit,
+    History,
+    Info,
+    Plus,
+    RefreshCw,
+    Sparkles,
+    Trash2,
+    Upload
 } from "lucide-react";
-import { MicButton } from "./MicButton.jsx";
+import { useEffect, useRef, useState } from "react";
 import { authenticatedFetch } from "../utils/api";
+import { MicButton } from "./MicButton.jsx";
 
 function GitPanel({ selectedProject, isMobile }) {
   const [gitStatus, setGitStatus] = useState(null);
@@ -960,10 +955,10 @@ function GitPanel({ selectedProject, isMobile }) {
             )}
             <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 max-w-md">
               <p className="text-sm text-blue-700 dark:text-blue-300 text-center">
-                <strong>Tip:</strong> Run{" "}
+                <strong>Tip:</strong> Run
                 <code className="bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded font-mono text-xs">
                   git init
-                </code>{" "}
+                </code>
                 in your project directory to initialize git source control.
               </p>
             </div>
@@ -1027,7 +1022,7 @@ function GitPanel({ selectedProject, isMobile }) {
                         >
                           <GitCommit className="w-4 h-4" />
                           <span>
-                            Commit {selectedFiles.size}{" "}
+                            Commit {selectedFiles.size}
                             file{selectedFiles.size !== 1 ? "s" : ""}
                           </span>
                           <ChevronDown className="w-3 h-3" />
@@ -1095,7 +1090,7 @@ function GitPanel({ selectedProject, isMobile }) {
                           </div>
                           <div className="flex items-center justify-between mt-2">
                             <span className="text-xs text-gray-500">
-                              {selectedFiles.size}{" "}
+                              {selectedFiles.size}
                               file{selectedFiles.size !== 1 ? "s" : ""} selected
                             </span>
                             <button
@@ -1142,7 +1137,7 @@ function GitPanel({ selectedProject, isMobile }) {
                   {selectedFiles.size} of {(gitStatus?.modified?.length || 0) +
                     (gitStatus?.added?.length || 0) +
                     (gitStatus?.deleted?.length || 0) +
-                    (gitStatus?.untracked?.length || 0)}{" "}
+                    (gitStatus?.untracked?.length || 0)}
                   {isMobile ? "" : "files"} selected
                 </span>
                 <div className={`flex ${isMobile ? "gap-1" : "gap-2"}`}>

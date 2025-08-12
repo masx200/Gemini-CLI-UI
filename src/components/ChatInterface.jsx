@@ -17,22 +17,22 @@
  */
 
 import React, {
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
+    memo,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
 } from "react";
-import ReactMarkdown from "react-markdown";
 import { useDropzone } from "react-dropzone";
-import TodoList from "./TodoList";
+import ReactMarkdown from "react-markdown";
 import GeminiLogo from "./GeminiLogo.jsx";
+import TodoList from "./TodoList";
 
-import GeminiStatus from "./GeminiStatus";
-import { MicButton } from "./MicButton.jsx";
 import { api } from "../utils/api";
 import { playNotificationSound } from "../utils/notificationSound";
+import GeminiStatus from "./GeminiStatus";
+import { MicButton } from "./MicButton.jsx";
 
 // Memoized message component to prevent unnecessary re-renders
 const MessageComponent = memo(
@@ -605,7 +605,7 @@ const MessageComponent = memo(
 
                                 return (
                                   <div className="mt-2 text-sm text-blue-700 dark:text-blue-300">
-                                    Read{" "}
+                                    Read
                                     <button
                                       onClick={() =>
                                         onFileOpen &&
@@ -964,7 +964,7 @@ const MessageComponent = memo(
                                           {selectedOption && (
                                             <div className="bg-amber-100 dark:bg-amber-800/30 rounded-lg p-3">
                                               <p className="text-amber-900 dark:text-amber-100 text-sm font-medium mb-1">
-                                                ✓ Gemini selected option{" "}
+                                                ✓ Gemini selected option
                                                 {selectedOption}
                                               </p>
                                               <p className="text-amber-800 dark:text-amber-200 text-xs">
@@ -1246,7 +1246,7 @@ const MessageComponent = memo(
                           const filename = input.file_path.split("/").pop();
                           return (
                             <div className="bg-blue-50 dark:bg-blue-900/20 border-l-2 border-blue-300 dark:border-blue-600 pl-3 py-1 mb-2 text-sm text-blue-700 dark:text-blue-300">
-                              📖 Read{" "}
+                              📖 Read
                               <button
                                 onClick={() =>
                                   onFileOpen && onFileOpen(input.file_path)}
@@ -2816,7 +2816,7 @@ function ChatInterface({
               <>
                 {chatMessages.length > visibleMessageCount && (
                   <div className="text-center text-gray-500 dark:text-gray-400 text-sm py-2 border-b border-gray-200 dark:border-gray-700">
-                    Showing last {visibleMessageCount}{" "}
+                    Showing last {visibleMessageCount}
                     messages ({chatMessages.length} total) •
                     <button
                       className="ml-1 text-blue-600 hover:text-blue-700 underline"

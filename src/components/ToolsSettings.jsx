@@ -1,26 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { ScrollArea } from "./ui/scroll-area";
-import { Badge } from "./ui/badge";
 import {
   AlertTriangle,
-  Edit3,
   Globe,
   Moon,
-  Play,
   Plus,
   Server,
   Settings,
   Shield,
   Sun,
   Terminal,
-  Trash2,
   Volume2,
   X,
-  Zap,
+  Zap
 } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 
 function ToolsSettings({ isOpen, onClose }) {
   const { isDarkMode, toggleDarkMode } = useTheme();
@@ -964,31 +959,31 @@ function ToolsSettings({ isOpen, onClose }) {
                     <li>
                       <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded">
                         "Bash(git log:*)"
-                      </code>{" "}
+                      </code>
                       - Allow all git log commands
                     </li>
                     <li>
                       <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded">
                         "Bash(git diff:*)"
-                      </code>{" "}
+                      </code>
                       - Allow all git diff commands
                     </li>
                     <li>
                       <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded">
                         "Write"
-                      </code>{" "}
+                      </code>
                       - Allow all Write tool usage
                     </li>
                     <li>
                       <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded">
                         "Read"
-                      </code>{" "}
+                      </code>
                       - Allow all Read tool usage
                     </li>
                     <li>
                       <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded">
                         "Bash(rm:*)"
-                      </code>{" "}
+                      </code>
                       - Block all rm commands (dangerous)
                     </li>
                   </ul>

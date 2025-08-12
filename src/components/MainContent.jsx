@@ -11,12 +11,12 @@
  * No session protection logic is implemented here - it's purely a props bridge.
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ChatInterface from "./ChatInterface";
-import FileTree from "./FileTree";
 import CodeEditor from "./CodeEditor";
-import Shell from "./Shell";
+import FileTree from "./FileTree";
 import GitPanel from "./GitPanel";
+import Shell from "./Shell";
 
 function MainContent({
   selectedProject,
@@ -206,7 +206,7 @@ function MainContent({
                       {selectedSession.summary}
                     </h2>
                     <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                      {selectedProject.displayName}{" "}
+                      {selectedProject.displayName}
                       <span className="hidden sm:inline">
                         • {selectedSession.id}
                       </span>
