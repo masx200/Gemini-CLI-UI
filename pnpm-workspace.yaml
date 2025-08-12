@@ -1,0 +1,6 @@
+onlyBuiltDependencies:
+  - bcrypt
+  - better-sqlite3
+  - esbuild
+  - node-pty
+  - sharp
