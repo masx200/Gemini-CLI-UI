@@ -234,15 +234,9 @@ and provides:
 | `API_KEY`         | -                                       | 外部 API 密钥（可选）              |
 | `NODE_ENV`        | `development`                           | 运行环境（development/production） |
 | `OPENAI_MODEL`    | -                                       | OpenAI 模型名称（可选）            |
-
-
 | `CUSTOM_LLM_MODEL_NAME`    | -                                       | OpenAI 模型名称（可选）            |
-
-
 | `CUSTOM_LLM_API_KEY`  | -                                       | OpenAI API 密钥（可选）            |
 | `CUSTOM_LLM_ENDPOINT` | -                                       | OpenAI API 基础 URL（可选）        |
-
-
 | `USE_CUSTOM_LLM`    | -                                       | 启用自定义 LLM 支持（可选）            |
 
 **示例配置**：
