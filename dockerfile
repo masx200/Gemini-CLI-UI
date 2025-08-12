@@ -182,9 +182,9 @@ env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.loc
 
 
 
-run pnpm i -g ansi-escapes
+run pnpm i -g easy-llm-cli 
 
 
 RUN cnpm install -g easy-llm-cli 
 
-run yarn global add @google/gemini-cli
+run yarn global add easy-llm-cli 
