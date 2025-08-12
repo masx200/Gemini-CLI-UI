@@ -157,7 +157,7 @@ RUN addgroup -g 1001 -S nodejs && \
 RUN chown -R nodejs:nodejs /app
 
 # Switch to non-root user
-USER nodejs
+USER root
 
 # Expose port internally (not to host)
 EXPOSE 4008
