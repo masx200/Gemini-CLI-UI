@@ -18,8 +18,8 @@ import { Button } from "./ui/button.jsx";
 
 //@ts-ignore
 import { Input } from "./ui/input.jsx";
-import McpServerManagement, { type Project } from "./mcp-server-management.jsx";
-import ModelProvidersSettings from "./ModelProvidersSettings.jsx";
+import McpServerManagement, { type Project } from "./mcp-server-management.tsx";
+import ModelProvidersSettings from "./ModelProvidersSettings.tsx";
 function ToolsSettings({ isOpen, onClose, projects = [] }: {
   isOpen: boolean;
   onClose: () => void;
@@ -101,7 +101,7 @@ function ToolsSettings({ isOpen, onClose, projects = [] }: {
       }
 
       // Load MCP servers from API
-      await fetchMcpServers();
+      // await fetchMcpServers();
     } catch (error) {
       // console.error('Error loading tool settings:', error);
       // Set defaults on error

@@ -1,4 +1,4 @@
-import { type Project } from "./mcp-server-management.jsx";
+import { type Project } from "./mcp-server-management.tsx";
 declare function ToolsSettings({ isOpen, onClose, projects }: {
     isOpen: boolean;
     onClose: () => void;

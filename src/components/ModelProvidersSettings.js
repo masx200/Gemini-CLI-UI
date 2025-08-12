@@ -1,6 +1,6 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import React, { useState } from "react";
-import ModelProvidersManagement from "./ModelProvidersManagement.jsx";
+import ModelProvidersManagement from "./ModelProvidersManagement.tsx";
 import { Avatar, Box, Button, Card, CardContent, CardHeader, IconButton, styled, Typography, } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import BoltIcon from "@mui/icons-material/Bolt";

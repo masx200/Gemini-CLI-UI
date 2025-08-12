@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ModelProvidersManagement from "./ModelProvidersManagement.jsx";
+import ModelProvidersManagement from "./ModelProvidersManagement.tsx";
 import {
   Avatar,
   Box,

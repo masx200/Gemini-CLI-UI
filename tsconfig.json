@@ -24,7 +24,7 @@
     // Stricter Typechecking Options
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-
+    "emitDeclarationOnly": true,
     // Style Options
     "noImplicitReturns": false,
     "noImplicitOverride": true,
@@ -32,7 +32,7 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noPropertyAccessFromIndexSignature": true,
-    "allowImportingTsExtensions": false,
+    "allowImportingTsExtensions": true,
     // Recommended Options
     "strict": true,
     "jsx": "react-jsx",

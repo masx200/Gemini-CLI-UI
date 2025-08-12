@@ -7,8 +7,8 @@ import { useTheme } from "../contexts/ThemeContext.jsx";
 import { Button } from "./ui/button.jsx";
 //@ts-ignore
 import { Input } from "./ui/input.jsx";
-import McpServerManagement, {} from "./mcp-server-management.jsx";
-import ModelProvidersSettings from "./ModelProvidersSettings.jsx";
+import McpServerManagement, {} from "./mcp-server-management.tsx";
+import ModelProvidersSettings from "./ModelProvidersSettings.tsx";
 function ToolsSettings({ isOpen, onClose, projects = [] }) {
     const { isDarkMode, toggleDarkMode } = useTheme();
     const [allowedTools, setAllowedTools] = useState([]);
