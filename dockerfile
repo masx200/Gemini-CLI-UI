@@ -172,6 +172,16 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 # Start the application (server only, build is already done)
 CMD ["npm", "run", "server"]
 run npm i -g pnpm
+
+
+
+
+env PNPM_HOME="/root/.local/share/pnpm"
+
+env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.local/share/pnpm
+
+
+
 run pnpm i -g @qwen-code/qwen-code
 
 
