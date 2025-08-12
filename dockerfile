@@ -182,7 +182,7 @@ env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.loc
 
 
 
-run pnpm i -g @qwen-code/qwen-code
+run pnpm i -g ansi-escapes
 
 
 RUN cnpm install -g easy-llm-cli 
