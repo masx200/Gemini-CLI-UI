@@ -44,6 +44,47 @@ export default function McpServerManagement({
   projects: Project[];
   setSaveStatus: (status: string) => void;
 }): JSX.Element {
+  
+  const testMcpServer = async (serverId: string, scope = 'user') => {
+    try {
+      const token = localStorage.getItem('auth-token');
+      const response = await fetch(`/api/mcp/servers/${serverId}/test?scope=${scope}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        return data.testResult;
+      } else {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to test server');
+      }
+    } catch (error) {
+      console.error('Error testing MCP server:', error);
+      throw error;
+    }
+  };
+
+  const handleMcpTest = async (serverId:string, scope:string) => {
+    try {
+      setMcpTestResults({ ...mcpTestResults, [serverId]: { loading: true } });
+      const result = await testMcpServer(serverId, scope);
+      setMcpTestResults({ ...mcpTestResults, [serverId]: result });
+    } catch (error:any) {
+      setMcpTestResults({ 
+        ...mcpTestResults, 
+        [serverId]: { 
+          success: false, 
+          message: error.message,
+          details: []
+        } 
+      });
+    }
+  };
   const [mcpTestResults, setMcpTestResults] = useState<Record<string, any>>({});
   // MCP API functions
   const fetchMcpServers = async () => {
