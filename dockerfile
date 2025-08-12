@@ -54,7 +54,7 @@ run pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 RUN yarn install --force --omit=dev --detial && npm cache clean --force
 
 # Build stage for frontend
-FROM base AS build
+# FROM base AS build
 
 
 
@@ -80,7 +80,7 @@ RUN yarn install --force
 RUN npm run build
 
 # Production stage
-FROM docker.cnb.cool/masx200/docker_mirror/node:22-alpine-linux-amd64 AS production
+# FROM docker.cnb.cool/masx200/docker_mirror/node:22-alpine-linux-amd64 AS production
 
 
 #https://unofficial-builds.nodejs.org/download/release/v22.18.0/node-v22.18.0-headers.tar.gz
@@ -133,7 +133,7 @@ RUN yarn install --force
 RUN yarn install --force --detail --omit=dev && npm cache clean --force
 
 # Copy built frontend from build stage
-COPY --from=build /app/dist ./dist
+# COPY --from=build /app/dist ./dist
 
 # Copy server code and other necessary files
 COPY server ./server
