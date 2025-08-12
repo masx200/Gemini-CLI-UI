@@ -22,7 +22,7 @@ router.get("/cli/list", async (req, res) => {
       ["mcp", "list", "-s", "user"],
       {
         stdio: ["pipe", "pipe", "pipe"],
-      }
+      },
     );
 
     let stdout = "";
@@ -112,7 +112,7 @@ router.post("/cli/add", async (req, res) => {
     console.log(
       "🔧 Running Claude CLI command:",
       process.env.GEMINI_PATH || "gemini",
-      cliArgs.join(" ")
+      cliArgs.join(" "),
     );
 
     const process = spawn(process.env.GEMINI_PATH || "gemini", cliArgs, {
@@ -173,7 +173,7 @@ router.delete("/cli/remove/:name", async (req, res) => {
       ["mcp", "remove", "-s", "user", name],
       {
         stdio: ["pipe", "pipe", "pipe"],
-      }
+      },
     );
 
     let stdout = "";
@@ -230,7 +230,7 @@ router.get("/cli/get/:name", async (req, res) => {
       ["mcp", "get", "-s", "user", name],
       {
         stdio: ["pipe", "pipe", "pipe"],
-      }
+      },
     );
 
     let stdout = "";
