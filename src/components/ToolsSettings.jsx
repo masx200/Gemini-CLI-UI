@@ -126,7 +126,7 @@ function ToolsSettings({ isOpen, onClose, projects = [] }) {
           oldValue: localStorage.getItem("gemini-tools-settings"),
           storageArea: localStorage,
           url: window.location.href,
-        }),
+        })
       );
 
       setSaveStatus("success");
@@ -230,6 +230,17 @@ function ToolsSettings({ isOpen, onClose, projects = [] }) {
               >
                 Appearance
               </button>
+
+              <button
+                onClick={() => setActiveTab("mcp")}
+                className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                  activeTab === "mcp"
+                    ? "border-blue-600 text-blue-600 dark:text-blue-400"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                MCP
+              </button>
             </div>
           </div>
 
@@ -264,11 +275,11 @@ function ToolsSettings({ isOpen, onClose, projects = [] }) {
                                 isDarkMode ? "translate-x-7" : "translate-x-1"
                               } inline-block h-6 w-6 transform rounded-full bg-white shadow-lg transition-transform duration-200 flex items-center justify-center`}
                             >
-                              {isDarkMode
-                                ? <Moon className="w-3.5 h-3.5 text-gray-700" />
-                                : (
-                                  <Sun className="w-3.5 h-3.5 text-yellow-500" />
-                                )}
+                              {isDarkMode ? (
+                                <Moon className="w-3.5 h-3.5 text-gray-700" />
+                              ) : (
+                                <Sun className="w-3.5 h-3.5 text-yellow-500" />
+                              )}
                             </span>
                           </button>
                         </div>
@@ -290,7 +301,8 @@ function ToolsSettings({ isOpen, onClose, projects = [] }) {
                           <select
                             value={projectSortOrder}
                             onChange={(e) =>
-                              setProjectSortOrder(e.target.value)}
+                              setProjectSortOrder(e.target.value)
+                            }
                             className="text-sm bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2 w-32"
                           >
                             <option value="name">Alphabetical</option>
@@ -332,8 +344,10 @@ function ToolsSettings({ isOpen, onClose, projects = [] }) {
                         ))}
                       </select>
                       <div className="text-sm text-gray-600 dark:text-gray-400">
-                        {availableModels.find((m) => m.value === selectedModel)
-                          ?.description}
+                        {
+                          availableModels.find((m) => m.value === selectedModel)
+                            ?.description
+                        }
                       </div>
                     </div>
                   </div>
@@ -382,7 +396,8 @@ function ToolsSettings({ isOpen, onClose, projects = [] }) {
                           type="checkbox"
                           checked={enableNotificationSound}
                           onChange={(e) =>
-                            setEnableNotificationSound(e.target.checked)}
+                            setEnableNotificationSound(e.target.checked)
+                          }
                           className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                         />
                         <div>
@@ -403,20 +418,20 @@ function ToolsSettings({ isOpen, onClose, projects = [] }) {
                             // Temporarily enable sound for testing
                             const currentSettings = JSON.parse(
                               localStorage.getItem("gemini-tools-settings") ||
-                                "{}",
+                                "{}"
                             );
                             localStorage.setItem(
                               "gemini-tools-settings",
                               JSON.stringify({
                                 ...currentSettings,
                                 enableNotificationSound: true,
-                              }),
+                              })
                             );
                             playNotificationSound();
                             // Restore original settings
                             localStorage.setItem(
                               "gemini-tools-settings",
-                              JSON.stringify(currentSettings),
+                              JSON.stringify(currentSettings)
                             );
                           }}
                           className="ml-7 px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
@@ -617,9 +632,13 @@ function ToolsSettings({ isOpen, onClose, projects = [] }) {
                 </div>
               </div>
             )}
+
+            {activeTab === "mcp" && (
+              <McpServerManagement projects={projects}></McpServerManagement>
+            )}
           </div>
         </div>
-        <McpServerManagement projects={projects}></McpServerManagement>
+
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 md:p-6 border-t border-border flex-shrink-0 gap-3 pb-safe-area-inset-bottom">
           <div className="flex items-center justify-center sm:justify-start gap-2 order-2 sm:order-1">
             {saveStatus === "success" && (
@@ -669,16 +688,14 @@ function ToolsSettings({ isOpen, onClose, projects = [] }) {
               disabled={isSaving}
               className="flex-1 sm:flex-none h-10 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 touch-manipulation"
             >
-              {isSaving
-                ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    Saving...
-                  </div>
-                )
-                : (
-                  "Save Settings"
-                )}
+              {isSaving ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  Saving...
+                </div>
+              ) : (
+                "Save Settings"
+              )}
             </Button>
           </div>
         </div>
