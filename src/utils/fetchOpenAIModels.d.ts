@@ -14,5 +14,5 @@ interface FetchModelsParams {
 }
 declare function fetchOpenAIModels(params: FetchModelsParams): Promise<OpenAIModel[]>;
 export { fetchOpenAIModels };
-export type { OpenAIModel, OpenAIModelsResponse, FetchModelsParams };
+export type { FetchModelsParams, OpenAIModel, OpenAIModelsResponse };
 //# sourceMappingURL=fetchOpenAIModels.d.ts.map

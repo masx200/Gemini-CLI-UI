@@ -9,15 +9,15 @@ import { Badge } from "./ui/badge.jsx";
 import { Button } from "./ui/button.jsx";
 import { useState, } from "react";
 export default function McpServerManagement({ projects = [], setSaveStatus, }) {
-    const testMcpServer = async (serverId, scope = 'user') => {
+    const testMcpServer = async (serverId, scope = "user") => {
         try {
-            const token = localStorage.getItem('auth-token');
+            const token = localStorage.getItem("auth-token");
             const response = await fetch(`/api/mcp/servers/${serverId}/test?scope=${scope}`, {
-                method: 'POST',
+                method: "POST",
                 headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                }
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                },
             });
             if (response.ok) {
                 const data = await response.json();
@@ -25,11 +25,11 @@ export default function McpServerManagement({ projects = [], setSaveStatus, }) {
             }
             else {
                 const error = await response.json();
-                throw new Error(error.error || 'Failed to test server');
+                throw new Error(error.error || "Failed to test server");
             }
         }
         catch (error) {
-            console.error('Error testing MCP server:', error);
+            console.error("Error testing MCP server:", error);
             throw error;
         }
     };
@@ -46,8 +46,8 @@ export default function McpServerManagement({ projects = [], setSaveStatus, }) {
                 [serverId]: {
                     success: false,
                     message: error.message,
-                    details: []
-                }
+                    details: [],
+                },
             });
         }
     };
@@ -403,21 +403,25 @@ export default function McpServerManagement({ projects = [], setSaveStatus, }) {
                                                                         .join(", ") })] })), server.raw && (_jsxs("details", { className: "mt-2", children: [_jsx("summary", { className: "cursor-pointer text-xs text-muted-foreground hover:text-foreground", children: "View full config" }), _jsx("pre", { className: "mt-1 text-xs bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-x-auto", children: JSON.stringify(server.raw, null, 2) })] }))] }), mcpTestResults[server.id] && (_jsxs("div", { className: `mt-2 p-2 rounded text-xs ${mcpTestResults[server.id].success
                                                         ? "bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200"
                                                         : "bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200"}`, children: [_jsx("div", { className: "font-medium", children: mcpTestResults[server.id].message }), mcpTestResults[server.id].details &&
-                                                            mcpTestResults[server.id].details.length > 0 && (_jsx("ul", { className: "mt-1 space-y-0.5", children: mcpTestResults[server.id].details.map((detail, i) => (_jsxs("li", { children: ["\u2022 ", detail] }, i))) }))] })), mcpServerTools[server.id] && (_jsxs("div", { className: "mt-2 p-2 rounded text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 border border-blue-200 dark:border-blue-800", children: [_jsx("div", { className: "font-medium mb-2", children: "Available Tools & Resources" }), mcpServerTools[server.id].tools &&
+                                                            mcpTestResults[server.id].details.length > 0 && (_jsx("ul", { className: "mt-1 space-y-0.5", children: mcpTestResults[server.id].details.map((detail, i) => _jsxs("li", { children: ["\u2022 ", detail] }, i)) }))] })), mcpServerTools[server.id] && (_jsxs("div", { className: "mt-2 p-2 rounded text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 border border-blue-200 dark:border-blue-800", children: [_jsx("div", { className: "font-medium mb-2", children: "Available Tools & Resources" }), mcpServerTools[server.id].tools &&
                                                             mcpServerTools[server.id].tools.length > 0 && (_jsxs("div", { className: "mb-2", children: [_jsxs("div", { className: "font-medium text-xs mb-1", children: ["Tools (", mcpServerTools[server.id].tools.length, "):"] }), _jsx("ul", { className: "space-y-0.5", children: mcpServerTools[server.id].tools.map((tool, i) => (_jsxs("li", { className: "flex items-start gap-1", children: [_jsx("span", { className: "text-blue-400 mt-0.5", children: "\u2022" }), _jsxs("div", { children: [_jsx("code", { className: "bg-blue-100 dark:bg-blue-800 px-1 rounded", children: tool.name }), tool.description &&
                                                                                         tool.description !==
-                                                                                            "No description provided" && (_jsxs("span", { className: "ml-1 text-xs opacity-75", children: ["- ", tool.description] }))] })] }, i))) })] })), mcpServerTools[server.id].resources &&
+                                                                                            "No description provided" &&
+                                                                                        (_jsxs("span", { className: "ml-1 text-xs opacity-75", children: ["- ", tool.description] }))] })] }, i))) })] })), mcpServerTools[server.id].resources &&
                                                             mcpServerTools[server.id].resources.length > 0 && (_jsxs("div", { className: "mb-2", children: [_jsxs("div", { className: "font-medium text-xs mb-1", children: ["Resources (", mcpServerTools[server.id].resources.length, "):"] }), _jsx("ul", { className: "space-y-0.5", children: mcpServerTools[server.id].resources.map((resource, i) => (_jsxs("li", { className: "flex items-start gap-1", children: [_jsx("span", { className: "text-blue-400 mt-0.5", children: "\u2022" }), _jsxs("div", { children: [_jsx("code", { className: "bg-blue-100 dark:bg-blue-800 px-1 rounded", children: resource.name }), resource.description &&
                                                                                         resource.description !==
-                                                                                            "No description provided" && (_jsxs("span", { className: "ml-1 text-xs opacity-75", children: ["- ", resource.description] }))] })] }, i))) })] })), mcpServerTools[server.id].prompts &&
+                                                                                            "No description provided" &&
+                                                                                        (_jsxs("span", { className: "ml-1 text-xs opacity-75", children: ["- ", resource.description] }))] })] }, i))) })] })), mcpServerTools[server.id].prompts &&
                                                             mcpServerTools[server.id].prompts.length > 0 && (_jsxs("div", { children: [_jsxs("div", { className: "font-medium text-xs mb-1", children: ["Prompts (", mcpServerTools[server.id].prompts.length, "):"] }), _jsx("ul", { className: "space-y-0.5", children: mcpServerTools[server.id].prompts.map((prompt, i) => (_jsxs("li", { className: "flex items-start gap-1", children: [_jsx("span", { className: "text-blue-400 mt-0.5", children: "\u2022" }), _jsxs("div", { children: [_jsx("code", { className: "bg-blue-100 dark:bg-blue-800 px-1 rounded", children: prompt.name }), prompt.description &&
                                                                                         prompt.description !==
-                                                                                            "No description provided" && (_jsxs("span", { className: "ml-1 text-xs opacity-75", children: ["- ", prompt.description] }))] })] }, i))) })] })), (!mcpServerTools[server.id].tools ||
+                                                                                            "No description provided" &&
+                                                                                        (_jsxs("span", { className: "ml-1 text-xs opacity-75", children: ["- ", prompt.description] }))] })] }, i))) })] })), (!mcpServerTools[server.id].tools ||
                                                             mcpServerTools[server.id].tools.length === 0) &&
                                                             (!mcpServerTools[server.id].resources ||
                                                                 mcpServerTools[server.id].resources.length === 0) &&
                                                             (!mcpServerTools[server.id].prompts ||
-                                                                mcpServerTools[server.id].prompts.length === 0) && (_jsx("div", { className: "text-xs opacity-75", children: "No tools, resources, or prompts discovered" }))] }))] }), _jsxs("div", { className: "flex items-center gap-2 ml-4", children: [_jsx(Button, { onClick: () => openMcpForm(server), variant: "ghost", size: "sm", className: "text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300", title: "Edit server", children: _jsx(Edit3, { className: "w-4 h-4" }) }), _jsx(Button, { onClick: () => handleMcpDelete(server.id, server.scope), variant: "ghost", size: "sm", className: "text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300", title: "Delete server", children: _jsx(Trash2, { className: "w-4 h-4" }) })] })] }) }, server.id))), mcpServers.length === 0 && (_jsx("div", { className: "text-center py-8 text-gray-500 dark:text-gray-400", children: "No MCP servers configured" }))] })] }), showMcpForm && (_jsx("div", { className: "fixed inset-0 bg-black/50 flex items-center justify-center z-[110] p-4", children: _jsxs("div", { className: "bg-background border border-border rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto", children: [_jsxs("div", { className: "flex items-center justify-between p-4 border-b border-border", children: [_jsx("h3", { className: "text-lg font-medium text-foreground", children: editingMcpServer ? "Edit MCP Server" : "Add MCP Server" }), _jsx(Button, { variant: "ghost", size: "sm", onClick: resetMcpForm, children: _jsx(X, { className: "w-4 h-4" }) })] }), _jsxs("form", { onSubmit: handleMcpSubmit, className: "p-4 space-y-4", children: [!editingMcpServer && (_jsxs("div", { className: "flex gap-2 mb-4", children: [_jsx("button", { type: "button", onClick: () => setMcpFormData((prev) => ({
+                                                                mcpServerTools[server.id].prompts.length === 0) &&
+                                                            (_jsx("div", { className: "text-xs opacity-75", children: "No tools, resources, or prompts discovered" }))] }))] }), _jsxs("div", { className: "flex items-center gap-2 ml-4", children: [_jsx(Button, { onClick: () => openMcpForm(server), variant: "ghost", size: "sm", className: "text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300", title: "Edit server", children: _jsx(Edit3, { className: "w-4 h-4" }) }), _jsx(Button, { onClick: () => handleMcpDelete(server.id, server.scope), variant: "ghost", size: "sm", className: "text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300", title: "Delete server", children: _jsx(Trash2, { className: "w-4 h-4" }) })] })] }) }, server.id))), mcpServers.length === 0 && (_jsx("div", { className: "text-center py-8 text-gray-500 dark:text-gray-400", children: "No MCP servers configured" }))] })] }), showMcpForm && (_jsx("div", { className: "fixed inset-0 bg-black/50 flex items-center justify-center z-[110] p-4", children: _jsxs("div", { className: "bg-background border border-border rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto", children: [_jsxs("div", { className: "flex items-center justify-between p-4 border-b border-border", children: [_jsx("h3", { className: "text-lg font-medium text-foreground", children: editingMcpServer ? "Edit MCP Server" : "Add MCP Server" }), _jsx(Button, { variant: "ghost", size: "sm", onClick: resetMcpForm, children: _jsx(X, { className: "w-4 h-4" }) })] }), _jsxs("form", { onSubmit: handleMcpSubmit, className: "p-4 space-y-4", children: [!editingMcpServer && (_jsxs("div", { className: "flex gap-2 mb-4", children: [_jsx("button", { type: "button", onClick: () => setMcpFormData((prev) => ({
                                                 ...prev,
                                                 importMode: "form",
                                             })), className: `px-4 py-2 rounded-lg font-medium transition-colors ${mcpFormData.importMode === "form"
@@ -427,7 +431,9 @@ export default function McpServerManagement({ projects = [], setSaveStatus, }) {
                                                 importMode: "json",
                                             })), className: `px-4 py-2 rounded-lg font-medium transition-colors ${mcpFormData.importMode === "json"
                                                 ? "bg-blue-600 text-white"
-                                                : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"}`, children: "JSON Import" })] })), mcpFormData.importMode === "form" && editingMcpServer && (_jsxs("div", { className: "bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-3", children: [_jsx("label", { className: "block text-sm font-medium text-foreground mb-2", children: "Scope" }), _jsxs("div", { className: "flex items-center gap-2", children: [mcpFormData.scope === "user" ? (_jsx(Globe, { className: "w-4 h-4" })) : (_jsx(FolderOpen, { className: "w-4 h-4" })), _jsx("span", { className: "text-sm", children: mcpFormData.scope === "user"
+                                                : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"}`, children: "JSON Import" })] })), mcpFormData.importMode === "form" && editingMcpServer && (_jsxs("div", { className: "bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-3", children: [_jsx("label", { className: "block text-sm font-medium text-foreground mb-2", children: "Scope" }), _jsxs("div", { className: "flex items-center gap-2", children: [mcpFormData.scope === "user"
+                                                    ? _jsx(Globe, { className: "w-4 h-4" })
+                                                    : _jsx(FolderOpen, { className: "w-4 h-4" }), _jsx("span", { className: "text-sm", children: mcpFormData.scope === "user"
                                                         ? "User (Global)"
                                                         : "Project (Local)" }), mcpFormData.scope === "local" &&
                                                     mcpFormData.projectPath && (_jsxs("span", { className: "text-xs text-muted-foreground", children: ["- ", mcpFormData.projectPath] }))] }), _jsx("p", { className: "text-xs text-muted-foreground mt-2", children: "Scope cannot be changed when editing an existing server" })] })), mcpFormData.importMode === "form" && !editingMcpServer && (_jsxs("div", { className: "space-y-4", children: [_jsxs("div", { children: [_jsx("label", { className: "block text-sm font-medium text-foreground mb-2", children: "Scope *" }), _jsxs("div", { className: "flex gap-2", children: [_jsx("button", { type: "button", onClick: () => setMcpFormData((prev) => ({
@@ -446,7 +452,9 @@ export default function McpServerManagement({ projects = [], setSaveStatus, }) {
                                                         : "Local scope: Only available in the selected project" })] }), mcpFormData.scope === "local" && !editingMcpServer && (_jsxs("div", { children: [_jsx("label", { className: "block text-sm font-medium text-foreground mb-2", children: "Project *" }), _jsxs("select", { value: mcpFormData.projectPath, onChange: (e) => setMcpFormData((prev) => ({
                                                         ...prev,
                                                         projectPath: e.target.value,
-                                                    })), className: "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500", required: mcpFormData.scope === "local", children: [_jsx("option", { value: "", children: "Select a project..." }), projects.map((project) => (_jsx("option", { value: project.path || project.fullPath, children: project.displayName || project.name }, project.name)))] }), mcpFormData.projectPath && (_jsxs("p", { className: "text-xs text-muted-foreground mt-1", children: ["Path: ", mcpFormData.projectPath] }))] }))] })), _jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-4", children: [_jsxs("div", { className: mcpFormData.importMode === "json" ? "md:col-span-2" : "", children: [_jsx("label", { className: "block text-sm font-medium text-foreground mb-2", children: "Server Name *" }), _jsx(Input, { value: mcpFormData.name, onChange: (e) => {
+                                                    })), className: "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500", required: mcpFormData.scope === "local", children: [_jsx("option", { value: "", children: "Select a project..." }), projects.map((project) => (_jsx("option", { value: project.path || project.fullPath, children: project.displayName || project.name }, project.name)))] }), mcpFormData.projectPath && (_jsxs("p", { className: "text-xs text-muted-foreground mt-1", children: ["Path: ", mcpFormData.projectPath] }))] }))] })), _jsxs("div", { className: "grid grid-cols-1 md:grid-cols-2 gap-4", children: [_jsxs("div", { className: mcpFormData.importMode === "json"
+                                                ? "md:col-span-2"
+                                                : "", children: [_jsx("label", { className: "block text-sm font-medium text-foreground mb-2", children: "Server Name *" }), _jsx(Input, { value: mcpFormData.name, onChange: (e) => {
                                                         setMcpFormData((prev) => ({
                                                             ...prev,
                                                             name: e.target.value,

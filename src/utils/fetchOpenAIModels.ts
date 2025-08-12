@@ -16,7 +16,7 @@ interface FetchModelsParams {
 }
 
 async function fetchOpenAIModels(
-  params: FetchModelsParams
+  params: FetchModelsParams,
 ): Promise<OpenAIModel[]> {
   const { OPENAI_API_KEY, OPENAI_BASE_URL } = params;
 
@@ -35,7 +35,7 @@ async function fetchOpenAIModels(
 
     if (!response.ok) {
       throw new Error(
-        `HTTP error! status: ${response.status}` + "\n" + "url=" + url
+        `HTTP error! status: ${response.status}` + "\n" + "url=" + url,
       );
     }
 
@@ -49,4 +49,4 @@ async function fetchOpenAIModels(
 }
 
 export { fetchOpenAIModels };
-export type { OpenAIModel, OpenAIModelsResponse, FetchModelsParams };
+export type { FetchModelsParams, OpenAIModel, OpenAIModelsResponse };

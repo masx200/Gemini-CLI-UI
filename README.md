@@ -222,17 +222,18 @@ and provides:
 
 项目支持以下环境变量配置，请在 `.env` 文件中设置：
 
-| 变量名           | 默认值                                  | 描述                               |
-| ---------------- | --------------------------------------- | ---------------------------------- |
-| `GEMINI_PATH`    | `gemini`                                | Gemini CLI 的安装路径              |
-| `HOME`           | 系统用户主目录                          | 用户主目录路径                     |
-| `PORT`           | `4008`                                  | API服务器端口                      |
-| `OPENAI_API_KEY` | -                                       | OpenAI API密钥（可选）             |
-| `OPENAI_BASE_URL`| -                                       | OpenAI API基础URL（可选）          |
-| `DB_PATH`        | `./server/database/geminicliui_auth.db` | 数据库文件路径                     |
-| `JWT_SECRET`     | 随机生成                                | JWT令牌加密密钥                    |
-| `API_KEY`        | -                                       | 外部API密钥（可选）                |
-| `NODE_ENV`       | `development`                           | 运行环境（development/production） |
+| 变量名            | 默认值                                  | 描述                               |
+| ----------------- | --------------------------------------- | ---------------------------------- |
+| `GEMINI_PATH`     | `gemini`                                | Gemini CLI 的安装路径              |
+| `HOME`            | 系统用户主目录                          | 用户主目录路径                     |
+| `PORT`            | `4008`                                  | API 服务器端口                     |
+| `OPENAI_API_KEY`  | -                                       | OpenAI API 密钥（可选）            |
+| `OPENAI_BASE_URL` | -                                       | OpenAI API 基础 URL（可选）        |
+| `DB_PATH`         | `./server/database/geminicliui_auth.db` | 数据库文件路径                     |
+| `JWT_SECRET`      | 随机生成                                | JWT 令牌加密密钥                   |
+| `API_KEY`         | -                                       | 外部 API 密钥（可选）              |
+| `NODE_ENV`        | `development`                           | 运行环境（development/production） |
+| `OPENAI_MODEL`    | -                                       | OpenAI 模型名称（可选）            |
 
 **示例配置**：
 
