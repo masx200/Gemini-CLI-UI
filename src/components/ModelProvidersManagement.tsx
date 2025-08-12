@@ -428,7 +428,7 @@ function ModelProvidersManagement({
                       )?.label || provider.provider_type}
                       action={
                         <Switch
-                          checked={provider.is_active}
+                          checked={Boolean(provider.is_active)}
                           onChange={() => handleToggleActive(provider)}
                         />
                       }

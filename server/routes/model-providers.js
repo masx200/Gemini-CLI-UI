@@ -9,7 +9,19 @@ router.get("/list", async (req, res) => {
         const providers = db
             .prepare("SELECT * FROM geminicliui_model_providers ORDER BY created_at DESC")
             .all();
-        res.json({ providers });
+        res.json({
+            providers: providers.map((a) => {
+                return {
+                    id: a.id,
+                    provider_name: a.provider_name,
+                    provider_type: a.provider_type,
+                    api_key: a.api_key,
+                    base_url: a.base_url,
+                    description: a.description,
+                    is_active: Boolean(a.is_active),
+                };
+            }),
+        });
     }
     catch (error) {
         console.error("Error fetching providers:", error);
@@ -46,7 +58,7 @@ router.post("/create", async (req, res) => {
         const stmt = db.prepare(`INSERT INTO geminicliui_model_providers 
        (provider_name, provider_type, api_key, base_url, description, is_active) 
        VALUES (?, ?, ?, ?, ?, ?)`);
-        const result = stmt.run(provider_name, provider_type, api_key, base_url || null, description || null, is_active !== false);
+        const result = stmt.run(provider_name, provider_type, api_key, base_url || null, description || null, Number(is_active !== false));
         const newProvider = db
             .prepare("SELECT * FROM geminicliui_model_providers WHERE id = ?")
             .get(result.lastInsertRowid);
@@ -54,7 +66,9 @@ router.post("/create", async (req, res) => {
     }
     catch (error) {
         console.error("Error creating provider:", error);
-        res.status(500).json({ error: "Failed to create provider" });
+        res
+            .status(500)
+            .json({ error: "Failed to create provider" + "\n" + String(error) });
     }
 });
 // Update a model provider
