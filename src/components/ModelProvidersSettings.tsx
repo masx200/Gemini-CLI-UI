@@ -4,9 +4,9 @@ import {
   Avatar,
   Box,
   Button,
-  Dialog,
-  DialogContent,
-  DialogTitle,
+  Card,
+  CardContent,
+  CardHeader,
   IconButton,
   styled,
   Typography,
@@ -28,34 +28,28 @@ const ModelProvidersSettings: React.FC<
   const [showManagement, setShowManagement] = useState(false);
 
   return (
-    <Dialog
-    
-      maxWidth="md"
-      fullWidth
-      PaperProps={{
-        sx: {
-          maxHeight: "80vh",
-          overflow: "hidden",
-        },
+    <Card
+      sx={{
+        maxWidth: "md",
+        margin: "auto",
+        maxHeight: "80vh",
+        overflow: "hidden",
       }}
     >
-      <DialogTitle sx={{ m: 0, p: 2 }}>
-        Model Providers Settings
-        <IconButton
-          aria-label="close"
-          onClick={onClose}
-          sx={{
-            position: "absolute",
-            right: 8,
-            top: 8,
-            color: (theme) => theme.palette.grey[500],
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
-
-      <DialogContent dividers>
+      <CardHeader
+        title="Model Providers Settings"
+        action={
+          <IconButton
+            aria-label="close"
+            sx={{
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+           
+          </IconButton>
+        }
+      />
+      <CardContent sx={{ overflow: "auto" }}>
         {!showManagement ? (
           <Box sx={{ textAlign: "center", py: 4 }}>
             <StyledAvatar>
@@ -82,8 +76,8 @@ const ModelProvidersSettings: React.FC<
             onClose={() => setShowManagement(false)}
           />
         )}
-      </DialogContent>
-    </Dialog>
+      </CardContent>
+    </Card>
   );
 };
 
