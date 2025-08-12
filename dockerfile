@@ -11,11 +11,11 @@ COPY ./unofficial-builds.nodejs.org/node-v22.18.0-headers.tar.gz /tmp/node-v22.1
 
 # 2) 解压指定目录到 /usr/local/include/node
 RUN mkdir -p /usr/local/include \
- && tar -xzf /tmp/node-v22.18.0.tar.gz \
-           -C /usr/local/include \
-           --strip-components=2 \
-           node-v22.18.0/include/node \
- && rm -f /tmp/node-v22.18.0.tar.gz
+    && tar -xzf /tmp/node-v22.18.0.tar.gz \
+    -C /usr/local/include \
+    --strip-components=2 \
+    node-v22.18.0/include/node \
+    && rm -f /tmp/node-v22.18.0.tar.gz
 
 run yarn config set registry https://registry.npmmirror.com
 
@@ -90,11 +90,11 @@ COPY ./unofficial-builds.nodejs.org/node-v22.18.0-headers.tar.gz /tmp/node-v22.1
 
 # 2) 解压指定目录到 /usr/local/include/node
 RUN mkdir -p /usr/local/include \
- && tar -xzf /tmp/node-v22.18.0.tar.gz \
-           -C /usr/local/include \
-           --strip-components=2 \
-           node-v22.18.0/include/node \
- && rm -f /tmp/node-v22.18.0.tar.gz
+    && tar -xzf /tmp/node-v22.18.0.tar.gz \
+    -C /usr/local/include \
+    --strip-components=2 \
+    node-v22.18.0/include/node \
+    && rm -f /tmp/node-v22.18.0.tar.gz
 
 run yarn config set registry https://registry.npmmirror.com
 
@@ -172,7 +172,9 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 # Start the application (server only, build is already done)
 CMD ["npm", "run", "server"]
 
-run cnpm i -g @qwen-code/qwen-code
+run pnpm i -g @qwen-code/qwen-code
 
 
-RUN cnpm install -g easy-llm-cli @google/gemini-cli
+RUN cnpm install -g easy-llm-cli 
+
+run yarn gloabl add @google/gemini-cli
