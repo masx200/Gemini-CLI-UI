@@ -1,4 +1,4 @@
-export type ModelProviderType = 'openai' | 'anthropic' | 'gemini' | 'bedrock' | 'baidu' | 'dashscope' | 'deepseek' | 'volcengine' | 'moonshot' | 'siliconflow' | 'modelscope' | 'openrouter' | 'pangu' | 'xunfei';
+export type ModelProviderType = "openai" | "anthropic" | "gemini" | "bedrock" | "baidu" | "dashscope" | "deepseek" | "volcengine" | "moonshot" | "siliconflow" | "modelscope" | "openrouter" | "pangu" | "xunfei";
 export interface ModelProvider {
     id: number;
     provider_name: string;

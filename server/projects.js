@@ -18,7 +18,7 @@ async function loadProjectConfig() {
   const configPath = path.join(
     process.env.HOME,
     ".gemini",
-    "project-config.json"
+    "project-config.json",
   );
   try {
     const configData = await fs.readFile(configPath, "utf8");
@@ -34,7 +34,7 @@ async function saveProjectConfig(config) {
   const configPath = path.join(
     process.env.HOME,
     ".gemini",
-    "project-config.json"
+    "project-config.json",
   );
   await fs.writeFile(configPath, JSON.stringify(config, null, 2), "utf8");
 }
@@ -84,7 +84,7 @@ async function extractProjectDirectory(projectName) {
     process.env.HOME,
     ".gemini",
     "projects",
-    projectName
+    projectName,
   );
   const cwdCounts = new Map();
   let latestTimestamp = 0;
@@ -172,11 +172,10 @@ async function extractProjectDirectory(projectName) {
         // Fallback (shouldn't reach here)
         if (!extractedPath) {
           try {
-            extractedPath =
-              latestCwd ||
+            extractedPath = latestCwd ||
               Buffer.from(
                 projectName.replace(/_/g, "+").replace(/-/g, "/"),
-                "base64"
+                "base64",
               ).toString("utf8");
           } catch (e) {
             extractedPath = latestCwd || projectName.replace(/-/g, "/");
@@ -237,7 +236,7 @@ async function getProjects() {
         const customName = config[entry.name]?.displayName;
         const autoDisplayName = await generateDisplayName(
           entry.name,
-          actualProjectDir
+          actualProjectDir,
         );
         const fullPath = actualProjectDir;
 
@@ -254,8 +253,9 @@ async function getProjects() {
         try {
           // Use sessionManager to get sessions for this project
           const sessionManager = (await import("./sessionManager.js")).default;
-          const allSessions =
-            sessionManager.getProjectSessions(actualProjectDir);
+          const allSessions = sessionManager.getProjectSessions(
+            actualProjectDir,
+          );
 
           // Paginate the sessions
           const paginatedSessions = allSessions.slice(0, 5);
@@ -293,8 +293,7 @@ async function getProjects() {
       const project = {
         name: projectName,
         path: actualProjectDir,
-        displayName:
-          projectConfig.displayName ||
+        displayName: projectConfig.displayName ||
           (await generateDisplayName(projectName, actualProjectDir)),
         fullPath: actualProjectDir,
         isCustomName: !!projectConfig.displayName,
@@ -314,7 +313,7 @@ async function getSessions(projectName, limit = 5, offset = 0) {
     process.env.HOME,
     ".gemini",
     "projects",
-    projectName
+    projectName,
   );
 
   try {
@@ -331,7 +330,7 @@ async function getSessions(projectName, limit = 5, offset = 0) {
         const filePath = path.join(projectDir, file);
         const stats = await fs.stat(filePath);
         return { file, mtime: stats.mtime };
-      })
+      }),
     );
 
     // Sort files by modification time (newest first) for better performance
@@ -365,7 +364,7 @@ async function getSessions(projectName, limit = 5, offset = 0) {
 
     // Convert to array and sort by last activity
     const sortedSessions = Array.from(allSessions.values()).sort(
-      (a, b) => new Date(b.lastActivity) - new Date(a.lastActivity)
+      (a, b) => new Date(b.lastActivity) - new Date(a.lastActivity),
     );
 
     const total = sortedSessions.length;
@@ -430,10 +429,9 @@ async function parseJsonlSessions(filePath) {
               if (typeof content === "string" && content.length > 0) {
                 // Skip command messages that start with <command-name>
                 if (!content.startsWith("<command-name>")) {
-                  session.summary =
-                    content.length > 50
-                      ? content.substring(0, 50) + "..."
-                      : content;
+                  session.summary = content.length > 50
+                    ? content.substring(0, 50) + "..."
+                    : content;
                 }
               }
             }
@@ -459,7 +457,7 @@ async function parseJsonlSessions(filePath) {
 
   // Convert Map to Array and sort by last activity
   return Array.from(sessions.values()).sort(
-    (a, b) => new Date(b.lastActivity) - new Date(a.lastActivity)
+    (a, b) => new Date(b.lastActivity) - new Date(a.lastActivity),
   );
 }
 
@@ -469,7 +467,7 @@ async function getSessionMessages(projectName, sessionId) {
     process.env.HOME,
     ".gemini",
     "projects",
-    projectName
+    projectName,
   );
 
   try {
@@ -507,7 +505,7 @@ async function getSessionMessages(projectName, sessionId) {
 
     // Sort messages by timestamp
     return messages.sort(
-      (a, b) => new Date(a.timestamp || 0) - new Date(b.timestamp || 0)
+      (a, b) => new Date(a.timestamp || 0) - new Date(b.timestamp || 0),
     );
   } catch (error) {
     // console.error(`Error reading messages for session ${sessionId}:`, error);
@@ -539,7 +537,7 @@ async function deleteSession(projectName, sessionId) {
     process.env.HOME,
     ".gemini",
     "projects",
-    projectName
+    projectName,
   );
 
   try {
@@ -580,7 +578,7 @@ async function deleteSession(projectName, sessionId) {
         // Write back the filtered content
         await fs.writeFile(
           jsonlFile,
-          filteredLines.join("\n") + (filteredLines.length > 0 ? "\n" : "")
+          filteredLines.join("\n") + (filteredLines.length > 0 ? "\n" : ""),
         );
         return true;
       }
@@ -610,7 +608,7 @@ async function deleteProject(projectName) {
     process.env.HOME,
     ".gemini",
     "projects",
-    projectName
+    projectName,
   );
 
   try {
@@ -645,7 +643,7 @@ async function addProjectManually(projectPath, displayName = null) {
     await fs.access(absolutePath);
   } catch (error) {
     throw new Error(
-      `Path does not exist: ${absolutePath}` + "\n" + String(error)
+      `Path does not exist: ${absolutePath}` + "\n" + String(error),
     );
   }
 
@@ -661,7 +659,7 @@ async function addProjectManually(projectPath, displayName = null) {
     process.env.HOME,
     ".gemini",
     "projects",
-    projectName
+    projectName,
   );
 
   try {
@@ -700,8 +698,8 @@ async function addProjectManually(projectPath, displayName = null) {
     name: projectName,
     path: absolutePath,
     fullPath: absolutePath,
-    displayName:
-      displayName || (await generateDisplayName(projectName, absolutePath)),
+    displayName: displayName ||
+      (await generateDisplayName(projectName, absolutePath)),
     isManuallyAdded: true,
     sessions: [],
   };

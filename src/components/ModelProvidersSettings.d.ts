@@ -1,5 +1,5 @@
-import React from 'react';
-interface ModelProvidersSettingsProps {
+import React from "react";
+export interface ModelProvidersSettingsProps {
     isOpen: boolean;
     onClose: () => void;
 }

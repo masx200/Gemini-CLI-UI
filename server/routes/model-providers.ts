@@ -10,7 +10,7 @@ router.get("/api/model-providers", async (req, res) => {
   try {
     const providers = db
       .prepare(
-        "SELECT * FROM geminicliui_model_providers ORDER BY created_at DESC"
+        "SELECT * FROM geminicliui_model_providers ORDER BY created_at DESC",
       )
       .all();
     res.json({ providers });
@@ -61,7 +61,7 @@ router.post("/api/model-providers", async (req, res) => {
     const stmt = db.prepare(
       `INSERT INTO geminicliui_model_providers 
        (provider_name, provider_type, api_key, base_url, description, is_active) 
-       VALUES (?, ?, ?, ?, ?, ?)`
+       VALUES (?, ?, ?, ?, ?, ?)`,
     );
 
     const result = stmt.run(
@@ -70,7 +70,7 @@ router.post("/api/model-providers", async (req, res) => {
       api_key,
       base_url || null,
       description || null,
-      is_active !== false
+      is_active !== false,
     );
 
     const newProvider = db
@@ -107,7 +107,7 @@ router.put("/api/model-providers/:id", async (req, res) => {
       `UPDATE geminicliui_model_providers 
        SET provider_name = ?, provider_type = ?, api_key = ?, 
            base_url = ?, description = ?, is_active = ?, updated_at = CURRENT_TIMESTAMP
-       WHERE id = ?`
+       WHERE id = ?`,
     );
 
     const result = stmt.run(
@@ -117,7 +117,7 @@ router.put("/api/model-providers/:id", async (req, res) => {
       base_url || null,
       description || null,
       is_active,
-      id
+      id,
     );
 
     if (result.changes === 0) {
@@ -129,11 +129,11 @@ router.put("/api/model-providers/:id", async (req, res) => {
       .get(id);
 
     res.json({ provider: updatedProvider });
-    return
+    return;
   } catch (error) {
     console.error("Error updating provider:", error);
     res.status(500).json({ error: "Failed to update provider" });
-    return
+    return;
   }
 });
 
@@ -143,7 +143,7 @@ router.delete("/api/model-providers/:id", async (req, res) => {
     const { id } = req.params;
 
     const stmt = db.prepare(
-      "DELETE FROM geminicliui_model_providers WHERE id = ?"
+      "DELETE FROM geminicliui_model_providers WHERE id = ?",
     );
 
     const result = stmt.run(id);
@@ -168,7 +168,7 @@ router.post("/api/model-providers/:id/test", async (req, res) => {
 
     const provider = db
       .prepare(
-        "SELECT * FROM geminicliui_model_providers WHERE id = ? AND is_active = 1"
+        "SELECT * FROM geminicliui_model_providers WHERE id = ? AND is_active = 1",
       )
       .get(id) as ModelProvider | undefined;
 

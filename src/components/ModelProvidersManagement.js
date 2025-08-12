@@ -1,7 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { Plus, Edit, Trash2, Key, Globe, Server, X } from "lucide-react";
+import { Edit, Globe, Key, Plus, Server, Trash2, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Button, Card, CardHeader, CardContent, TextField, Switch, FormControlLabel, FormControl, InputLabel, Select, MenuItem, Typography, Box, Dialog, DialogTitle, DialogContent, IconButton, Grid, } from "@mui/material";
+import { Box, Button, Card, CardContent, CardHeader, Dialog, DialogContent, DialogTitle, FormControl, FormControlLabel, Grid, IconButton, InputLabel, MenuItem, Select, Switch, TextField, Typography, } from "@mui/material";
 //@ts-ignore
 import { authenticatedFetch } from "../../src/utils/api.js";
 const PROVIDER_TYPES = [
@@ -181,16 +181,26 @@ function ModelProvidersManagement({ isOpen, onClose, }) {
                                                         ? "Saving..."
                                                         : editingProvider
                                                             ? "Update"
-                                                            : "Add" })] })] }) })] })), isLoading ? (_jsx(Box, { sx: {
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            height: 256,
-                        }, children: _jsx("div", { className: "animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" }) })) : (_jsx(Grid, { container: true, spacing: 2, children: providers.map((provider) => (_jsx(Grid, { children: _jsxs(Card, { sx: {
-                                    height: "100%",
-                                    display: "flex",
-                                    flexDirection: "column",
-                                }, children: [_jsx(CardHeader, { title: provider.provider_name, subheader: PROVIDER_TYPES.find((t) => t.value === provider.provider_type)?.label || provider.provider_type, action: _jsx(Switch, { checked: provider.is_active, onChange: () => handleToggleActive(provider) }) }), _jsxs(CardContent, { sx: { flexGrow: 1 }, children: [_jsxs(Box, { sx: { display: "flex", flexDirection: "column", gap: 1 }, children: [_jsxs(Box, { sx: { display: "flex", alignItems: "center", gap: 1 }, children: [_jsx(Key, { className: "w-4 h-4 text-gray-400" }), _jsx(Typography, { variant: "body2", color: "text.secondary", children: provider.api_key ? "••••••••" : "No API key" })] }), provider.base_url && (_jsxs(Box, { sx: { display: "flex", alignItems: "center", gap: 1 }, children: [_jsx(Globe, { className: "w-4 h-4 text-gray-400" }), _jsx(Typography, { variant: "body2", color: "text.secondary", noWrap: true, children: provider.base_url })] })), provider.description && (_jsx(Typography, { variant: "body2", color: "text.secondary", children: provider.description }))] }), _jsxs(Box, { sx: { display: "flex", gap: 1, mt: 2 }, children: [_jsx(Button, { variant: "outlined", size: "small", onClick: () => startEdit(provider), startIcon: _jsx(Edit, { className: "w-4 h-4" }), sx: { flex: 1 }, children: "Edit" }), _jsx(Button, { variant: "contained", color: "error", size: "small", onClick: () => handleDelete(provider.id), startIcon: _jsx(Trash2, { className: "w-4 h-4" }), sx: { flex: 1 }, children: "Delete" })] })] })] }) }, provider.id))) })), !isLoading && providers.length === 0 && !showForm && (_jsxs(Box, { sx: { textAlign: "center", py: 6 }, children: [_jsx(Server, { className: "w-12 h-12 mx-auto text-gray-400 mb-4" }), _jsx(Typography, { variant: "h6", gutterBottom: true, children: "No model providers" }), _jsx(Typography, { variant: "body1", color: "text.secondary", gutterBottom: true, children: "Get started by adding your first model provider." }), _jsx(Button, { variant: "contained", onClick: startAdd, startIcon: _jsx(Plus, { className: "w-4 h-4" }), children: "Add Provider" })] }))] })] }));
+                                                            : "Add" })] })] }) })] })), isLoading
+                        ? (_jsx(Box, { sx: {
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                height: 256,
+                            }, children: _jsx("div", { className: "animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" }) }))
+                        : (_jsx(Grid, { container: true, spacing: 2, children: providers.map((provider) => (_jsx(Grid, { children: _jsxs(Card, { sx: {
+                                        height: "100%",
+                                        display: "flex",
+                                        flexDirection: "column",
+                                    }, children: [_jsx(CardHeader, { title: provider.provider_name, subheader: PROVIDER_TYPES.find((t) => t.value === provider.provider_type)?.label || provider.provider_type, action: _jsx(Switch, { checked: provider.is_active, onChange: () => handleToggleActive(provider) }) }), _jsxs(CardContent, { sx: { flexGrow: 1 }, children: [_jsxs(Box, { sx: {
+                                                        display: "flex",
+                                                        flexDirection: "column",
+                                                        gap: 1,
+                                                    }, children: [_jsxs(Box, { sx: { display: "flex", alignItems: "center", gap: 1 }, children: [_jsx(Key, { className: "w-4 h-4 text-gray-400" }), _jsx(Typography, { variant: "body2", color: "text.secondary", children: provider.api_key ? "••••••••" : "No API key" })] }), provider.base_url && (_jsxs(Box, { sx: {
+                                                                display: "flex",
+                                                                alignItems: "center",
+                                                                gap: 1,
+                                                            }, children: [_jsx(Globe, { className: "w-4 h-4 text-gray-400" }), _jsx(Typography, { variant: "body2", color: "text.secondary", noWrap: true, children: provider.base_url })] })), provider.description && (_jsx(Typography, { variant: "body2", color: "text.secondary", children: provider.description }))] }), _jsxs(Box, { sx: { display: "flex", gap: 1, mt: 2 }, children: [_jsx(Button, { variant: "outlined", size: "small", onClick: () => startEdit(provider), startIcon: _jsx(Edit, { className: "w-4 h-4" }), sx: { flex: 1 }, children: "Edit" }), _jsx(Button, { variant: "contained", color: "error", size: "small", onClick: () => handleDelete(provider.id), startIcon: _jsx(Trash2, { className: "w-4 h-4" }), sx: { flex: 1 }, children: "Delete" })] })] })] }) }, provider.id))) })), !isLoading && providers.length === 0 && !showForm && (_jsxs(Box, { sx: { textAlign: "center", py: 6 }, children: [_jsx(Server, { className: "w-12 h-12 mx-auto text-gray-400 mb-4" }), _jsx(Typography, { variant: "h6", gutterBottom: true, children: "No model providers" }), _jsx(Typography, { variant: "body1", color: "text.secondary", gutterBottom: true, children: "Get started by adding your first model provider." }), _jsx(Button, { variant: "contained", onClick: startAdd, startIcon: _jsx(Plus, { className: "w-4 h-4" }), children: "Add Provider" })] }))] })] }));
 }
 export default ModelProvidersManagement;
 //# sourceMappingURL=ModelProvidersManagement.js.map
