@@ -145,6 +145,8 @@ COPY .env.example ./
 RUN yarn install --force
 # Create directory for SQLite database
 RUN mkdir -p /app/data
+# 构建后端
+RUN npm run build
 
 # Create default .env file for Docker deployment
 RUN echo "PORT=4008\nNODE_ENV=production\nDB_PATH=/app/data/auth.db\nHOME=/opt/docker" > .env

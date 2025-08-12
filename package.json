@@ -1,6 +1,6 @@
 {
   "name": "gemini-cli-ui",
-  "version": "1.5.0",
+  "version": "1.6.1",
   "description": "A stylish web-based UI for Gemini CLI",
   "type": "module",
   "main": "server/index.js",
@@ -8,7 +8,7 @@
     "dev": "concurrently --kill-others \"npm run server\" \"npm run client\"",
     "server": "node server/index.js",
     "client": "vite --host",
-    "build": "vite build",
+    "build": "vite build && tsc ",
     "preview": "vite preview",
     "start": "npm run build && npm run server"
   },
@@ -22,7 +22,6 @@
   "author": "Gemini CLI UI Contributors",
   "license": "MIT",
   "dependencies": {
-    "@google/generative-ai": "^0.21.0",
     "@codemirror/lang-css": "^6.3.1",
     "@codemirror/lang-html": "^6.4.9",
     "@codemirror/lang-javascript": "^6.2.4",
@@ -30,6 +29,7 @@
     "@codemirror/lang-markdown": "^6.3.3",
     "@codemirror/lang-python": "^6.2.1",
     "@codemirror/theme-one-dark": "^6.1.2",
+    "@google/generative-ai": "^0.21.0",
     "@tailwindcss/typography": "^0.5.16",
     "@uiw/react-codemirror": "^4.23.13",
     "@xterm/addon-clipboard": "^0.1.0",
@@ -53,6 +53,7 @@
     "react-markdown": "^10.1.0",
     "react-router-dom": "^6.8.1",
     "tailwind-merge": "^3.3.1",
+    "typescript": "^5.9.2",
     "ws": "^8.14.2",
     "xterm": "^5.3.0",
     "xterm-addon-fit": "^0.8.0"
