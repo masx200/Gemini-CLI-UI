@@ -172,4 +172,4 @@ CMD ["npm", "run", "server"]
 run cnpm i -g @qwen-code/qwen-code
 
 
-RUN npm install -g easy-llm-cli @google/gemini-cli
+RUN cnpm install -g easy-llm-cli @google/gemini-cli
