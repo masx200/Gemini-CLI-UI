@@ -1,17 +1,20 @@
 import {
-  AlertTriangle, Moon,
-  Plus, Settings,
+  AlertTriangle,
+  Moon,
+  Plus,
+  Settings,
   Shield,
-  Sun, Volume2,
+  Sun,
+  Volume2,
   X,
-  Zap
+  Zap,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import McpServerManagement from "./mcp-server-management.js";
-function ToolsSettings({ isOpen, onClose ,projects = [] }) {
+function ToolsSettings({ isOpen, onClose, projects = [] }) {
   const { isDarkMode, toggleDarkMode } = useTheme();
   const [allowedTools, setAllowedTools] = useState([]);
   const [disallowedTools, setDisallowedTools] = useState([]);
@@ -57,9 +60,6 @@ function ToolsSettings({ isOpen, onClose ,projects = [] }) {
       description: "Most advanced model (Note: May have quota limits)",
     },
   ];
-
-
-
 
   useEffect(() => {
     if (isOpen) {
@@ -165,9 +165,6 @@ function ToolsSettings({ isOpen, onClose ,projects = [] }) {
   };
 
   // MCP form handling functions
- 
-
-
 
   const handleTestConfiguration = async () => {
     setMcpConfigTesting(true);
@@ -186,8 +183,6 @@ function ToolsSettings({ isOpen, onClose ,projects = [] }) {
       setMcpConfigTesting(false);
     }
   };
-
-
 
   if (!isOpen) return null;
 

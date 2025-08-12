@@ -721,7 +721,7 @@ function AppContent() {
       )}
 
       {/* Tools Settings Modal */}
-       <ToolsSettings
+      <ToolsSettings
         isOpen={showToolsSettings}
         onClose={() => setShowToolsSettings(false)}
         projects={projects}
