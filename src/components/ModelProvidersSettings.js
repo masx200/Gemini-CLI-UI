@@ -10,7 +10,7 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
     height: 64,
     margin: "0 auto 16px",
 }));
-const ModelProvidersSettings = ({ isOpen, onClose }) => {
+const ModelProvidersSettings = ({}) => {
     const [showManagement, setShowManagement] = useState(false);
     return (_jsxs(Dialog, { open: isOpen, onClose: onClose, maxWidth: "md", fullWidth: true, PaperProps: {
             sx: {
@@ -22,9 +22,7 @@ const ModelProvidersSettings = ({ isOpen, onClose }) => {
                             right: 8,
                             top: 8,
                             color: (theme) => theme.palette.grey[500],
-                        }, children: _jsx(CloseIcon, {}) })] }), _jsx(DialogContent, { dividers: true, children: !showManagement
-                    ? (_jsxs(Box, { sx: { textAlign: "center", py: 4 }, children: [_jsx(StyledAvatar, { children: _jsx(BoltIcon, { sx: { fontSize: 32 } }) }), _jsx(Typography, { variant: "h6", gutterBottom: true, children: "Manage Model Providers" }), _jsx(Typography, { variant: "body1", color: "text.secondary", paragraph: true, children: "Configure and manage your AI model providers including API keys and settings." }), _jsx(Button, { variant: "contained", onClick: () => setShowManagement(true), size: "large", children: "Open Provider Management" })] }))
-                    : (_jsx(ModelProvidersManagement, { isOpen: showManagement, onClose: () => setShowManagement(false) })) })] }));
+                        }, children: _jsx(CloseIcon, {}) })] }), _jsx(DialogContent, { dividers: true, children: !showManagement ? (_jsxs(Box, { sx: { textAlign: "center", py: 4 }, children: [_jsx(StyledAvatar, { children: _jsx(BoltIcon, { sx: { fontSize: 32 } }) }), _jsx(Typography, { variant: "h6", gutterBottom: true, children: "Manage Model Providers" }), _jsx(Typography, { variant: "body1", color: "text.secondary", paragraph: true, children: "Configure and manage your AI model providers including API keys and settings." }), _jsx(Button, { variant: "contained", onClick: () => setShowManagement(true), size: "large", children: "Open Provider Management" })] })) : (_jsx(ModelProvidersManagement, { isOpen: showManagement, onClose: () => setShowManagement(false) })) })] }));
 };
 export default ModelProvidersSettings;
 //# sourceMappingURL=ModelProvidersSettings.js.map

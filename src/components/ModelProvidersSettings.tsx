@@ -13,10 +13,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import BoltIcon from "@mui/icons-material/Bolt";
-export interface ModelProvidersSettingsProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+export interface ModelProvidersSettingsProps {}
 
 const StyledAvatar = styled(Avatar)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
@@ -25,15 +22,14 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
   margin: "0 auto 16px",
 }));
 
-const ModelProvidersSettings: React.FC<ModelProvidersSettingsProps> = (
-  { isOpen, onClose },
-) => {
+const ModelProvidersSettings: React.FC<
+  ModelProvidersSettingsProps
+> = ({}: ModelProvidersSettingsProps) => {
   const [showManagement, setShowManagement] = useState(false);
 
   return (
     <Dialog
-      open={isOpen}
-      onClose={onClose}
+    
       maxWidth="md"
       fullWidth
       PaperProps={{
@@ -60,34 +56,32 @@ const ModelProvidersSettings: React.FC<ModelProvidersSettingsProps> = (
       </DialogTitle>
 
       <DialogContent dividers>
-        {!showManagement
-          ? (
-            <Box sx={{ textAlign: "center", py: 4 }}>
-              <StyledAvatar>
-                <BoltIcon sx={{ fontSize: 32 }} />
-              </StyledAvatar>
-              <Typography variant="h6" gutterBottom>
-                Manage Model Providers
-              </Typography>
-              <Typography variant="body1" color="text.secondary" paragraph>
-                Configure and manage your AI model providers including API keys
-                and settings.
-              </Typography>
-              <Button
-                variant="contained"
-                onClick={() => setShowManagement(true)}
-                size="large"
-              >
-                Open Provider Management
-              </Button>
-            </Box>
-          )
-          : (
-            <ModelProvidersManagement
-              isOpen={showManagement}
-              onClose={() => setShowManagement(false)}
-            />
-          )}
+        {!showManagement ? (
+          <Box sx={{ textAlign: "center", py: 4 }}>
+            <StyledAvatar>
+              <BoltIcon sx={{ fontSize: 32 }} />
+            </StyledAvatar>
+            <Typography variant="h6" gutterBottom>
+              Manage Model Providers
+            </Typography>
+            <Typography variant="body1" color="text.secondary" paragraph>
+              Configure and manage your AI model providers including API keys
+              and settings.
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={() => setShowManagement(true)}
+              size="large"
+            >
+              Open Provider Management
+            </Button>
+          </Box>
+        ) : (
+          <ModelProvidersManagement
+            isOpen={showManagement}
+            onClose={() => setShowManagement(false)}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

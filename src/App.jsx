@@ -29,7 +29,7 @@ import {
 import Sidebar from "./components/Sidebar";
 import MainContent from "./components/MainContent";
 import MobileNav from "./components/MobileNav";
-import ToolsSettings from "./components/ToolsSettings";
+import ToolsSettings from "./components/ToolsSettings.jsx";
 import QuickSettingsPanel from "./components/QuickSettingsPanel";
 import ErrorBoundary from "./components/ErrorBoundary";
 
