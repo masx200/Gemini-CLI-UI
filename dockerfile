@@ -187,4 +187,3 @@ run pnpm i -g easy-llm-cli
 
 RUN cnpm install -g easy-llm-cli 
 
-run yarn global add easy-llm-cli 
