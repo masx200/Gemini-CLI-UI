@@ -26,8 +26,8 @@ function ToolsSettings({ isOpen, onClose, projects = [] }: {
   projects: Project[];
 }) {
   const { isDarkMode, toggleDarkMode } = useTheme();
-  const [allowedTools, setAllowedTools] = useState([]);
-  const [disallowedTools, setDisallowedTools] = useState([]);
+  const [allowedTools, setAllowedTools] = useState<string[]>([]);
+  const [disallowedTools, setDisallowedTools] = useState<string[]>([]);
   const [newAllowedTool, setNewAllowedTool] = useState("");
   const [newDisallowedTool, setNewDisallowedTool] = useState("");
   const [skipPermissions, setSkipPermissions] = useState(false);
@@ -152,25 +152,25 @@ function ToolsSettings({ isOpen, onClose, projects = [] }: {
     }
   };
 
-  const addAllowedTool = (tool) => {
+  const addAllowedTool = (tool: string) => {
     if (tool && !allowedTools.includes(tool)) {
       setAllowedTools([...allowedTools, tool]);
       setNewAllowedTool("");
     }
   };
 
-  const removeAllowedTool = (tool) => {
+  const removeAllowedTool = (tool: string) => {
     setAllowedTools(allowedTools.filter((t) => t !== tool));
   };
 
-  const addDisallowedTool = (tool) => {
+  const addDisallowedTool = (tool: string) => {
     if (tool && !disallowedTools.includes(tool)) {
       setDisallowedTools([...disallowedTools, tool]);
       setNewDisallowedTool("");
     }
   };
 
-  const removeDisallowedTool = (tool) => {
+  const removeDisallowedTool = (tool: string) => {
     setDisallowedTools(disallowedTools.filter((t) => t !== tool));
   };
 
@@ -482,9 +482,9 @@ function ToolsSettings({ isOpen, onClose, projects = [] }: {
                   <div className="flex flex-col sm:flex-row gap-2">
                     <Input
                       value={newAllowedTool}
-                      onChange={(e) => setNewAllowedTool(e.target.value)}
+                      onChange={(e:any) => setNewAllowedTool(e.target.value)}
                       placeholder='e.g., "Bash(git log:*)" or "Write"'
-                      onKeyPress={(e) => {
+                      onKeyPress={(e:any) => {
                         if (e.key === "Enter") {
                           addAllowedTool(newAllowedTool);
                         }
@@ -567,9 +567,9 @@ function ToolsSettings({ isOpen, onClose, projects = [] }: {
                   <div className="flex flex-col sm:flex-row gap-2">
                     <Input
                       value={newDisallowedTool}
-                      onChange={(e) => setNewDisallowedTool(e.target.value)}
+                      onChange={(e:any) => setNewDisallowedTool(e.target.value)}
                       placeholder='e.g., "Bash(rm:*)" or "Write"'
-                      onKeyPress={(e) => {
+                      onKeyPress={(e:any) => {
                         if (e.key === "Enter") {
                           addDisallowedTool(newDisallowedTool);
                         }
