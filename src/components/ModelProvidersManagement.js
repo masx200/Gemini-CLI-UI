@@ -1,7 +1,9 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { Plus, Edit, Trash2, Key, Globe, Server, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Button, Card, CardHeader, CardContent, TextField, Switch, FormControlLabel, FormControl, InputLabel, Select, MenuItem, Typography, Box, Dialog, DialogTitle, DialogContent, IconButton, Grid } from "@mui/material";
+import { Button, Card, CardHeader, CardContent, TextField, Switch, FormControlLabel, FormControl, InputLabel, Select, MenuItem, Typography, Box, Dialog, DialogTitle, DialogContent, IconButton, Grid, } from "@mui/material";
+//@ts-ignore
+import { authenticatedFetch } from "../../src/utils/api.js";
 const PROVIDER_TYPES = [
     { value: "openai", label: "OpenAI", icon: "🤖" },
     { value: "anthropic", label: "Anthropic", icon: "🦾" },
@@ -40,7 +42,7 @@ function ModelProvidersManagement({ isOpen, onClose, }) {
     const loadProviders = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch("/api/model-providers");
+            const response = await authenticatedFetch("/api/model-providers");
             const data = await response.json();
             setProviders(data.providers || []);
         }
@@ -60,7 +62,7 @@ function ModelProvidersManagement({ isOpen, onClose, }) {
                 ? `/api/model-providers/${editingProvider.id}`
                 : "/api/model-providers";
             const method = editingProvider ? "PUT" : "POST";
-            const response = await fetch(url, {
+            const response = await authenticatedFetch(url, {
                 method,
                 headers: {
                     "Content-Type": "application/json",
@@ -83,7 +85,7 @@ function ModelProvidersManagement({ isOpen, onClose, }) {
         if (!confirm("Are you sure you want to delete this provider?"))
             return;
         try {
-            const response = await fetch(`/api/model-providers/${id}`, {
+            const response = await authenticatedFetch(`/api/model-providers/${id}`, {
                 method: "DELETE",
             });
             if (response.ok) {
@@ -96,7 +98,7 @@ function ModelProvidersManagement({ isOpen, onClose, }) {
     };
     const handleToggleActive = async (provider) => {
         try {
-            const response = await fetch(`/api/model-providers/${provider.id}`, {
+            const response = await authenticatedFetch(`/api/model-providers/${provider.id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -143,31 +145,52 @@ function ModelProvidersManagement({ isOpen, onClose, }) {
         return null;
     return (_jsxs(Dialog, { open: isOpen, onClose: onClose, maxWidth: "lg", fullWidth: true, fullScreen: true, PaperProps: {
             sx: {
-                height: { xs: '100vh', md: '90vh' },
+                height: { xs: "100vh", md: "90vh" },
                 margin: { xs: 0, md: 2 },
                 borderRadius: { xs: 0, md: 2 },
             },
-        }, children: [_jsxs(DialogTitle, { sx: { m: 0, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }, children: [_jsxs(Box, { sx: { display: 'flex', alignItems: 'center', gap: 1 }, children: [_jsx(Server, { className: "w-5 h-5 md:w-6 md:h-6 text-blue-600" }), _jsx(Typography, { variant: "h6", component: "span", children: "Model Providers" })] }), _jsxs(Box, { sx: { display: 'flex', gap: 1 }, children: [_jsx(Button, { variant: "contained", onClick: startAdd, startIcon: _jsx(Plus, { className: "w-4 h-4" }), size: "small", children: "Add Provider" }), _jsx(IconButton, { onClick: onClose, size: "small", children: _jsx(X, { className: "w-5 h-5" }) })] })] }), _jsxs(DialogContent, { dividers: true, sx: { p: 2 }, children: [showForm && (_jsxs(Card, { sx: { mb: 2 }, children: [_jsx(CardHeader, { title: editingProvider ? "Edit Provider" : "Add New Provider", subheader: "Configure a new AI model provider" }), _jsx(CardContent, { children: _jsxs(Box, { component: "form", onSubmit: handleSubmit, sx: { display: 'flex', flexDirection: 'column', gap: 2 }, children: [_jsxs(Grid, { container: true, spacing: 2, children: [_jsx(Grid, { item: true, xs: 12, md: 6, children: _jsx(TextField, { fullWidth: true, id: "provider_name", label: "Provider Name *", value: formData.provider_name, onChange: (e) => setFormData({
+        }, children: [_jsxs(DialogTitle, { sx: {
+                    m: 0,
+                    p: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                }, children: [_jsxs(Box, { sx: { display: "flex", alignItems: "center", gap: 1 }, children: [_jsx(Server, { className: "w-5 h-5 md:w-6 md:h-6 text-blue-600" }), _jsx(Typography, { variant: "h6", component: "span", children: "Model Providers" })] }), _jsxs(Box, { sx: { display: "flex", gap: 1 }, children: [_jsx(Button, { variant: "contained", onClick: startAdd, startIcon: _jsx(Plus, { className: "w-4 h-4" }), size: "small", children: "Add Provider" }), _jsx(IconButton, { onClick: onClose, size: "small", children: _jsx(X, { className: "w-5 h-5" }) })] })] }), _jsxs(DialogContent, { dividers: true, sx: { p: 2 }, children: [showForm && (_jsxs(Card, { sx: { mb: 2 }, children: [_jsx(CardHeader, { title: editingProvider ? "Edit Provider" : "Add New Provider", subheader: "Configure a new AI model provider" }), _jsx(CardContent, { children: _jsxs(Box, { component: "form", onSubmit: handleSubmit, sx: { display: "flex", flexDirection: "column", gap: 2 }, children: [_jsxs(Grid, { container: true, spacing: 2, children: [_jsx(Grid, { children: _jsx(TextField, { fullWidth: true, id: "provider_name", label: "Provider Name *", value: formData.provider_name, onChange: (e) => setFormData({
                                                             ...formData,
                                                             provider_name: e.target.value,
-                                                        }), placeholder: "e.g., My OpenAI Provider", required: true }) }), _jsx(Grid, { item: true, xs: 12, md: 6, children: _jsxs(FormControl, { fullWidth: true, required: true, children: [_jsx(InputLabel, { id: "provider_type-label", children: "Provider Type *" }), _jsx(Select, { labelId: "provider_type-label", id: "provider_type", value: formData.provider_type, onChange: (e) => setFormData({ ...formData, provider_type: e.target.value }), label: "Provider Type *", children: PROVIDER_TYPES.map((type) => (_jsxs(MenuItem, { value: type.value, children: [type.icon, " ", type.label] }, type.value))) })] }) }), _jsx(Grid, { item: true, xs: 12, md: 6, children: _jsx(TextField, { fullWidth: true, id: "api_key", label: "API Key *", type: "password", value: formData.api_key, onChange: (e) => setFormData({
+                                                        }), placeholder: "e.g., My OpenAI Provider", required: true }) }), _jsx(Grid, { children: _jsxs(FormControl, { fullWidth: true, required: true, children: [_jsx(InputLabel, { id: "provider_type-label", children: "Provider Type *" }), _jsx(Select, { labelId: "provider_type-label", id: "provider_type", value: formData.provider_type, onChange: (e) => setFormData({
+                                                                    ...formData,
+                                                                    provider_type: e.target.value,
+                                                                }), label: "Provider Type *", children: PROVIDER_TYPES.map((type) => (_jsxs(MenuItem, { value: type.value, children: [type.icon, " ", type.label] }, type.value))) })] }) }), _jsx(Grid, { children: _jsx(TextField, { fullWidth: true, id: "api_key", label: "API Key *", type: "password", value: formData.api_key, onChange: (e) => setFormData({
                                                             ...formData,
                                                             api_key: e.target.value,
                                                         }), placeholder: "Enter your API key", required: true, InputProps: {
-                                                            startAdornment: _jsx(Key, { className: "w-4 h-4 text-gray-400 mr-2" }),
-                                                        } }) }), _jsx(Grid, { item: true, xs: 12, md: 6, children: _jsx(TextField, { fullWidth: true, id: "base_url", label: "Base URL", value: formData.base_url, onChange: (e) => setFormData({
+                                                            startAdornment: (_jsx(Key, { className: "w-4 h-4 text-gray-400 mr-2" })),
+                                                        } }) }), _jsx(Grid, { children: _jsx(TextField, { fullWidth: true, id: "base_url", label: "Base URL", value: formData.base_url, onChange: (e) => setFormData({
                                                             ...formData,
                                                             base_url: e.target.value,
                                                         }), placeholder: "https://api.openai.com/v1", InputProps: {
-                                                            startAdornment: _jsx(Globe, { className: "w-4 h-4 text-gray-400 mr-2" }),
+                                                            startAdornment: (_jsx(Globe, { className: "w-4 h-4 text-gray-400 mr-2" })),
                                                         } }) })] }), _jsx(TextField, { fullWidth: true, id: "description", label: "Description", value: formData.description, onChange: (e) => setFormData({
                                                 ...formData,
                                                 description: e.target.value,
-                                            }), placeholder: "Optional description for this provider", multiline: true, rows: 3 }), _jsx(FormControlLabel, { control: _jsx(Switch, { checked: formData.is_active, onChange: (e) => setFormData({ ...formData, is_active: e.target.checked }) }), label: "Active" }), _jsxs(Box, { sx: { display: 'flex', gap: 1, justifyContent: 'flex-end' }, children: [_jsx(Button, { variant: "outlined", onClick: resetForm, disabled: isSaving, children: "Cancel" }), _jsx(Button, { type: "submit", variant: "contained", disabled: isSaving, children: isSaving
+                                            }), placeholder: "Optional description for this provider", multiline: true, rows: 3 }), _jsx(FormControlLabel, { control: _jsx(Switch, { checked: formData.is_active, onChange: (e) => setFormData({
+                                                    ...formData,
+                                                    is_active: e.target.checked,
+                                                }) }), label: "Active" }), _jsxs(Box, { sx: { display: "flex", gap: 1, justifyContent: "flex-end" }, children: [_jsx(Button, { variant: "outlined", onClick: resetForm, disabled: isSaving, children: "Cancel" }), _jsx(Button, { type: "submit", variant: "contained", disabled: isSaving, children: isSaving
                                                         ? "Saving..."
                                                         : editingProvider
                                                             ? "Update"
-                                                            : "Add" })] })] }) })] })), isLoading ? (_jsx(Box, { sx: { display: 'flex', justifyContent: 'center', alignItems: 'center', height: 256 }, children: _jsx("div", { className: "animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" }) })) : (_jsx(Grid, { container: true, spacing: 2, children: providers.map((provider) => (_jsx(Grid, { item: true, xs: 12, md: 6, lg: 4, children: _jsxs(Card, { sx: { height: '100%', display: 'flex', flexDirection: 'column' }, children: [_jsx(CardHeader, { title: provider.provider_name, subheader: PROVIDER_TYPES.find((t) => t.value === provider.provider_type)?.label || provider.provider_type, action: _jsx(Switch, { checked: provider.is_active, onChange: () => handleToggleActive(provider) }) }), _jsxs(CardContent, { sx: { flexGrow: 1 }, children: [_jsxs(Box, { sx: { display: 'flex', flexDirection: 'column', gap: 1 }, children: [_jsxs(Box, { sx: { display: 'flex', alignItems: 'center', gap: 1 }, children: [_jsx(Key, { className: "w-4 h-4 text-gray-400" }), _jsx(Typography, { variant: "body2", color: "text.secondary", children: provider.api_key ? "••••••••" : "No API key" })] }), provider.base_url && (_jsxs(Box, { sx: { display: 'flex', alignItems: 'center', gap: 1 }, children: [_jsx(Globe, { className: "w-4 h-4 text-gray-400" }), _jsx(Typography, { variant: "body2", color: "text.secondary", noWrap: true, children: provider.base_url })] })), provider.description && (_jsx(Typography, { variant: "body2", color: "text.secondary", children: provider.description }))] }), _jsxs(Box, { sx: { display: 'flex', gap: 1, mt: 2 }, children: [_jsx(Button, { variant: "outlined", size: "small", onClick: () => startEdit(provider), startIcon: _jsx(Edit, { className: "w-4 h-4" }), sx: { flex: 1 }, children: "Edit" }), _jsx(Button, { variant: "contained", color: "error", size: "small", onClick: () => handleDelete(provider.id), startIcon: _jsx(Trash2, { className: "w-4 h-4" }), sx: { flex: 1 }, children: "Delete" })] })] })] }) }, provider.id))) })), !isLoading && providers.length === 0 && !showForm && (_jsxs(Box, { sx: { textAlign: 'center', py: 6 }, children: [_jsx(Server, { className: "w-12 h-12 mx-auto text-gray-400 mb-4" }), _jsx(Typography, { variant: "h6", gutterBottom: true, children: "No model providers" }), _jsx(Typography, { variant: "body1", color: "text.secondary", gutterBottom: true, children: "Get started by adding your first model provider." }), _jsx(Button, { variant: "contained", onClick: startAdd, startIcon: _jsx(Plus, { className: "w-4 h-4" }), children: "Add Provider" })] }))] })] }));
+                                                            : "Add" })] })] }) })] })), isLoading ? (_jsx(Box, { sx: {
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            height: 256,
+                        }, children: _jsx("div", { className: "animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600" }) })) : (_jsx(Grid, { container: true, spacing: 2, children: providers.map((provider) => (_jsx(Grid, { children: _jsxs(Card, { sx: {
+                                    height: "100%",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                }, children: [_jsx(CardHeader, { title: provider.provider_name, subheader: PROVIDER_TYPES.find((t) => t.value === provider.provider_type)?.label || provider.provider_type, action: _jsx(Switch, { checked: provider.is_active, onChange: () => handleToggleActive(provider) }) }), _jsxs(CardContent, { sx: { flexGrow: 1 }, children: [_jsxs(Box, { sx: { display: "flex", flexDirection: "column", gap: 1 }, children: [_jsxs(Box, { sx: { display: "flex", alignItems: "center", gap: 1 }, children: [_jsx(Key, { className: "w-4 h-4 text-gray-400" }), _jsx(Typography, { variant: "body2", color: "text.secondary", children: provider.api_key ? "••••••••" : "No API key" })] }), provider.base_url && (_jsxs(Box, { sx: { display: "flex", alignItems: "center", gap: 1 }, children: [_jsx(Globe, { className: "w-4 h-4 text-gray-400" }), _jsx(Typography, { variant: "body2", color: "text.secondary", noWrap: true, children: provider.base_url })] })), provider.description && (_jsx(Typography, { variant: "body2", color: "text.secondary", children: provider.description }))] }), _jsxs(Box, { sx: { display: "flex", gap: 1, mt: 2 }, children: [_jsx(Button, { variant: "outlined", size: "small", onClick: () => startEdit(provider), startIcon: _jsx(Edit, { className: "w-4 h-4" }), sx: { flex: 1 }, children: "Edit" }), _jsx(Button, { variant: "contained", color: "error", size: "small", onClick: () => handleDelete(provider.id), startIcon: _jsx(Trash2, { className: "w-4 h-4" }), sx: { flex: 1 }, children: "Delete" })] })] })] }) }, provider.id))) })), !isLoading && providers.length === 0 && !showForm && (_jsxs(Box, { sx: { textAlign: "center", py: 6 }, children: [_jsx(Server, { className: "w-12 h-12 mx-auto text-gray-400 mb-4" }), _jsx(Typography, { variant: "h6", gutterBottom: true, children: "No model providers" }), _jsx(Typography, { variant: "body1", color: "text.secondary", gutterBottom: true, children: "Get started by adding your first model provider." }), _jsx(Button, { variant: "contained", onClick: startAdd, startIcon: _jsx(Plus, { className: "w-4 h-4" }), children: "Add Provider" })] }))] })] }));
 }
 export default ModelProvidersManagement;
 //# sourceMappingURL=ModelProvidersManagement.js.map

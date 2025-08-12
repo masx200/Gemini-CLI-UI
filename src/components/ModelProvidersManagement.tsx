@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import {
   Button,
   Card,
-  CardHeader, CardContent,
+  CardHeader,
+  CardContent,
   TextField,
   Switch,
   FormControlLabel,
@@ -15,8 +16,13 @@ import {
   Box,
   Dialog,
   DialogTitle,
-  DialogContent, IconButton, Grid
+  DialogContent,
+  IconButton,
+  Grid,
 } from "@mui/material";
+
+//@ts-ignore
+import { authenticatedFetch } from "../../src/utils/api.js";
 export interface ProviderType {
   value: string;
   label: string;
@@ -85,7 +91,7 @@ function ModelProvidersManagement({
   const loadProviders = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/model-providers");
+      const response = await authenticatedFetch("/api/model-providers");
       const data = await response.json();
       setProviders(data.providers || []);
     } catch (error) {
@@ -107,7 +113,7 @@ function ModelProvidersManagement({
 
       const method = editingProvider ? "PUT" : "POST";
 
-      const response = await fetch(url, {
+      const response = await authenticatedFetch(url, {
         method,
         headers: {
           "Content-Type": "application/json",
@@ -130,7 +136,7 @@ function ModelProvidersManagement({
     if (!confirm("Are you sure you want to delete this provider?")) return;
 
     try {
-      const response = await fetch(`/api/model-providers/${id}`, {
+      const response = await authenticatedFetch(`/api/model-providers/${id}`, {
         method: "DELETE",
       });
 
@@ -144,13 +150,16 @@ function ModelProvidersManagement({
 
   const handleToggleActive = async (provider: Provider) => {
     try {
-      const response = await fetch(`/api/model-providers/${provider.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...provider, is_active: !provider.is_active }),
-      });
+      const response = await authenticatedFetch(
+        `/api/model-providers/${provider.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ...provider, is_active: !provider.is_active }),
+        }
+      );
 
       if (response.ok) {
         await loadProviders();
@@ -202,20 +211,28 @@ function ModelProvidersManagement({
       fullScreen
       PaperProps={{
         sx: {
-          height: { xs: '100vh', md: '90vh' },
+          height: { xs: "100vh", md: "90vh" },
           margin: { xs: 0, md: 2 },
           borderRadius: { xs: 0, md: 2 },
         },
       }}
     >
-      <DialogTitle sx={{ m: 0, p: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+      <DialogTitle
+        sx={{
+          m: 0,
+          p: 2,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Server className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
           <Typography variant="h6" component="span">
             Model Providers
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box sx={{ display: "flex", gap: 1 }}>
           <Button
             variant="contained"
             onClick={startAdd}
@@ -230,240 +247,278 @@ function ModelProvidersManagement({
         </Box>
       </DialogTitle>
 
-        <DialogContent dividers sx={{ p: 2 }}>
-          {showForm && (
-            <Card sx={{ mb: 2 }}>
-              <CardHeader
-                title={editingProvider ? "Edit Provider" : "Add New Provider"}
-                subheader="Configure a new AI model provider"
-              />
-              <CardContent>
-                <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  <Grid container spacing={2}>
-                    <Grid item xs={12} md={6}>
-                      <TextField
-                        fullWidth
-                        id="provider_name"
-                        label="Provider Name *"
-                        value={formData.provider_name}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            provider_name: e.target.value,
-                          })
-                        }
-                        placeholder="e.g., My OpenAI Provider"
-                        required
-                      />
-                    </Grid>
-
-                    <Grid item xs={12} md={6}>
-                      <FormControl fullWidth required>
-                        <InputLabel id="provider_type-label">Provider Type *</InputLabel>
-                        <Select
-                          labelId="provider_type-label"
-                          id="provider_type"
-                          value={formData.provider_type}
-                          onChange={(e) =>
-                            setFormData({ ...formData, provider_type: e.target.value })
-                          }
-                          label="Provider Type *"
-                        >
-                          {PROVIDER_TYPES.map((type) => (
-                            <MenuItem key={type.value} value={type.value}>
-                              {type.icon} {type.label}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                    </Grid>
-
-                    <Grid item xs={12} md={6}>
-                      <TextField
-                        fullWidth
-                        id="api_key"
-                        label="API Key *"
-                        type="password"
-                        value={formData.api_key}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            api_key: e.target.value,
-                          })
-                        }
-                        placeholder="Enter your API key"
-                        required
-                        InputProps={{
-                          startAdornment: <Key className="w-4 h-4 text-gray-400 mr-2" />,
-                        }}
-                      />
-                    </Grid>
-
-                    <Grid item xs={12} md={6}>
-                      <TextField
-                        fullWidth
-                        id="base_url"
-                        label="Base URL"
-                        value={formData.base_url}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            base_url: e.target.value,
-                          })
-                        }
-                        placeholder="https://api.openai.com/v1"
-                        InputProps={{
-                          startAdornment: <Globe className="w-4 h-4 text-gray-400 mr-2" />,
-                        }}
-                      />
-                    </Grid>
+      <DialogContent dividers sx={{ p: 2 }}>
+        {showForm && (
+          <Card sx={{ mb: 2 }}>
+            <CardHeader
+              title={editingProvider ? "Edit Provider" : "Add New Provider"}
+              subheader="Configure a new AI model provider"
+            />
+            <CardContent>
+              <Box
+                component="form"
+                onSubmit={handleSubmit}
+                sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+              >
+                <Grid container spacing={2}>
+                  <Grid >
+                    <TextField
+                      fullWidth
+                      id="provider_name"
+                      label="Provider Name *"
+                      value={formData.provider_name}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          provider_name: e.target.value,
+                        })
+                      }
+                      placeholder="e.g., My OpenAI Provider"
+                      required
+                    />
                   </Grid>
 
-                  <TextField
-                    fullWidth
-                    id="description"
-                    label="Description"
-                    value={formData.description}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        description: e.target.value,
-                      })
-                    }
-                    placeholder="Optional description for this provider"
-                    multiline
-                    rows={3}
-                  />
-
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        checked={formData.is_active}
+                  <Grid >
+                    <FormControl fullWidth required>
+                      <InputLabel id="provider_type-label">
+                        Provider Type *
+                      </InputLabel>
+                      <Select
+                        labelId="provider_type-label"
+                        id="provider_type"
+                        value={formData.provider_type}
                         onChange={(e) =>
-                          setFormData({ ...formData, is_active: e.target.checked })
+                          setFormData({
+                            ...formData,
+                            provider_type: e.target.value,
+                          })
                         }
-                      />
-                    }
-                    label="Active"
-                  />
+                        label="Provider Type *"
+                      >
+                        {PROVIDER_TYPES.map((type) => (
+                          <MenuItem key={type.value} value={type.value}>
+                            {type.icon} {type.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
 
-                  <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
-                    <Button
-                      variant="outlined"
-                      onClick={resetForm}
-                      disabled={isSaving}
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      disabled={isSaving}
-                    >
-                      {isSaving
-                        ? "Saving..."
-                        : editingProvider
-                        ? "Update"
-                        : "Add"}
-                    </Button>
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
-          )
+                  <Grid >
+                    <TextField
+                      fullWidth
+                      id="api_key"
+                      label="API Key *"
+                      type="password"
+                      value={formData.api_key}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          api_key: e.target.value,
+                        })
+                      }
+                      placeholder="Enter your API key"
+                      required
+                      InputProps={{
+                        startAdornment: (
+                          <Key className="w-4 h-4 text-gray-400 mr-2" />
+                        ),
+                      }}
+                    />
+                  </Grid>
 
-          {isLoading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 256 }}>
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            </Box>
-          ) : (
-            <Grid container spacing={2}>
-              {providers.map((provider) => (
-                <Grid item xs={12} md={6} lg={4} key={provider.id}>
-                  <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-                    <CardHeader
-                      title={provider.provider_name}
-                      subheader={PROVIDER_TYPES.find(
-                        (t) => t.value === provider.provider_type
-                      )?.label || provider.provider_type}
-                      action={
-                        <Switch
-                          checked={provider.is_active}
-                          onChange={() => handleToggleActive(provider)}
-                        />
+                  <Grid >
+                    <TextField
+                      fullWidth
+                      id="base_url"
+                      label="Base URL"
+                      value={formData.base_url}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          base_url: e.target.value,
+                        })
+                      }
+                      placeholder="https://api.openai.com/v1"
+                      InputProps={{
+                        startAdornment: (
+                          <Globe className="w-4 h-4 text-gray-400 mr-2" />
+                        ),
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+
+                <TextField
+                  fullWidth
+                  id="description"
+                  label="Description"
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      description: e.target.value,
+                    })
+                  }
+                  placeholder="Optional description for this provider"
+                  multiline
+                  rows={3}
+                />
+
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={formData.is_active}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          is_active: e.target.checked,
+                        })
                       }
                     />
-                    <CardContent sx={{ flexGrow: 1 }}>
-                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                          <Key className="w-4 h-4 text-gray-400" />
-                          <Typography variant="body2" color="text.secondary">
-                            {provider.api_key ? "••••••••" : "No API key"}
+                  }
+                  label="Active"
+                />
+
+                <Box
+                  sx={{ display: "flex", gap: 1, justifyContent: "flex-end" }}
+                >
+                  <Button
+                    variant="outlined"
+                    onClick={resetForm}
+                    disabled={isSaving}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" variant="contained" disabled={isSaving}>
+                    {isSaving
+                      ? "Saving..."
+                      : editingProvider
+                      ? "Update"
+                      : "Add"}
+                  </Button>
+                </Box>
+              </Box>
+            </CardContent>
+          </Card>
+        )}
+        {isLoading ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: 256,
+            }}
+          >
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          </Box>
+        ) : (
+          <Grid container spacing={2}>
+            {providers.map((provider) => (
+              <Grid key={provider.id}>
+                <Card
+                  sx={{
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+                >
+                  <CardHeader
+                    title={provider.provider_name}
+                    subheader={
+                      PROVIDER_TYPES.find(
+                        (t) => t.value === provider.provider_type
+                      )?.label || provider.provider_type
+                    }
+                    action={
+                      <Switch
+                        checked={provider.is_active}
+                        onChange={() => handleToggleActive(provider)}
+                      />
+                    }
+                  />
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Box
+                      sx={{ display: "flex", flexDirection: "column", gap: 1 }}
+                    >
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                      >
+                        <Key className="w-4 h-4 text-gray-400" />
+                        <Typography variant="body2" color="text.secondary">
+                          {provider.api_key ? "••••••••" : "No API key"}
+                        </Typography>
+                      </Box>
+                      {provider.base_url && (
+                        <Box
+                          sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                        >
+                          <Globe className="w-4 h-4 text-gray-400" />
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            noWrap
+                          >
+                            {provider.base_url}
                           </Typography>
                         </Box>
-                        {provider.base_url && (
-                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Globe className="w-4 h-4 text-gray-400" />
-                            <Typography variant="body2" color="text.secondary" noWrap>
-                              {provider.base_url}
-                            </Typography>
-                          </Box>
-                        )}
-                        {provider.description && (
-                          <Typography variant="body2" color="text.secondary">
-                            {provider.description}
-                          </Typography>
-                        )}
-                      </Box>
-                      <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          onClick={() => startEdit(provider)}
-                          startIcon={<Edit className="w-4 h-4" />}
-                          sx={{ flex: 1 }}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          variant="contained"
-                          color="error"
-                          size="small"
-                          onClick={() => handleDelete(provider.id)}
-                          startIcon={<Trash2 className="w-4 h-4" />}
-                          sx={{ flex: 1 }}
-                        >
-                          Delete
-                        </Button>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-          )}
+                      )}
+                      {provider.description && (
+                        <Typography variant="body2" color="text.secondary">
+                          {provider.description}
+                        </Typography>
+                      )}
+                    </Box>
+                    <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={() => startEdit(provider)}
+                        startIcon={<Edit className="w-4 h-4" />}
+                        sx={{ flex: 1 }}
+                      >
+                        Edit
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        size="small"
+                        onClick={() => handleDelete(provider.id)}
+                        startIcon={<Trash2 className="w-4 h-4" />}
+                        sx={{ flex: 1 }}
+                      >
+                        Delete
+                      </Button>
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        )}
 
-          {!isLoading && providers.length === 0 && !showForm && (
-            <Box sx={{ textAlign: 'center', py: 6 }}>
-              <Server className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-              <Typography variant="h6" gutterBottom>
-                No model providers
-              </Typography>
-              <Typography variant="body1" color="text.secondary" gutterBottom>
-                Get started by adding your first model provider.
-              </Typography>
-              <Button
-                variant="contained"
-                onClick={startAdd}
-                startIcon={<Plus className="w-4 h-4" />}
-              >
-                Add Provider
-              </Button>
-            </Box>
-          )}
-        </DialogContent>
-      </Dialog>
-    );
-  }
+        {!isLoading && providers.length === 0 && !showForm && (
+          <Box sx={{ textAlign: "center", py: 6 }}>
+            <Server className="w-12 h-12 mx-auto text-gray-400 mb-4" />
+            <Typography variant="h6" gutterBottom>
+              No model providers
+            </Typography>
+            <Typography variant="body1" color="text.secondary" gutterBottom>
+              Get started by adding your first model provider.
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={startAdd}
+              startIcon={<Plus className="w-4 h-4" />}
+            >
+              Add Provider
+            </Button>
+          </Box>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export default ModelProvidersManagement;
