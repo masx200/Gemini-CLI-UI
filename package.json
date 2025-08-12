@@ -5,10 +5,11 @@
   "type": "module",
   "main": "server/index.js",
   "scripts": {
+    "watch": "tsc --watch",
     "dev": "concurrently --kill-others \"npm run server\" \"npm run client\"",
     "server": "node server/index.js",
     "client": "vite --host",
-    "build": "vite build",
+    "build": "vite build && tsc",
     "preview": "vite preview",
     "start": "npm run build && npm run server"
   },
