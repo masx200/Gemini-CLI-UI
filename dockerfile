@@ -145,6 +145,7 @@ COPY .env.example ./
 RUN yarn install --force
 # Create directory for SQLite database
 RUN mkdir -p /app/data
+copy . .
 # 构建后端
 RUN npm run build
 
