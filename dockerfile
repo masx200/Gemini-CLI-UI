@@ -151,7 +151,7 @@ RUN npm run build
 
 # Create default .env file for Docker deployment
 RUN echo "PORT=4008\nNODE_ENV=production\nDB_PATH=/app/data/auth.db\nHOME=/opt/docker" > .env
-
+env HOME=/opt/docker
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nodejs -u 1001
