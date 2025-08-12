@@ -178,23 +178,23 @@ function ToolsSettings({ isOpen, onClose, projects = [] }: {
 
   // MCP form handling functions
 
-  const handleTestConfiguration = async () => {
-    setMcpConfigTesting(true);
-    try {
-      const result = await testMcpConfiguration(mcpFormData);
-      setMcpConfigTestResult(result);
-      setMcpConfigTested(true);
-    } catch (error) {
-      setMcpConfigTestResult({
-        success: false,
-        message: error.message,
-        details: [],
-      });
-      setMcpConfigTested(true);
-    } finally {
-      setMcpConfigTesting(false);
-    }
-  };
+  // const handleTestConfiguration = async () => {
+  //   setMcpConfigTesting(true);
+  //   try {
+  //     const result = await testMcpConfiguration(mcpFormData);
+  //     setMcpConfigTestResult(result);
+  //     setMcpConfigTested(true);
+  //   } catch (error) {
+  //     setMcpConfigTestResult({
+  //       success: false,
+  //       message: error.message,
+  //       details: [],
+  //     });
+  //     setMcpConfigTested(true);
+  //   } finally {
+  //     setMcpConfigTesting(false);
+  //   }
+  // };
 
   if (!isOpen) return null;
 

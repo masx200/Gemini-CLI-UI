@@ -91,7 +91,7 @@ function ModelProvidersManagement({
   const loadProviders = async () => {
     setIsLoading(true);
     try {
-      const response = await authenticatedFetch("/api/model-providers");
+      const response = await authenticatedFetch("/api/model-providers/list");
       const data = await response.json();
       setProviders(data.providers || []);
     } catch (error) {
@@ -109,7 +109,7 @@ function ModelProvidersManagement({
     try {
       const url = editingProvider
         ? `/api/model-providers/${editingProvider.id}`
-        : "/api/model-providers";
+        : "/api/model-providers/create";
 
       const method = editingProvider ? "PUT" : "POST";
 

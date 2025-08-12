@@ -6,7 +6,7 @@ import type { ModelProvider } from "../types/model-provider.js";
 
 // Get all model providers
 //@ts-ignore
-router.get("/api/model-providers", async (req, res) => {
+router.get("/list", async (req, res) => {
   try {
     const providers = db
       .prepare(
@@ -21,7 +21,7 @@ router.get("/api/model-providers", async (req, res) => {
 });
 
 // Get a single model provider
-router.get("/api/model-providers/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const provider = db
@@ -41,7 +41,7 @@ router.get("/api/model-providers/:id", async (req, res) => {
 });
 
 // Create a new model provider
-router.post("/api/model-providers", async (req, res) => {
+router.post("/create", async (req, res) => {
   try {
     const {
       provider_name,
@@ -85,7 +85,7 @@ router.post("/api/model-providers", async (req, res) => {
 });
 
 // Update a model provider
-router.put("/api/model-providers/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const {
@@ -138,7 +138,7 @@ router.put("/api/model-providers/:id", async (req, res) => {
 });
 
 // Delete a model provider
-router.delete("/api/model-providers/:id", async (req, res) => {
+router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -162,7 +162,7 @@ router.delete("/api/model-providers/:id", async (req, res) => {
 });
 
 // Test a model provider connection
-router.post("/api/model-providers/:id/test", async (req, res) => {
+router.post("/:id/test", async (req, res) => {
   try {
     const { id } = req.params;
 
