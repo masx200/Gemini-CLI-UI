@@ -6,10 +6,11 @@
   "main": "server/index.js",
   "scripts": {
     "watch": "tsc --watch",
-    "dev": "concurrently --kill-others \"npm run server\" \"npm run client\" \"npm run watch\"",
+    "watch:server": "tsc --watch -p tsconfig-server.json",
+    "dev": "concurrently --kill-others \"npm run server\" \"npm run client\" \"npm run watch\" \"npm run watch:server\"",
     "server": "node server/index.js",
     "client": "vite --host",
-    "build": "vite build && tsc",
+    "build": " npx tsc -p tsconfig-server.json && vite build && tsc",
     "preview": "vite preview",
     "start": "npm run build && npm run server"
   },
@@ -59,6 +60,7 @@
     "xterm-addon-fit": "^0.8.0"
   },
   "devDependencies": {
+    "@types/express": "^5.0.3",
     "@types/react": "^18.2.43",
     "@types/react-dom": "^18.2.17",
     "@vitejs/plugin-react": "^4.6.0",
