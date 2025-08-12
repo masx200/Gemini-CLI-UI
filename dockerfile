@@ -86,7 +86,7 @@ RUN apk add  nano sudo  --no-cache \
     git
 
 # Install Claude CLI globally
-RUN npm install -g @anthropic-ai/claude-code
+
 
 # Install SuperClaude framework
 RUN cd /tmp && \
@@ -148,3 +148,7 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 # Start the application (server only, build is already done)
 CMD ["npm", "run", "server"]
 
+run cnpm i -g @qwen-code/qwen-code
+
+
+RUN npm install -g easy-llm-cli @google/gemini-cli
