@@ -228,6 +228,7 @@ and provides:
 | `HOME`           | 系统用户主目录                          | 用户主目录路径                     |
 | `PORT`           | `4008`                                  | API服务器端口                      |
 | `OPENAI_API_KEY` | -                                       | OpenAI API密钥（可选）             |
+| `OPENAI_BASE_URL`| -                                       | OpenAI API基础URL（可选）          |
 | `DB_PATH`        | `./server/database/geminicliui_auth.db` | 数据库文件路径                     |
 | `JWT_SECRET`     | 随机生成                                | JWT令牌加密密钥                    |
 | `API_KEY`        | -                                       | 外部API密钥（可选）                |
