@@ -1,16 +1,10 @@
 import {
-  AlertTriangle,
-  Globe,
-  Moon,
-  Plus,
-  Server,
-  Settings,
+  AlertTriangle, Moon,
+  Plus, Settings,
   Shield,
-  Sun,
-  Terminal,
-  Volume2,
+  Sun, Volume2,
   X,
-  Zap,
+  Zap
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTheme } from "../contexts/ThemeContext";
@@ -630,7 +624,7 @@ function ToolsSettings({ isOpen, onClose ,projects = [] }) {
             )}
           </div>
         </div>
-        <McpServerManagement></McpServerManagement>
+        <McpServerManagement projects={projects}></McpServerManagement>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 md:p-6 border-t border-border flex-shrink-0 gap-3 pb-safe-area-inset-bottom">
           <div className="flex items-center justify-center sm:justify-start gap-2 order-2 sm:order-1">
             {saveStatus === "success" && (

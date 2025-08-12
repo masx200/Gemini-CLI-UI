@@ -6,14 +6,205 @@ import { Edit3, FolderOpen, Trash2 } from "lucide-react";
 import { Badge } from "./ui/badge.jsx";
 //@ts-ignore
 import { Button } from "./ui/button.jsx";
-import { useState } from "react";
-export interface Project {}
+import {
+  useState,
+  type JSXElementConstructor,
+  type Key,
+  type ReactElement,
+  type ReactNode,
+  type ReactPortal,
+} from "react";
+export interface Project {
+  name: string;
+  path: string;
+  displayName: string;
+  fullPath: string;
+}
+
+export interface MCPServerData {}
 export default function McpServerManagement({
   projects = [],
+  setSaveStatus,
 }: {
   projects: Project[];
+  setSaveStatus: (status: string) => void;
 }): JSX.Element {
-  const handleMcpDelete = async (serverId, scope) => {
+  // MCP API functions
+  const fetchMcpServers = async () => {
+    try {
+      const token = localStorage.getItem("auth-token");
+
+      // Try to read directly from config files for complete details
+      const configResponse = await fetch("/api/mcp/config/read", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (configResponse.ok) {
+        const configData = await configResponse.json();
+        if (configData.success && configData.servers) {
+          setMcpServers(configData.servers);
+          return;
+        }
+      }
+
+      // Fallback to Claude CLI
+      const cliResponse = await fetch("/api/mcp/cli/list", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (cliResponse.ok) {
+        const cliData = await cliResponse.json();
+        if (cliData.success && cliData.servers) {
+          // Convert CLI format to our format
+          const servers = cliData.servers.map(
+            (server: {
+              name: any;
+              type: any;
+              command: any;
+              args: any;
+              env: any;
+              url: any;
+              headers: any;
+            }) => ({
+              id: server.name,
+              name: server.name,
+              type: server.type,
+              scope: "user",
+              config: {
+                command: server.command || "",
+                args: server.args || [],
+                env: server.env || {},
+                url: server.url || "",
+                headers: server.headers || {},
+                timeout: 30000,
+              },
+              created: new Date().toISOString(),
+              updated: new Date().toISOString(),
+            })
+          );
+          setMcpServers(servers);
+          return;
+        }
+      }
+
+      // Final fallback to direct config reading
+      const response = await fetch("/api/mcp/servers?scope=user", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setMcpServers(data.servers || []);
+      } else {
+        console.error("Failed to fetch MCP servers");
+      }
+    } catch (error) {
+      console.error("Error fetching MCP servers:", error);
+    }
+  };
+
+  const deleteMcpServer = async (serverId: any, scope = "user") => {
+    try {
+      const token = localStorage.getItem("auth-token");
+
+      // Use Claude CLI to remove the server with proper scope
+      const response = await fetch(
+        `/api/mcp/cli/remove/${serverId}?scope=${scope}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          await fetchMcpServers(); // Refresh the list
+          return true;
+        } else {
+          throw new Error(
+            result.error || "Failed to delete server via Claude CLI"
+          );
+        }
+      } else {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to delete server");
+      }
+    } catch (error) {
+      console.error("Error deleting MCP server:", error);
+      throw error;
+    }
+  };
+
+  const saveMcpServer = async (serverData: {
+    name: any;
+    type: any;
+    scope: any;
+    projectPath: any;
+    config: any;
+    jsonInput?: string;
+    importMode?: string;
+  }) => {
+    try {
+      const token = localStorage.getItem("auth-token");
+
+      if (editingMcpServer) {
+        // For editing, remove old server and add new one
+        await deleteMcpServer(editingMcpServer.id, "user");
+      }
+
+      // Use Claude CLI to add the server
+      const response = await fetch("/api/mcp/cli/add", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: serverData.name,
+          type: serverData.type,
+          scope: serverData.scope,
+          projectPath: serverData.projectPath,
+          command: serverData.config?.command,
+          args: serverData.config?.args || [],
+          url: serverData.config?.url,
+          headers: serverData.config?.headers || {},
+          env: serverData.config?.env || {},
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          await fetchMcpServers(); // Refresh the list
+          return true;
+        } else {
+          throw new Error(
+            result.error || "Failed to save server via Claude CLI"
+          );
+        }
+      } else {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to save server");
+      }
+    } catch (error) {
+      console.error("Error saving MCP server:", error);
+      throw error;
+    }
+  };
+  const handleMcpDelete = async (serverId: any, scope: string | undefined) => {
     if (confirm("Are you sure you want to delete this MCP server?")) {
       try {
         await deleteMcpServer(serverId, scope);
@@ -25,7 +216,7 @@ export default function McpServerManagement({
     }
   };
   const [mcpServerTools, setMcpServerTools] = useState({});
-  const handleMcpSubmit = async (e) => {
+  const handleMcpSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
     setMcpLoading(true);
@@ -74,7 +265,7 @@ export default function McpServerManagement({
       setMcpLoading(false);
     }
   };
-  const updateMcpConfig = (key, value) => {
+  const updateMcpConfig = (key: string, value: Record<string, any>) => {
     setMcpFormData((prev) => ({
       ...prev,
       config: {
@@ -85,7 +276,7 @@ export default function McpServerManagement({
   };
 
   const [mcpLoading, setMcpLoading] = useState(false);
-  const getTransportIcon = (type) => {
+  const getTransportIcon = (type: any) => {
     switch (type) {
       case "stdio":
         return <Terminal className="w-4 h-4" />;
@@ -101,6 +292,7 @@ export default function McpServerManagement({
   const [jsonValidationError, setJsonValidationError] = useState("");
   const resetMcpForm = () => {
     setMcpFormData({
+      raw: undefined,
       name: "",
       type: "stdio",
       scope: "user", // Default to user scope
@@ -121,6 +313,7 @@ export default function McpServerManagement({
     setJsonValidationError("");
   };
   const [mcpFormData, setMcpFormData] = useState({
+    raw: undefined,
     name: "",
     type: "stdio",
     scope: "user",
@@ -139,7 +332,7 @@ export default function McpServerManagement({
   const [showMcpForm, setShowMcpForm] = useState(false);
 
   const [editingMcpServer, setEditingMcpServer] = useState(null);
-  const openMcpForm = (server = null) => {
+  const openMcpForm = (server: MCPServerData = null) => {
     if (server) {
       setEditingMcpServer(server);
       setMcpFormData({
@@ -284,7 +477,21 @@ export default function McpServerManagement({
                         mcpTestResults[server.id].details.length > 0 && (
                           <ul className="mt-1 space-y-0.5">
                             {mcpTestResults[server.id].details.map(
-                              (detail, i) => (
+                              (
+                                detail:
+                                  | string
+                                  | number
+                                  | boolean
+                                  | ReactElement<
+                                      any,
+                                      string | JSXElementConstructor<any>
+                                    >
+                                  | Iterable<ReactNode>
+                                  | ReactPortal
+                                  | null
+                                  | undefined,
+                                i: Key | null | undefined
+                              ) => (
                                 <li key={i}>• {detail}</li>
                               )
                             )}
@@ -308,7 +515,34 @@ export default function McpServerManagement({
                             </div>
                             <ul className="space-y-0.5">
                               {mcpServerTools[server.id].tools.map(
-                                (tool, i) => (
+                                (
+                                  tool: {
+                                    name:
+                                      | string
+                                      | number
+                                      | boolean
+                                      | ReactElement<
+                                          any,
+                                          string | JSXElementConstructor<any>
+                                        >
+                                      | Iterable<ReactNode>
+                                      | ReactPortal
+                                      | null
+                                      | undefined;
+                                    description:
+                                      | string
+                                      | number
+                                      | boolean
+                                      | ReactElement<
+                                          any,
+                                          string | JSXElementConstructor<any>
+                                        >
+                                      | Iterable<ReactNode>
+                                      | null
+                                      | undefined;
+                                  },
+                                  i: Key | null | undefined
+                                ) => (
                                   <li
                                     key={i}
                                     className="flex items-start gap-1"
@@ -344,7 +578,34 @@ export default function McpServerManagement({
                             </div>
                             <ul className="space-y-0.5">
                               {mcpServerTools[server.id].resources.map(
-                                (resource, i) => (
+                                (
+                                  resource: {
+                                    name:
+                                      | string
+                                      | number
+                                      | boolean
+                                      | ReactElement<
+                                          any,
+                                          string | JSXElementConstructor<any>
+                                        >
+                                      | Iterable<ReactNode>
+                                      | ReactPortal
+                                      | null
+                                      | undefined;
+                                    description:
+                                      | string
+                                      | number
+                                      | boolean
+                                      | ReactElement<
+                                          any,
+                                          string | JSXElementConstructor<any>
+                                        >
+                                      | Iterable<ReactNode>
+                                      | null
+                                      | undefined;
+                                  },
+                                  i: Key | null | undefined
+                                ) => (
                                   <li
                                     key={i}
                                     className="flex items-start gap-1"
@@ -380,7 +641,34 @@ export default function McpServerManagement({
                             </div>
                             <ul className="space-y-0.5">
                               {mcpServerTools[server.id].prompts.map(
-                                (prompt, i) => (
+                                (
+                                  prompt: {
+                                    name:
+                                      | string
+                                      | number
+                                      | boolean
+                                      | ReactElement<
+                                          any,
+                                          string | JSXElementConstructor<any>
+                                        >
+                                      | Iterable<ReactNode>
+                                      | ReactPortal
+                                      | null
+                                      | undefined;
+                                    description:
+                                      | string
+                                      | number
+                                      | boolean
+                                      | ReactElement<
+                                          any,
+                                          string | JSXElementConstructor<any>
+                                        >
+                                      | Iterable<ReactNode>
+                                      | null
+                                      | undefined;
+                                  },
+                                  i: Key | null | undefined
+                                ) => (
                                   <li
                                     key={i}
                                     className="flex items-start gap-1"
@@ -636,7 +924,7 @@ export default function McpServerManagement({
                   </label>
                   <Input
                     value={mcpFormData.name}
-                    onChange={(e) => {
+                    onChange={(e: { target: { value: any } }) => {
                       setMcpFormData((prev) => ({
                         ...prev,
                         name: e.target.value,
@@ -776,7 +1064,7 @@ export default function McpServerManagement({
                       </label>
                       <Input
                         value={mcpFormData.config.command}
-                        onChange={(e) =>
+                        onChange={(e: { target: { value: any } }) =>
                           updateMcpConfig("command", e.target.value)
                         }
                         placeholder="/path/to/mcp-server"
@@ -803,7 +1091,7 @@ export default function McpServerManagement({
                           )
                         }
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                        rows="3"
+                        rows={3}
                         placeholder="--api-key&#10;abc123"
                       />
                     </div>
@@ -818,7 +1106,9 @@ export default function McpServerManagement({
                     </label>
                     <Input
                       value={mcpFormData.config.url}
-                      onChange={(e) => updateMcpConfig("url", e.target.value)}
+                      onChange={(e: { target: { value: any } }) =>
+                        updateMcpConfig("url", e.target.value)
+                      }
                       placeholder="https://api.example.com/mcp"
                       type="url"
                       required
@@ -837,7 +1127,7 @@ export default function McpServerManagement({
                       .map(([k, v]) => `${k}=${v}`)
                       .join("\n")}
                     onChange={(e) => {
-                      const env = {};
+                      const env: Record<string, any> = {};
                       e.target.value.split("\n").forEach((line) => {
                         const [key, ...valueParts] = line.split("=");
                         if (key && key.trim()) {
@@ -847,7 +1137,7 @@ export default function McpServerManagement({
                       updateMcpConfig("env", env);
                     }}
                     className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                    rows="3"
+                    rows={3}
                     placeholder="API_KEY=your-key&#10;DEBUG=true"
                   />
                 </div>
@@ -864,7 +1154,7 @@ export default function McpServerManagement({
                         .map(([k, v]) => `${k}=${v}`)
                         .join("\n")}
                       onChange={(e) => {
-                        const headers = {};
+                        const headers: Record<string, any> = {};
                         e.target.value.split("\n").forEach((line) => {
                           const [key, ...valueParts] = line.split("=");
                           if (key && key.trim()) {
@@ -874,7 +1164,7 @@ export default function McpServerManagement({
                         updateMcpConfig("headers", headers);
                       }}
                       className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                      rows="3"
+                      rows={3}
                       placeholder="Authorization=Bearer token&#10;X-API-Key=your-key"
                     />
                   </div>
