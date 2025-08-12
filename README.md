@@ -1,6 +1,8 @@
+# easy-llm-cli-ui
+
 <div align="center">
-  <img src="public/logo.svg" alt="Gemini CLI UI" width="64" height="64">
-  <h1>Gemini CLI UI</h1>
+  <img src="public/logo.svg" alt="easy-llm-cli-ui" width="64" height="64">
+  <h1>easy-llm-cli-ui</h1>
 </div>
 
 A desktop and mobile UI for
@@ -33,9 +35,9 @@ everywhere.
 <tr>
 <td align="center">
 <h3>Chat View</h3>
-<img src="public/screenshots/gemini-cli-ui-diagram-en.png" alt="Desktop Interface" width="800">
+<img src="public/screenshots/easy-llm-cli-ui-diagram-en.png" alt="Desktop Interface" width="800">
 <br>
-<em>Gemini CLI UI Diagram</em>
+<em>easy-llm-cli-ui Diagram</em>
 </td>
 </table>
 </div align="center">
@@ -72,8 +74,8 @@ everywhere.
 1. **Clone the repository:**
 
 ```bash
-git clone https://github.com/cruzyjapan/Gemini-CLI-UI.git
-cd Gemini-CLI-UI
+git clone https://github.com/masx200/easy-llm-cli-ui.git
+cd easy-llm-cli-ui
 ```
 
 2. **Install dependencies:**
