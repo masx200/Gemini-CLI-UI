@@ -1,9 +1,13 @@
 import { useState } from "react";
-import { Settings, Server } from "lucide-react";
-import { Button } from "./ui/button";
-import ModelProvidersManagement from "./ModelProvidersManagement";
-
-function ModelProvidersSettings({ isOpen, onClose }) {
+import { Server } from "lucide-react";
+//@ts-ignore
+import { Button } from "./ui/button.jsx";
+import ModelProvidersManagement from "./ModelProvidersManagement.jsx";
+export interface ModelProvidersSettingsProps{
+  isOpen: boolean;
+  onClose: () => void;
+}
+function ModelProvidersSettings({ isOpen, onClose }: ModelProvidersSettingsProps) {
   const [showModelProviders, setShowModelProviders] = useState(false);
 
   if (!isOpen) return null;

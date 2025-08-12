@@ -1,21 +1,15 @@
-import {
-  Plus,
-  Edit,
-  Trash2,
-  Key,
-  Globe,
-  Server, X
-} from "lucide-react";
+import { Plus, Edit, Trash2, Key, Globe, Server, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
-import { Switch } from "./ui/switch";
-import { Label } from "./ui/label";
-import { Textarea } from "./ui/textarea";
-
-const PROVIDER_TYPES = [
+//@ts-ignore
+import { Button } from "./ui/button.jsx";
+//@ts-ignore
+import { Input } from "./ui/input.jsx";
+export interface ProviderType {
+  value: string;
+  label: string;
+  icon: string;
+}
+const PROVIDER_TYPES: ProviderType[] = [
   { value: "openai", label: "OpenAI", icon: "🤖" },
   { value: "anthropic", label: "Anthropic", icon: "🦾" },
   { value: "gemini", label: "Gemini", icon: "🔍" },
@@ -31,14 +25,29 @@ const PROVIDER_TYPES = [
   { value: "pangu", label: "Pangu", icon: "☁️" },
   { value: "xunfei", label: "Xunfei", icon: "🎤" },
 ];
-
-function ModelProvidersManagement({ isOpen, onClose }) {
-  const [providers, setProviders] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [editingProvider, setEditingProvider] = useState(null);
-  const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({
+export interface ModelProvidersManagementProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+export interface Provider {
+  id: number;
+  provider_name: string;
+  provider_type: string;
+  api_key: string;
+  base_url: string;
+  description: string;
+  is_active: boolean;
+}
+function ModelProvidersManagement({
+  isOpen,
+  onClose,
+}: ModelProvidersManagementProps) {
+  const [providers, setProviders] = useState<Provider[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [editingProvider, setEditingProvider] = useState<Provider | null>(null);
+  const [showForm, setShowForm] = useState<boolean>(false);
+  const [formData, setFormData] = useState<Record<string, any>>({
     provider_name: "",
     provider_type: "",
     api_key: "",
@@ -67,7 +76,7 @@ function ModelProvidersManagement({ isOpen, onClose }) {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSaving(true);
 
@@ -75,9 +84,9 @@ function ModelProvidersManagement({ isOpen, onClose }) {
       const url = editingProvider
         ? `/api/model-providers/${editingProvider.id}`
         : "/api/model-providers";
-      
+
       const method = editingProvider ? "PUT" : "POST";
-      
+
       const response = await fetch(url, {
         method,
         headers: {
@@ -97,7 +106,7 @@ function ModelProvidersManagement({ isOpen, onClose }) {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to delete this provider?")) return;
 
     try {
@@ -113,7 +122,7 @@ function ModelProvidersManagement({ isOpen, onClose }) {
     }
   };
 
-  const handleToggleActive = async (provider) => {
+  const handleToggleActive = async (provider: Provider) => {
     try {
       const response = await fetch(`/api/model-providers/${provider.id}`, {
         method: "PUT",
@@ -144,7 +153,7 @@ function ModelProvidersManagement({ isOpen, onClose }) {
     setShowForm(false);
   };
 
-  const startEdit = (provider) => {
+  const startEdit = (provider: Provider) => {
     setEditingProvider(provider);
     setFormData({
       provider_name: provider.provider_name,
@@ -212,8 +221,11 @@ function ModelProvidersManagement({ isOpen, onClose }) {
                       <Input
                         id="provider_name"
                         value={formData.provider_name}
-                        onChange={(e) =>
-                          setFormData({ ...formData, provider_name: e.target.value })
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                          setFormData({
+                            ...formData,
+                            provider_name: e.target.value,
+                          })
                         }
                         placeholder="e.g., My OpenAI Provider"
                         required
@@ -224,7 +236,7 @@ function ModelProvidersManagement({ isOpen, onClose }) {
                       <Label htmlFor="provider_type">Provider Type *</Label>
                       <Select
                         value={formData.provider_type}
-                        onValueChange={(value) =>
+                        onValueChange={(value: string) =>
                           setFormData({ ...formData, provider_type: value })
                         }
                         required
@@ -250,8 +262,11 @@ function ModelProvidersManagement({ isOpen, onClose }) {
                           id="api_key"
                           type="password"
                           value={formData.api_key}
-                          onChange={(e) =>
-                            setFormData({ ...formData, api_key: e.target.value })
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setFormData({
+                              ...formData,
+                              api_key: e.target.value,
+                            })
                           }
                           placeholder="Enter your API key"
                           className="pl-10"
@@ -267,8 +282,11 @@ function ModelProvidersManagement({ isOpen, onClose }) {
                         <Input
                           id="base_url"
                           value={formData.base_url}
-                          onChange={(e) =>
-                            setFormData({ ...formData, base_url: e.target.value })
+                          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                            setFormData({
+                              ...formData,
+                              base_url: e.target.value,
+                            })
                           }
                           placeholder="https://api.openai.com/v1"
                           className="pl-10"
@@ -282,8 +300,11 @@ function ModelProvidersManagement({ isOpen, onClose }) {
                     <Textarea
                       id="description"
                       value={formData.description}
-                      onChange={(e) =>
-                        setFormData({ ...formData, description: e.target.value })
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                        setFormData({
+                          ...formData,
+                          description: e.target.value,
+                        })
                       }
                       placeholder="Optional description for this provider"
                       rows={3}
@@ -294,7 +315,7 @@ function ModelProvidersManagement({ isOpen, onClose }) {
                     <Switch
                       id="is_active"
                       checked={formData.is_active}
-                      onCheckedChange={(checked) =>
+                      onCheckedChange={(checked: boolean) =>
                         setFormData({ ...formData, is_active: checked })
                       }
                     />
@@ -311,7 +332,11 @@ function ModelProvidersManagement({ isOpen, onClose }) {
                       Cancel
                     </Button>
                     <Button type="submit" disabled={isSaving}>
-                      {isSaving ? "Saving..." : editingProvider ? "Update" : "Add"}
+                      {isSaving
+                        ? "Saving..."
+                        : editingProvider
+                        ? "Update"
+                        : "Add"}
                     </Button>
                   </div>
                 </form>
@@ -334,7 +359,9 @@ function ModelProvidersManagement({ isOpen, onClose }) {
                           {provider.provider_name}
                         </CardTitle>
                         <CardDescription>
-                          {PROVIDER_TYPES.find((t) => t.value === provider.provider_type)?.label || provider.provider_type}
+                          {PROVIDER_TYPES.find(
+                            (t) => t.value === provider.provider_type
+                          )?.label || provider.provider_type}
                         </CardDescription>
                       </div>
                       <div className="flex items-center gap-2">
