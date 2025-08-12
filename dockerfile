@@ -115,15 +115,6 @@ RUN apk add  nano sudo  --no-cache \
     curl \
     git
 
-# Install Claude CLI globally
-
-
-# Install SuperClaude framework
-RUN cd /tmp && \
-    git clone https://bgithub.xyz/NomenAK/SuperClaude.git && \
-    cd SuperClaude && git checkout SuperClaude-v2 && \
-    echo "y" | ./install.sh && \
-    rm -rf /tmp/SuperClaude
 
 # Set working directory
 WORKDIR /app
