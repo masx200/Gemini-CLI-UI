@@ -187,4 +187,4 @@ run pnpm i -g ansi-escapes
 
 RUN cnpm install -g easy-llm-cli 
 
-run yarn gloabl add @google/gemini-cli
+run yarn global add @google/gemini-cli
