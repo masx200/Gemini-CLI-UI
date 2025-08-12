@@ -33,6 +33,7 @@ export default function McpServerManagement({ projects = [], setSaveStatus, }) {
             throw error;
         }
     };
+    //@ts-ignore
     const handleMcpTest = async (serverId, scope) => {
         try {
             setMcpTestResults({ ...mcpTestResults, [serverId]: { loading: true } });
@@ -234,6 +235,7 @@ export default function McpServerManagement({ projects = [], setSaveStatus, }) {
             throw error;
         }
     };
+    //@ts-ignore
     const handleMcpToolsDiscovery = async (serverId, scope) => {
         try {
             setMcpToolsLoading({ ...mcpToolsLoading, [serverId]: true });
