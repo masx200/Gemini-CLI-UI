@@ -18,7 +18,7 @@ router.get("/list", async (req, res) => {
   try {
     const providers = db
       .prepare(
-        "SELECT * FROM geminicliui_model_providers ORDER BY created_at DESC"
+        "SELECT * FROM geminicliui_model_providers ORDER BY created_at DESC",
       )
       .all() as Provider[];
     res.json({
@@ -81,7 +81,7 @@ router.post("/create", async (req, res) => {
     const stmt = db.prepare(
       `INSERT INTO geminicliui_model_providers 
        (provider_name, provider_type, api_key, base_url, description, is_active) 
-       VALUES (?, ?, ?, ?, ?, ?)`
+       VALUES (?, ?, ?, ?, ?, ?)`,
     );
 
     const result = stmt.run(
@@ -90,7 +90,7 @@ router.post("/create", async (req, res) => {
       api_key,
       base_url || null,
       description || null,
-      Number(is_active !== false)
+      Number(is_active !== false),
     );
 
     const newProvider = db
@@ -129,7 +129,7 @@ router.put("/:id", async (req, res) => {
       `UPDATE geminicliui_model_providers 
        SET provider_name = ?, provider_type = ?, api_key = ?, 
            base_url = ?, description = ?, is_active = ?, updated_at = CURRENT_TIMESTAMP
-       WHERE id = ?`
+       WHERE id = ?`,
     );
 
     const result = stmt.run(
@@ -139,7 +139,7 @@ router.put("/:id", async (req, res) => {
       base_url || null,
       description || null,
       is_active,
-      id
+      id,
     );
 
     if (result.changes === 0) {
@@ -165,7 +165,7 @@ router.delete("/:id", async (req, res) => {
     const { id } = req.params;
 
     const stmt = db.prepare(
-      "DELETE FROM geminicliui_model_providers WHERE id = ?"
+      "DELETE FROM geminicliui_model_providers WHERE id = ?",
     );
 
     const result = stmt.run(id);
@@ -190,7 +190,7 @@ router.post("/:id/test", async (req, res) => {
 
     const provider = db
       .prepare(
-        "SELECT * FROM geminicliui_model_providers WHERE id = ? AND is_active = 1"
+        "SELECT * FROM geminicliui_model_providers WHERE id = ? AND is_active = 1",
       )
       .get(id) as ModelProvider | undefined;
 
