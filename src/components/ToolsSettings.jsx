@@ -210,6 +210,16 @@ function ToolsSettings({ isOpen, onClose, projects = [] }) {
           {/* Tab Navigation */}
           <div className="border-b border-border">
             <div className="flex px-4 md:px-6">
+                <button
+                onClick={() => setActiveTab("models")}
+                className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                  activeTab === "models"
+                    ? "border-blue-600 text-blue-600 dark:text-blue-400"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                Models
+              </button>
               <button
                 onClick={() => setActiveTab("tools")}
                 className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
@@ -245,6 +255,45 @@ function ToolsSettings({ isOpen, onClose, projects = [] }) {
           </div>
 
           <div className="p-4 md:p-6 space-y-6 md:space-y-8 pb-safe-area-inset-bottom">
+
+              {activeTab === "models" && (
+              <div className="space-y-6 md:space-y-8">
+                {/* Model Selection */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Zap className="w-5 h-5 text-cyan-500" />
+                    <h3 className="text-lg font-medium text-foreground">
+                      Gemini Model
+                    </h3>
+                  </div>
+                  <div className="bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800 rounded-lg p-4">
+                    <div className="space-y-3">
+                      <label className="block text-sm font-medium text-foreground">
+                        Select Model
+                      </label>
+                      <select
+                        value={selectedModel}
+                        onChange={(e) => setSelectedModel(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-cyan-500 focus:border-cyan-500"
+                      >
+                        {availableModels.map((model) => (
+                          <option key={model.value} value={model.value}>
+                            {model.label}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        {
+                          availableModels.find((m) => m.value === selectedModel)
+                            ?.description
+                        }
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            )}
             {/* Appearance Tab */}
             {activeTab === "appearance" && (
               <div className="space-y-6 md:space-y-8">
@@ -320,39 +369,7 @@ function ToolsSettings({ isOpen, onClose, projects = [] }) {
             {activeTab === "tools" && (
               <div className="space-y-6 md:space-y-8">
                 {/* Model Selection */}
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <Zap className="w-5 h-5 text-cyan-500" />
-                    <h3 className="text-lg font-medium text-foreground">
-                      Gemini Model
-                    </h3>
-                  </div>
-                  <div className="bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800 rounded-lg p-4">
-                    <div className="space-y-3">
-                      <label className="block text-sm font-medium text-foreground">
-                        Select Model
-                      </label>
-                      <select
-                        value={selectedModel}
-                        onChange={(e) => setSelectedModel(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-cyan-500 focus:border-cyan-500"
-                      >
-                        {availableModels.map((model) => (
-                          <option key={model.value} value={model.value}>
-                            {model.label}
-                          </option>
-                        ))}
-                      </select>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">
-                        {
-                          availableModels.find((m) => m.value === selectedModel)
-                            ?.description
-                        }
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
+             
                 {/* Skip Permissions */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
