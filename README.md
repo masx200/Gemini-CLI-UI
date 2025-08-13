@@ -360,6 +360,8 @@ Thanks to the original Claude Code UI project.
 - **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework
 - **[CodeMirror](https://codemirror.net/)** - Advanced code editor
 
+https://github.com/ConardLi/easy-llm-cli
+
 ## Support & Community
 
 ### Stay Updated
