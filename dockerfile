@@ -57,14 +57,14 @@ run sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositorie
 COPY package.json package-lock.json ./
 
 # Install all dependencies including dev dependencies for building
-RUN yarn install --force
+
 
 # Copy source code
 COPY . .
 
-RUN yarn install --force
+
 # Build the frontend
-RUN npm run build
+
 
 
 
@@ -86,8 +86,7 @@ RUN apk add  nano sudo  --no-cache \
     git
 
 
-# Set working directory
-WORKDIR /app
+
 
 # Copy package files
 COPY package.json package-lock.json ./
@@ -98,12 +97,11 @@ run pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 
 
-RUN yarn install --force
+
 # Install production dependencies only
 RUN yarn install --force --detail --omit=dev && npm cache clean --force
 
-# Copy built frontend from build stage
-# COPY --from=build /app/dist ./dist
+
 
 # Copy server code and other necessary files
 COPY server ./server
