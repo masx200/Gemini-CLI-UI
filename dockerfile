@@ -38,7 +38,6 @@ run pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 run corepack enable
 
-# Install dependencies using corepack up --force for reproducible builds
 RUN corepack up 
 
 
