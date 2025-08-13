@@ -1,3 +1,4 @@
+import BoltIcon from "@mui/icons-material/Bolt";
 import {
   AlertTriangle,
   Moon,
@@ -17,9 +18,11 @@ import { useTheme } from "../contexts/ThemeContext.jsx";
 import { Button } from "./ui/button.jsx";
 
 //@ts-ignore
-import { Input } from "./ui/input.jsx";
-import McpServerManagement, { type Project } from "./mcp-server-management.tsx";
 import ModelProvidersSettings from "./ModelProvidersSettings.tsx";
+import McpServerManagement, { type Project } from "./mcp-server-management.tsx";
+//@ts-ignore
+import { Input } from "./ui/input.jsx";
+
 function ToolsSettings({
   isOpen,
   onClose,
@@ -140,7 +143,7 @@ function ToolsSettings({
           oldValue: localStorage.getItem("gemini-tools-settings"),
           storageArea: localStorage,
           url: window.location.href,
-        }),
+        })
       );
 
       setSaveStatus("success");
@@ -271,7 +274,19 @@ function ToolsSettings({
           <div className="p-4 md:p-6 space-y-6 md:space-y-8 pb-safe-area-inset-bottom">
             {activeTab === "models" && (
               <div className="space-y-6 md:space-y-8">
-                <ModelProvidersSettings></ModelProvidersSettings>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div style={{ backgroundColor: "lightgreen" }}>
+                      <BoltIcon sx={{ fontSize: 32 }} />
+                    </div>
+
+                    <h3 className="text-lg font-medium text-foreground">
+                      Model Providers Settings
+                    </h3>
+                  </div>
+                  <ModelProvidersSettings></ModelProvidersSettings>
+                </div>
+
                 {/* Model Selection */}
                 <div className="space-y-4">
                   <div className="flex items-center gap-3">
@@ -297,8 +312,10 @@ function ToolsSettings({
                         ))}
                       </select>
                       <div className="text-sm text-gray-600 dark:text-gray-400">
-                        {availableModels.find((m) => m.value === selectedModel)
-                          ?.description}
+                        {
+                          availableModels.find((m) => m.value === selectedModel)
+                            ?.description
+                        }
                       </div>
                     </div>
                   </div>
@@ -335,11 +352,11 @@ function ToolsSettings({
                                 isDarkMode ? "translate-x-7" : "translate-x-1"
                               } inline-block h-6 w-6 transform rounded-full bg-white shadow-lg transition-transform duration-200 flex items-center justify-center`}
                             >
-                              {isDarkMode
-                                ? <Moon className="w-3.5 h-3.5 text-gray-700" />
-                                : (
-                                  <Sun className="w-3.5 h-3.5 text-yellow-500" />
-                                )}
+                              {isDarkMode ? (
+                                <Moon className="w-3.5 h-3.5 text-gray-700" />
+                              ) : (
+                                <Sun className="w-3.5 h-3.5 text-yellow-500" />
+                              )}
                             </span>
                           </button>
                         </div>
@@ -361,7 +378,8 @@ function ToolsSettings({
                           <select
                             value={projectSortOrder}
                             onChange={(e) =>
-                              setProjectSortOrder(e.target.value)}
+                              setProjectSortOrder(e.target.value)
+                            }
                             className="text-sm bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2 w-32"
                           >
                             <option value="name">Alphabetical</option>
@@ -423,7 +441,8 @@ function ToolsSettings({
                           type="checkbox"
                           checked={enableNotificationSound}
                           onChange={(e) =>
-                            setEnableNotificationSound(e.target.checked)}
+                            setEnableNotificationSound(e.target.checked)
+                          }
                           className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                         />
                         <div>
@@ -445,20 +464,20 @@ function ToolsSettings({
                             // Temporarily enable sound for testing
                             const currentSettings = JSON.parse(
                               localStorage.getItem("gemini-tools-settings") ||
-                                "{}",
+                                "{}"
                             );
                             localStorage.setItem(
                               "gemini-tools-settings",
                               JSON.stringify({
                                 ...currentSettings,
                                 enableNotificationSound: true,
-                              }),
+                              })
                             );
                             playNotificationSound();
                             // Restore original settings
                             localStorage.setItem(
                               "gemini-tools-settings",
-                              JSON.stringify(currentSettings),
+                              JSON.stringify(currentSettings)
                             );
                           }}
                           className="ml-7 px-3 py-1 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
@@ -572,7 +591,8 @@ function ToolsSettings({
                     <Input
                       value={newDisallowedTool}
                       onChange={(e: any) =>
-                        setNewDisallowedTool(e.target.value)}
+                        setNewDisallowedTool(e.target.value)
+                      }
                       placeholder='e.g., "Bash(rm:*)" or "Write"'
                       onKeyPress={(e: any) => {
                         if (e.key === "Enter") {
@@ -719,16 +739,14 @@ function ToolsSettings({
               disabled={isSaving}
               className="flex-1 sm:flex-none h-10 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 touch-manipulation"
             >
-              {isSaving
-                ? (
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                    Saving...
-                  </div>
-                )
-                : (
-                  "Save Settings"
-                )}
+              {isSaving ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  Saving...
+                </div>
+              ) : (
+                "Save Settings"
+              )}
             </Button>
           </div>
         </div>

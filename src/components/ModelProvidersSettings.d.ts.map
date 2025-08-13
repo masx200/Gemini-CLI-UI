@@ -1,1 +1,1 @@
-{"version":3,"file":"ModelProvidersSettings.d.ts","sourceRoot":"","sources":["ModelProvidersSettings.tsx"],"names":[],"mappings":"AAeA,OAAO,KAA8B,MAAM,OAAO,CAAC;AAInD,MAAM,WAAW,2BAA2B;CAAG;AAW/C,QAAA,MAAM,sBAAsB,EAAE,KAAK,CAAC,EAAE,CACpC,2BAA2B,CAoH5B,CAAC;AAEF,eAAe,sBAAsB,CAAC"}
+{"version":3,"file":"ModelProvidersSettings.d.ts","sourceRoot":"","sources":["ModelProvidersSettings.tsx"],"names":[],"mappings":"AAQA,OAAO,KAA8B,MAAM,OAAO,CAAC;AAInD,MAAM,WAAW,2BAA2B;CAAG;AAK/C,QAAA,MAAM,sBAAsB,EAAE,KAAK,CAAC,EAAE,CACpC,2BAA2B,CAuF5B,CAAC;AAEF,eAAe,sBAAsB,CAAC"}

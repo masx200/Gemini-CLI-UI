@@ -1,16 +1,9 @@
-import BoltIcon from "@mui/icons-material/Bolt";
 import {
-  Avatar,
   Box,
   Button,
-  Card,
-  CardContent,
-  CardHeader,
-  IconButton,
   MenuItem,
   Select,
   Stack,
-  styled,
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
@@ -21,12 +14,6 @@ export interface ModelProvidersSettingsProps {}
 
 //@ts-ignore
 import { authenticatedFetch } from "../../src/utils/api.js";
-const StyledAvatar = styled(Avatar)(({ theme }) => ({
-  backgroundColor: theme.palette.primary.main,
-  width: 64,
-  height: 64,
-  margin: "0 auto 16px",
-}));
 
 const ModelProvidersSettings: React.FC<
   ModelProvidersSettingsProps
@@ -54,96 +41,67 @@ const ModelProvidersSettings: React.FC<
   };
 
   return (
-    <Card
-      sx={{
-        maxWidth: "md",
-        margin: "auto",
-        maxHeight: "80vh",
-        overflow: "hidden",
-      }}
-    >
-      <CardHeader
-        title="Model Providers Settings"
-        action={
-          <IconButton
-            aria-label="close"
-            sx={{
-              color: (theme) => theme.palette.grey[500],
-            }}
+    <div>
+      {!showManagement ? (
+        <Box sx={{ textAlign: "center", py: 4 }}>
+          <Stack
+            direction="row"
+            spacing={2}
+            alignItems="center"
+            alignContent="center"
+            justifyContent="center"
           >
-          </IconButton>
-        }
-      />
-      <CardContent sx={{ overflow: "auto" }}>
-        {!showManagement
-          ? (
-            <Box sx={{ textAlign: "center", py: 4 }}>
-              <Stack
-                direction="row"
-                spacing={2}
-                alignItems="center"
-                alignContent="center"
-                justifyContent="center"
+            <span>当前选择的模型供应商</span>
+            {isLoading ? (
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: 256,
+                }}
               >
-                <StyledAvatar>
-                  <BoltIcon sx={{ fontSize: 32 }} />
-                </StyledAvatar>
-                <span>当前选择的模型供应商</span>
-                {isLoading
-                  ? (
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        height: 256,
-                      }}
-                    >
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600">
-                      </div>
-                    </Box>
-                  )
-                  : (
-                    <Select
-                      value={selectedProvider}
-                      onChange={(e) => setSelectedProvider(e.target.value)}
-                    >
-                      {providers.map((provider) => (
-                        <MenuItem
-                          key={provider.provider_name}
-                          value={provider.provider_name}
-                        >
-                          {provider.provider_name}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  )}
-              </Stack>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              </Box>
+            ) : (
+              <Select
+                value={selectedProvider}
+                onChange={(e) => setSelectedProvider(e.target.value)}
+              >
+                {providers.map((provider) => (
+                  <MenuItem
+                    key={provider.provider_name}
+                    value={provider.provider_name}
+                  >
+                    {provider.provider_name}
+                  </MenuItem>
+                ))}
+              </Select>
+            )}
+          </Stack>
 
-              <Typography variant="h6" gutterBottom>
-                Manage Model Providers
-              </Typography>
-              <Typography variant="body1" color="text.secondary" paragraph>
-                Configure and manage your AI model providers including API keys
-                and settings.
-              </Typography>
-              <Button
-                variant="contained"
-                onClick={() => setShowManagement(true)}
-                size="large"
-              >
-                Open Provider Management
-              </Button>
-            </Box>
-          )
-          : (
-            <ModelProvidersManagement
-              isOpen={showManagement}
-              onClose={() => setShowManagement(false)}
-            />
-          )}
-      </CardContent>
-    </Card>
+          <Typography variant="h6" gutterBottom>
+            Manage Model Providers
+          </Typography>
+          <Typography variant="body1" color="text.secondary" paragraph>
+            Configure and manage your AI model providers including API keys and
+            settings.
+          </Typography>
+          <Button
+            variant="contained"
+            onClick={() => setShowManagement(true)}
+            size="large"
+          >
+            Open Provider Management
+          </Button>
+        </Box>
+      ) : (
+        <ModelProvidersManagement
+          isOpen={showManagement}
+          onClose={() => setShowManagement(false)}
+        />
+      )}
+    </div>
   );
 };
 
