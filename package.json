@@ -53,7 +53,7 @@
     "mime-types": "^3.0.1",
     "multer": "^2.0.2",
     "node-fetch": "^2.7.0",
-    "node-pty": "^1.0.0",
+    "node-pty-prebuilt-multiarch": "0.10.1-pre.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
