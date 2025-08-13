@@ -655,8 +655,12 @@ function handleShellConnection(ws) {
           // Detect operating system and use appropriate shell
           const isWindows = process.platform === "win32";
           const shell = isWindows ? "cmd.exe" : "bash";
-          const shellArgs = isWindows ? ["/c", shellCommand] : ["-c", shellCommand];
-          const homeDir = isWindows ? process.env.USERPROFILE : (process.env.HOME || "/");
+          const shellArgs = isWindows
+            ? ["/c", shellCommand]
+            : ["-c", shellCommand];
+          const homeDir = isWindows
+            ? process.env.USERPROFILE
+            : (process.env.HOME || "/");
 
           // Start shell using PTY for proper terminal emulation
           shellProcess = pty.spawn(shell, shellArgs, {
@@ -670,7 +674,7 @@ function handleShellConnection(ws) {
               COLORTERM: "truecolor",
               FORCE_COLOR: "3",
               // Override browser opening commands to echo URL for detection
-              BROWSER: isWindows ? 'echo OPEN_URL:' : 'echo "OPEN_URL:"',
+              BROWSER: isWindows ? "echo OPEN_URL:" : 'echo "OPEN_URL:"',
             },
           });
 
@@ -746,7 +750,7 @@ function handleShellConnection(ws) {
             shellProcess = null;
           });
         } catch (spawnError) {
-          console.error('❌ Error spawning process:', spawnError);
+          console.error("❌ Error spawning process:", spawnError);
           ws.send(
             JSON.stringify({
               type: "output",

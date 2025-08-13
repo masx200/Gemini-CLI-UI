@@ -1123,7 +1123,7 @@ export default function McpServerManagement({ projects = [], setSaveStatus }) {
                         "Configuration Details (from",
                         " ",
                         editingMcpServer.scope === "global"
-                          ? "~/.gemini.json"
+                          ? "~/.gemini/settings.json"
                           : "project config",
                         ")",
                       ],

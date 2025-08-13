@@ -1,7 +1,7 @@
 import { spawn } from "child_process";
 import { promises as fs } from "fs";
-import path from "path";
 import os from "os";
+import path from "path";
 import sessionManager from "./sessionManager.js";
 
 let activeGeminiProcesses = new Map(); // Track active processes by session ID
@@ -55,7 +55,8 @@ async function spawnGemini(command, options = {}, ws) {
     // Use cwd (actual project directory) instead of projectPath (Gemini's metadata directory)
     // Debug - cwd and projectPath
     // Clean the path by removing any non-printable characters
-    const cleanPath = (cwd || process.cwd()).replace(/[^\x20-\x7E]/g, "")
+    const cleanPath = (cwd || process.cwd())
+      .replace(/[^\x20-\x7E]/g, "")
       .trim();
     const workingDir = cleanPath;
     // Debug - workingDir
@@ -98,7 +99,9 @@ async function spawnGemini(command, options = {}, ws) {
         if (tempImagePaths.length > 0 && command && command.trim()) {
           const imageNote =
             `\n\n[画像を添付しました: ${tempImagePaths.length}枚の画像があります。以下のパスに保存されています:]\n${
-              tempImagePaths.map((p, i) => `${i + 1}. ${p}`).join("\n")
+              tempImagePaths
+                .map((p, i) => `${i + 1}. ${p}`)
+                .join("\n")
             }`;
           const modifiedCommand = command + imageNote;
 
@@ -130,8 +133,8 @@ async function spawnGemini(command, options = {}, ws) {
       // Use already imported modules (fs.promises is imported as fs, path, os)
       const fsSync = await import("fs"); // Import synchronous fs methods
 
-      // Check for MCP config in ~/.gemini.json
-      const geminiConfigPath = path.join(os.homedir(), ".gemini.json");
+      // Check for MCP config in ~/.gemini/settings.json
+      const geminiConfigPath = path.join(os.homedir(), ".gemini/settings.json");
 
       let hasMcpServers = false;
 
@@ -156,14 +159,14 @@ async function spawnGemini(command, options = {}, ws) {
             const projectConfig =
               geminiConfig.geminiProjects[currentProjectPath];
             if (
-              projectConfig && projectConfig.mcpServers &&
+              projectConfig &&
+              projectConfig.mcpServers &&
               Object.keys(projectConfig.mcpServers).length > 0
             ) {
               hasMcpServers = true;
             }
           }
-        } catch (e) {
-        }
+        } catch (e) {}
       }
 
       if (hasMcpServers) {
@@ -253,10 +256,12 @@ async function spawnGemini(command, options = {}, ws) {
     const timeout = setTimeout(() => {
       if (!hasReceivedOutput) {
         // console.error('⏰ Gemini CLI timeout - no output received after', timeoutMs, 'ms');
-        ws.send(JSON.stringify({
-          type: "gemini-error",
-          error: "Gemini CLI timeout - no response received",
-        }));
+        ws.send(
+          JSON.stringify({
+            type: "gemini-error",
+            error: "Gemini CLI timeout - no response received",
+          }),
+        );
         geminiProcess.kill("SIGTERM");
       }
     }, timeoutMs);
@@ -301,13 +306,15 @@ async function spawnGemini(command, options = {}, ws) {
         fullResponse += (fullResponse ? "\n" : "") + filteredOutput;
 
         // Send the filtered output as a message
-        ws.send(JSON.stringify({
-          type: "gemini-response",
-          data: {
-            type: "message",
-            content: filteredOutput,
-          },
-        }));
+        ws.send(
+          JSON.stringify({
+            type: "gemini-response",
+            data: {
+              type: "message",
+              content: filteredOutput,
+            },
+          }),
+        );
       }
 
       // For new sessions, create a session ID
@@ -329,10 +336,12 @@ async function spawnGemini(command, options = {}, ws) {
           activeGeminiProcesses.set(capturedSessionId, geminiProcess);
         }
 
-        ws.send(JSON.stringify({
-          type: "session-created",
-          sessionId: capturedSessionId,
-        }));
+        ws.send(
+          JSON.stringify({
+            type: "session-created",
+            sessionId: capturedSessionId,
+          }),
+        );
       }
     });
 
@@ -353,10 +362,12 @@ async function spawnGemini(command, options = {}, ws) {
       }
 
       // console.error('Gemini CLI stderr:', errorMsg);
-      ws.send(JSON.stringify({
-        type: "gemini-error",
-        error: errorMsg,
-      }));
+      ws.send(
+        JSON.stringify({
+          type: "gemini-error",
+          error: errorMsg,
+        }),
+      );
     });
 
     // Handle process completion
@@ -373,15 +384,18 @@ async function spawnGemini(command, options = {}, ws) {
         sessionManager.addMessage(finalSessionId, "assistant", fullResponse);
       }
 
-      ws.send(JSON.stringify({
-        type: "gemini-complete",
-        exitCode: code,
-        isNewSession: !sessionId && !!command, // Flag to indicate this was a new session
-      }));
+      ws.send(
+        JSON.stringify({
+          type: "gemini-complete",
+          exitCode: code,
+          isNewSession: !sessionId && !!command, // Flag to indicate this was a new session
+        }),
+      );
 
       // Clean up temporary image files if any
       if (
-        geminiProcess.tempImagePaths && geminiProcess.tempImagePaths.length > 0
+        geminiProcess.tempImagePaths &&
+        geminiProcess.tempImagePaths.length > 0
       ) {
         for (const imagePath of geminiProcess.tempImagePaths) {
           await fs.unlink(imagePath).catch((err) => {
@@ -389,7 +403,8 @@ async function spawnGemini(command, options = {}, ws) {
           });
         }
         if (geminiProcess.tempDir) {
-          await fs.rm(geminiProcess.tempDir, { recursive: true, force: true })
+          await fs
+            .rm(geminiProcess.tempDir, { recursive: true, force: true })
             .catch((err) => {
               // console.error(`Failed to delete temp directory ${geminiProcess.tempDir}:`, err)
             });
@@ -411,10 +426,12 @@ async function spawnGemini(command, options = {}, ws) {
       const finalSessionId = capturedSessionId || sessionId || processKey;
       activeGeminiProcesses.delete(finalSessionId);
 
-      ws.send(JSON.stringify({
-        type: "gemini-error",
-        error: error.message,
-      }));
+      ws.send(
+        JSON.stringify({
+          type: "gemini-error",
+          error: error.message,
+        }),
+      );
 
       reject(error);
     });

@@ -1081,7 +1081,7 @@ export default function McpServerManagement({
                   <h4 className="text-sm font-medium text-foreground mb-2">
                     Configuration Details (from
                     {editingMcpServer.scope === "global"
-                      ? "~/.gemini.json"
+                      ? "~/.gemini/settings.json"
                       : "project config"}
                     )
                   </h4>

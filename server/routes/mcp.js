@@ -150,8 +150,9 @@ router.post("/cli/add-json", async (req, res) => {
         // Validate and parse JSON config
         let parsedConfig;
         try {
-            parsedConfig =
-                typeof jsonConfig === "string" ? JSON.parse(jsonConfig) : jsonConfig;
+            parsedConfig = typeof jsonConfig === "string"
+                ? JSON.parse(jsonConfig)
+                : jsonConfig;
         }
         catch (parseError) {
             return res.status(400).json({
@@ -365,7 +366,7 @@ router.get("/config/read", async (req, res) => {
         console.log("📖 Reading MCP servers from gemini config files");
         const homeDir = os.homedir();
         const configPaths = [
-            path.join(homeDir, ".gemini.json"),
+            path.join(homeDir, ".gemini/settings.json"),
             path.join(homeDir, ".gemini", "settings.json"),
         ];
         let configData = null;

@@ -26,7 +26,7 @@ router.get("/cli/list", async (req, res) => {
       ["mcp", "list"],
       {
         stdio: ["pipe", "pipe", "pipe"],
-      }
+      },
     );
 
     let stdout = "";
@@ -86,7 +86,7 @@ router.post("/cli/add", async (req, res) => {
 
     console.log(
       `➕ Adding MCP server using gemini cli (${scope} scope):`,
-      name
+      name,
     );
 
     const { spawn } = await import("child_process");
@@ -125,7 +125,7 @@ router.post("/cli/add", async (req, res) => {
       "🔧 Running gemini cli command:",
       //@ts-ignore
       process.env.GEMINI_PATH || "gemini",
-      cliArgs.join(" ")
+      cliArgs.join(" "),
     );
 
     // For local scope, we need to run the command in the project directory
@@ -142,7 +142,7 @@ router.post("/cli/add", async (req, res) => {
       //@ts-ignore
       process.env.GEMINI_PATH || "gemini",
       cliArgs,
-      spawnOptions
+      spawnOptions,
     );
 
     let stdout = "";
@@ -195,8 +195,9 @@ router.post("/cli/add-json", async (req, res) => {
     // Validate and parse JSON config
     let parsedConfig;
     try {
-      parsedConfig =
-        typeof jsonConfig === "string" ? JSON.parse(jsonConfig) : jsonConfig;
+      parsedConfig = typeof jsonConfig === "string"
+        ? JSON.parse(jsonConfig)
+        : jsonConfig;
     } catch (parseError: any) {
       return res.status(400).json({
         error: "Invalid JSON configuration",
@@ -247,7 +248,7 @@ router.post("/cli/add-json", async (req, res) => {
       cliArgs[2],
       cliArgs[3],
       cliArgs[4],
-      jsonString
+      jsonString,
     );
 
     // For local scope, we need to run the command in the project directory
@@ -264,7 +265,7 @@ router.post("/cli/add-json", async (req, res) => {
       //@ts-ignore
       process.env.GEMINI_PATH || "gemini",
       cliArgs,
-      spawnOptions
+      spawnOptions,
     );
 
     let stdout = "";
@@ -328,7 +329,7 @@ router.delete("/cli/remove/:name", async (req, res) => {
       "🗑️ Removing MCP server using gemini cli:",
       actualName,
       "scope:",
-      actualScope
+      actualScope,
     );
 
     const { spawn } = await import("child_process");
@@ -351,7 +352,7 @@ router.delete("/cli/remove/:name", async (req, res) => {
       "🔧 Running gemini cli command:",
       //@ts-ignore
       process.env.GEMINI_PATH || "gemini",
-      cliArgs.join(" ")
+      cliArgs.join(" "),
     );
 
     const process2 = spawn(
@@ -361,7 +362,7 @@ router.delete("/cli/remove/:name", async (req, res) => {
       cliArgs,
       {
         stdio: ["pipe", "pipe", "pipe"],
-      }
+      },
     );
 
     let stdout = "";
@@ -419,7 +420,7 @@ router.get("/cli/get/:name", async (req, res) => {
       ["mcp", "get", name],
       {
         stdio: ["pipe", "pipe", "pipe"],
-      }
+      },
     );
 
     let stdout = "";
@@ -518,7 +519,7 @@ router.get(
 
       const homeDir = os.homedir();
       const configPaths = [
-        path.join(homeDir, ".gemini.json"),
+        path.join(homeDir, ".gemini/settings.json"),
         path.join(homeDir, ".gemini", "settings.json"),
       ];
 
@@ -558,7 +559,7 @@ router.get(
       ) {
         console.log(
           "🔍 Found user-scoped MCP servers:",
-          Object.keys(configData.mcpServers)
+          Object.keys(configData.mcpServers),
         );
         for (const [name, config] of Object.entries(configData.mcpServers)) {
           const server: MCPServerResponse = {
@@ -615,11 +616,13 @@ router.get(
         ) {
           console.log(
             `🔍 Found local-scoped MCP servers for ${currentProjectPath}:`,
-            Object.keys(projectConfig.mcpServers)
+            Object.keys(projectConfig.mcpServers),
           );
-          for (const [name, config] of Object.entries(
-            projectConfig.mcpServers
-          )) {
+          for (
+            const [name, config] of Object.entries(
+              projectConfig.mcpServers,
+            )
+          ) {
             const server: MCPServerResponse = {
               id: `local:${name}`, // Prefix with scope for uniqueness
               name: name, // Keep original name
@@ -661,7 +664,7 @@ router.get(
         details: error?.message,
       });
     }
-  }
+  },
 );
 
 // Helper functions to parse gemini cli output
