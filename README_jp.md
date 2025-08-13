@@ -1,6 +1,8 @@
+# easy-llm-cli-ui
+
 <div align="center">
-  <img src="public/logo.svg" alt="Gemini CLI UI" width="64" height="64">
-  <h1>Gemini CLI UI</h1>
+  <img src="public/logo.svg" alt="easy-llm-cli-ui" width="64" height="64">
+  <h1>easy-llm-cli-ui</h1>
 </div>
 
 [Gemini CLI](https://github.com/google-gemini/gemini-cli)
@@ -32,7 +34,7 @@ CLI のアクティブなプロジェクトとセッションを表示し、CLI 
 <h3>Chat View</h3>
 <img src="public/screenshots/easy-llm-cli-ui-diagram.png" alt="Desktop Interface" width="800">
 <br>
-<em>Gemini CLI UI Diagram</em>
+<em>easy-llm-cli-ui Diagram</em>
 </td>
 </table>
 </div align="center">
@@ -65,7 +67,7 @@ CLI のアクティブなプロジェクトとセッションを表示し、CLI 
 1. **リポジトリをクローン：**
 
 ```bash
-git clone https://github.com/cruzyjapan/easy-llm-cli-ui.git
+git clone https://github.com/masx200/easy-llm-cli-ui.git
 cd geminicliui
 ```
 

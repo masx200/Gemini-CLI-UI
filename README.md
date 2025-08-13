@@ -1,6 +1,8 @@
+# easy-llm-cli-ui
+
 <div align="center">
-  <img src="public/logo.svg" alt="Gemini CLI UI" width="64" height="64">
-  <h1>Gemini CLI UI</h1>
+  <img src="public/logo.svg" alt="easy-llm-cli-ui" width="64" height="64">
+  <h1>easy-llm-cli-ui</h1>
 </div>
 
 A desktop and mobile UI for
@@ -35,7 +37,7 @@ everywhere.
 <h3>Chat View</h3>
 <img src="public/screenshots/easy-llm-cli-ui-diagram-en.png" alt="Desktop Interface" width="800">
 <br>
-<em>Gemini CLI UI Diagram</em>
+<em>easy-llm-cli-ui Diagram</em>
 </td>
 </table>
 </div align="center">
@@ -72,7 +74,7 @@ everywhere.
 1. **Clone the repository:**
 
 ```bash
-git clone https://github.com/cruzyjapan/easy-llm-cli-ui.git
+git clone https://github.com/masx200/easy-llm-cli-ui.git
 cd easy-llm-cli-ui
 ```
 
@@ -234,6 +236,10 @@ and provides:
 | `API_KEY`         | -                                       | 外部 API 密钥（可选）              |
 | `NODE_ENV`        | `development`                           | 运行环境（development/production） |
 | `OPENAI_MODEL`    | -                                       | OpenAI 模型名称（可选）            |
+| `CUSTOM_LLM_MODEL_NAME`    | -                                       | OpenAI 模型名称（可选）            |
+| `CUSTOM_LLM_API_KEY`  | -                                       | OpenAI API 密钥（可选）            |
+| `CUSTOM_LLM_ENDPOINT` | -                                       | OpenAI API 基础 URL（可选）        |
+| `USE_CUSTOM_LLM`    | -                                       | 启用自定义 LLM 支持（可选）            |
 
 **示例配置**：
 
