@@ -389,7 +389,7 @@ router.get("/config/read", async (req, res) => {
                     type: "stdio", // Default type
                     scope: "user", // User scope - available across all projects
                     config: {},
-                    raw: config, // Include raw config for full details
+                    raw: config,
                 };
                 // Determine transport type and extract config
                 if (config.command) {
@@ -423,7 +423,7 @@ router.get("/config/read", async (req, res) => {
                         scope: "local", // Local scope - only for this project
                         projectPath: currentProjectPath,
                         config: {},
-                        raw: config, // Include raw config for full details
+                        raw: config,
                     };
                     // Determine transport type and extract config
                     if (config.command) {

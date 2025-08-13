@@ -450,105 +450,109 @@ router.get("/cli/get/:name", async (req, res) => {
   }
 });
 
+// Type definitions for Claude configuration
+export interface ClaudeServerConfig {
+  command?: string;
+  args?: string[];
+  env?: Record<string, string>;
+  url?: string;
+  transport?: "stdio" | "http" | "sse";
+  headers?: Record<string, string>;
+}
+
+export interface ClaudeProjectConfig {
+  mcpServers?: Record<string, ClaudeServerConfig>;
+}
+
+export interface ClaudeConfigData {
+  mcpServers?: Record<string, ClaudeServerConfig>;
+  projects?: Record<string, ClaudeProjectConfig>;
+}
+
+export interface MCPServerResponse {
+  id: string;
+  name: string;
+  type: string;
+  scope: "user" | "local";
+  config: {
+    command?: string;
+    args?: string[];
+    env?: Record<string, string>;
+    url?: string;
+    headers?: Record<string, string>;
+  };
+  raw: ClaudeServerConfig;
+  projectPath?: string;
+}
+
+export interface ConfigReadResponse {
+  success?: boolean;
+  message?: string;
+  configPath?: string | null;
+  servers?: MCPServerResponse[];
+  error?: string;
+  details?: string;
+}
+
 // GET /api/mcp/config/read - Read MCP servers directly from Claude config files
-router.get("/config/read", async (req, res) => {
-  try {
-    console.log("📖 Reading MCP servers from Claude config files");
+router.get(
+  "/config/read",
+  async (req: express.Request, res: express.Response<ConfigReadResponse>) => {
+    try {
+      console.log("📖 Reading MCP servers from Claude config files");
 
-    const homeDir = os.homedir();
-    const configPaths = [
-      path.join(homeDir, ".gemini.json"),
-      path.join(homeDir, ".gemini", "settings.json"),
-    ];
+      const homeDir = os.homedir();
+      const configPaths = [
+        path.join(homeDir, ".gemini.json"),
+        path.join(homeDir, ".gemini", "settings.json"),
+      ];
 
-    let configData = null;
-    let configPath: string | null = null;
+      let configData: ClaudeConfigData | null = null;
+      let configPath: string | null = null;
 
-    // Try to read from either config file
-    for (const filepath of configPaths) {
-      try {
-        const fileContent = await fs.readFile(filepath, "utf8");
-        configData = JSON.parse(fileContent);
-        configPath = filepath;
-        console.log(`✅ Found Claude config at: ${filepath}`);
-        break;
-      } catch (error) {
-        // File doesn't exist or is not valid JSON, try next
-        console.log(`ℹ️ Config not found or invalid at: ${filepath}`);
-      }
-    }
-
-    if (!configData) {
-      return res.json({
-        success: false,
-        message: "No Claude configuration file found",
-        servers: [],
-      });
-    }
-
-    // Extract MCP servers from the config
-    const servers = [];
-
-    // Check for user-scoped MCP servers (at root level)
-    if (
-      configData.mcpServers &&
-      typeof configData.mcpServers === "object" &&
-      Object.keys(configData.mcpServers).length > 0
-    ) {
-      console.log(
-        "🔍 Found user-scoped MCP servers:",
-        Object.keys(configData.mcpServers),
-      );
-      for (const [name, config] of Object.entries(configData.mcpServers)) {
-        const server = {
-          id: name,
-          name: name,
-          type: "stdio", // Default type
-          scope: "user", // User scope - available across all projects
-          config: {},
-          raw: config, // Include raw config for full details
-        };
-
-        // Determine transport type and extract config
-        if (config.command) {
-          server.type = "stdio";
-          server.config.command = config.command;
-          server.config.args = config.args || [];
-          server.config.env = config.env || {};
-        } else if (config.url) {
-          server.type = config.transport || "http";
-          server.config.url = config.url;
-          server.config.headers = config.headers || {};
+      // Try to read from either config file
+      for (const filepath of configPaths) {
+        try {
+          const fileContent = await fs.readFile(filepath, "utf8");
+          configData = JSON.parse(fileContent) as ClaudeConfigData;
+          configPath = filepath;
+          console.log(`✅ Found Claude config at: ${filepath}`);
+          break;
+        } catch (error) {
+          // File doesn't exist or is not valid JSON, try next
+          console.log(`ℹ️ Config not found or invalid at: ${filepath}`);
         }
-
-        servers.push(server);
       }
-    }
 
-    // Check for local-scoped MCP servers (project-specific)
-    const currentProjectPath = process.cwd();
+      if (!configData) {
+        return res.json({
+          success: false,
+          message: "No Claude configuration file found",
+          servers: [],
+        });
+      }
 
-    // Check under 'projects' key
-    if (configData.projects && configData.projects[currentProjectPath]) {
-      const projectConfig = configData.projects[currentProjectPath];
+      // Extract MCP servers from the config
+      const servers: MCPServerResponse[] = [];
+
+      // Check for user-scoped MCP servers (at root level)
       if (
-        projectConfig.mcpServers &&
-        typeof projectConfig.mcpServers === "object" &&
-        Object.keys(projectConfig.mcpServers).length > 0
+        configData.mcpServers &&
+        typeof configData.mcpServers === "object" &&
+        Object.keys(configData.mcpServers).length > 0
       ) {
         console.log(
-          `🔍 Found local-scoped MCP servers for ${currentProjectPath}:`,
-          Object.keys(projectConfig.mcpServers),
+          "🔍 Found user-scoped MCP servers:",
+          Object.keys(configData.mcpServers),
         );
-        for (const [name, config] of Object.entries(projectConfig.mcpServers)) {
-          const server = {
-            id: `local:${name}`, // Prefix with scope for uniqueness
-            name: name, // Keep original name
+        for (const [name, config] of Object.entries(configData.mcpServers)) {
+          const server: MCPServerResponse = {
+            id: name,
+            name: name,
             type: "stdio", // Default type
-            scope: "local", // Local scope - only for this project
-            projectPath: currentProjectPath,
+            scope: "user", // User scope - available across all projects
             config: {},
-            raw: config, // Include raw config for full details
+            raw: config,
           };
 
           // Determine transport type and extract config
@@ -566,23 +570,68 @@ router.get("/config/read", async (req, res) => {
           servers.push(server);
         }
       }
+
+      // Check for local-scoped MCP servers (project-specific)
+      const currentProjectPath = process.cwd();
+
+      // Check under 'projects' key
+      if (configData.projects && configData.projects[currentProjectPath]) {
+        const projectConfig = configData.projects[currentProjectPath];
+        if (
+          projectConfig.mcpServers &&
+          typeof projectConfig.mcpServers === "object" &&
+          Object.keys(projectConfig.mcpServers).length > 0
+        ) {
+          console.log(
+            `🔍 Found local-scoped MCP servers for ${currentProjectPath}:`,
+            Object.keys(projectConfig.mcpServers),
+          );
+          for (
+            const [name, config] of Object.entries(projectConfig.mcpServers)
+          ) {
+            const server: MCPServerResponse = {
+              id: `local:${name}`, // Prefix with scope for uniqueness
+              name: name, // Keep original name
+              type: "stdio", // Default type
+              scope: "local", // Local scope - only for this project
+              projectPath: currentProjectPath,
+              config: {},
+              raw: config,
+            };
+
+            // Determine transport type and extract config
+            if (config.command) {
+              server.type = "stdio";
+              server.config.command = config.command;
+              server.config.args = config.args || [];
+              server.config.env = config.env || {};
+            } else if (config.url) {
+              server.type = config.transport || "http";
+              server.config.url = config.url;
+              server.config.headers = config.headers || {};
+            }
+
+            servers.push(server);
+          }
+        }
+      }
+
+      console.log(`📋 Found ${servers.length} MCP servers in config`);
+
+      res.json({
+        success: true,
+        configPath: configPath,
+        servers: servers,
+      });
+    } catch (error) {
+      console.error("Error reading Claude config:", error);
+      res.status(500).json({
+        error: "Failed to read Claude configuration",
+        details: error.message,
+      });
     }
-
-    console.log(`📋 Found ${servers.length} MCP servers in config`);
-
-    res.json({
-      success: true,
-      configPath: configPath,
-      servers: servers,
-    });
-  } catch (error) {
-    console.error("Error reading Claude config:", error);
-    res.status(500).json({
-      error: "Failed to read Claude configuration",
-      details: error.message,
-    });
-  }
-});
+  },
+);
 
 // Helper functions to parse gemini cli output
 export interface ClaudeListServer {
