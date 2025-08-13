@@ -41,13 +41,13 @@ export interface geminiListServer {
     name: string;
     type: string;
     status: string;
-    description: string;
+    description?: string;
 }
 export interface geminiGetOutput {
     name?: string;
     type?: string;
-    command?: string;
-    url?: string;
+    command?: string | undefined;
+    url?: string | undefined;
     raw_output?: string;
     parse_error?: string;
     [key: string]: any;

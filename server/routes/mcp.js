@@ -338,7 +338,7 @@ router.get("/cli/get/:name", async (req, res) => {
         console.error("Error getting MCP server details via CLI:", error);
         res.status(500).json({
             error: "Failed to get MCP server details",
-            details: error.message,
+            details: error?.message,
         });
     }
 });
@@ -451,7 +451,7 @@ router.get("/config/read", async (req, res) => {
         console.error("Error reading gemini config:", error);
         res.status(500).json({
             error: "Failed to read gemini configuration",
-            details: error.message,
+            details: error?.message,
         });
     }
 });
@@ -480,13 +480,13 @@ function parsegeminiListOutput(output) {
             if (rest.includes("✓") || rest.includes("✗")) {
                 const statusMatch = rest.match(/(.*?)\s*-\s*([✓✗].*)$/);
                 if (statusMatch) {
-                    description = statusMatch[1].trim();
-                    status = statusMatch[2].includes("✓") ? "connected" : "failed";
+                    description = statusMatch[1]?.trim();
+                    status = statusMatch[2]?.includes("✓") ? "connected" : "failed";
                 }
             }
             // Try to determine type from description
-            if (description.startsWith("http://") ||
-                description.startsWith("https://")) {
+            if (description?.startsWith("http://") ||
+                description?.startsWith("https://")) {
                 type = "http";
             }
             servers.push({

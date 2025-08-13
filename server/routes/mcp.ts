@@ -440,11 +440,11 @@ router.get("/cli/get/:name", async (req, res) => {
         .status(500)
         .json({ error: "Failed to run gemini cli", details: error.message });
     });
-  } catch (error) {
+  } catch (error:any) {
     console.error("Error getting MCP server details via CLI:", error);
     res.status(500).json({
       error: "Failed to get MCP server details",
-      details: error.message,
+      details: error?.message,
     });
   }
 });
@@ -622,11 +622,11 @@ router.get(
         configPath: configPath,
         servers: servers,
       });
-    } catch (error) {
+    } catch (error:any) {
       console.error("Error reading gemini config:", error);
       res.status(500).json({
         error: "Failed to read gemini configuration",
-        details: error.message,
+        details: error?.message,
       });
     }
   }
@@ -637,7 +637,7 @@ export interface geminiListServer {
   name: string;
   type: string;
   status: string;
-  description: string;
+  description?: string;
 }
 
 function parsegeminiListOutput(output: string): geminiListServer[] {
@@ -661,23 +661,23 @@ function parsegeminiListOutput(output: string): geminiListServer[] {
       const rest = line.substring(colonIndex + 1).trim();
 
       // Try to extract description and status
-      let description = rest;
-      let status = "unknown";
+      let description: string | undefined = rest;
+      let status: string | undefined = "unknown";
       let type = "stdio"; // default type
 
       // Check for status indicators
       if (rest.includes("✓") || rest.includes("✗")) {
         const statusMatch = rest.match(/(.*?)\s*-\s*([✓✗].*)$/);
         if (statusMatch) {
-          description = statusMatch[1].trim();
-          status = statusMatch[2].includes("✓") ? "connected" : "failed";
+          description = statusMatch[1]?.trim();
+          status = statusMatch[2]?.includes("✓") ? "connected" : "failed";
         }
       }
 
       // Try to determine type from description
       if (
-        description.startsWith("http://") ||
-        description.startsWith("https://")
+        description?.startsWith("http://") ||
+        description?.startsWith("https://")
       ) {
         type = "http";
       }
@@ -697,8 +697,8 @@ function parsegeminiListOutput(output: string): geminiListServer[] {
 export interface geminiGetOutput {
   name?: string;
   type?: string;
-  command?: string;
-  url?: string;
+  command?: string|undefined;
+  url?: string|undefined;
   raw_output?: string;
   parse_error?: string;
   [key: string]: any; // Allow additional properties
@@ -731,7 +731,7 @@ function parsegeminiGetOutput(output: string): geminiGetOutput {
     }
 
     return server;
-  } catch (error) {
+  } catch (error:any) {
     return { raw_output: output, parse_error: error.message };
   }
 }
