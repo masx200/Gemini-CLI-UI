@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import GeminiLogo from "./GeminiLogo";
 
@@ -51,7 +51,7 @@ const SetupForm = () => {
               <GeminiLogo size={64} />
             </div>
             <h1 className="text-2xl font-bold text-foreground">
-              Welcome to Gemini CLI UI
+              Welcome to easy-llm-cli-ui
             </h1>
             <p className="text-muted-foreground mt-2">
               Set up your account to get started

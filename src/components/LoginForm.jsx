@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import { useAuth } from "../contexts/AuthContext";
 import { MessageSquare } from "lucide-react";
+import { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
 
 const LoginForm = () => {
   const [username, setUsername] = useState("");
@@ -43,7 +43,7 @@ const LoginForm = () => {
             </div>
             <h1 className="text-2xl font-bold text-foreground">Welcome Back</h1>
             <p className="text-muted-foreground mt-2">
-              Sign in to your Gemini CLI UI account
+              Sign in to your easy-llm-cli-ui account
             </p>
           </div>
 

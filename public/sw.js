@@ -1,18 +1,13 @@
-// Service Worker for Gemini CLI UI PWA
+// Service Worker for easy-llm-cli-ui PWA
 const CACHE_NAME = "gemini-ui-v1";
-const urlsToCache = [
-  "/",
-  "/index.html",
-  "/manifest.json",
-];
+const urlsToCache = ["/", "/index.html", "/manifest.json"];
 
 // Install event
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then((cache) => {
-        return cache.addAll(urlsToCache);
-      }),
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(urlsToCache);
+    }),
   );
   self.skipWaiting();
 });
@@ -20,15 +15,14 @@ self.addEventListener("install", (event) => {
 // Fetch event
 self.addEventListener("fetch", (event) => {
   event.respondWith(
-    caches.match(event.request)
-      .then((response) => {
-        // Return cached response if found
-        if (response) {
-          return response;
-        }
-        // Otherwise fetch from network
-        return fetch(event.request);
-      }),
+    caches.match(event.request).then((response) => {
+      // Return cached response if found
+      if (response) {
+        return response;
+      }
+      // Otherwise fetch from network
+      return fetch(event.request);
+    }),
   );
 });
 

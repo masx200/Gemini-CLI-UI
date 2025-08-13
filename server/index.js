@@ -1025,7 +1025,7 @@ app.post(
 );
 
 // Serve React app for all other routes
-app.get("*", (req, res) => {
+app.get("*splat", (req, res) => {
   res.sendFile(path.join(__dirname, "../dist/index.html"));
 });
 
@@ -1140,7 +1140,7 @@ async function startServer() {
       }
     });
     server.listen(PORT, "0.0.0.0", async () => {
-      // console.log(`Gemini CLI UI server running on http://0.0.0.0:${PORT}`);
+      console.log(`easy-llm-cli-ui server running on http://0.0.0.0:${PORT}`);
 
       // Start watching the projects folder for changes
       await setupProjectsWatcher(); // Re-enabled with better-sqlite3

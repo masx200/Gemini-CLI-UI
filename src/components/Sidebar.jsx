@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { ScrollArea } from "./ui/scroll-area";
-import { Button } from "./ui/button";
+import { useEffect, useState } from "react";
 import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+import { ScrollArea } from "./ui/scroll-area";
 
 import {
   Check,
@@ -19,13 +19,11 @@ import {
   RefreshCw,
   Search,
   Settings,
-  Sparkles,
   Star,
   Trash2,
   X,
 } from "lucide-react";
 import { cn } from "../lib/utils";
-import GeminiLogo from "./GeminiLogo";
 import { api } from "../utils/api";
 
 // Move formatTimeAgo outside component to avoid recreation on every render
@@ -413,10 +411,7 @@ function Sidebar({
       // Store additional sessions locally
       setAdditionalSessions((prev) => ({
         ...prev,
-        [project.name]: [
-          ...(prev[project.name] || []),
-          ...result.sessions,
-        ],
+        [project.name]: [...(prev[project.name] || []), ...result.sessions],
       }));
 
       // Update project metadata if needed
@@ -440,8 +435,9 @@ function Sidebar({
     const projectName = project.name.toLowerCase();
 
     // Search in both display name and actual project name/path
-    return displayName.includes(searchLower) ||
-      projectName.includes(searchLower);
+    return (
+      displayName.includes(searchLower) || projectName.includes(searchLower)
+    );
   });
 
   return (
@@ -456,7 +452,7 @@ function Sidebar({
             </div>
             <div>
               <h1 className="text-lg font-bold text-foreground">
-                Gemini CLI UI
+                easy-llm-cli-ui
               </h1>
               <p className="text-sm text-muted-foreground">
                 AI coding assistant interface
@@ -506,7 +502,7 @@ function Sidebar({
               </div>
               <div>
                 <h1 className="text-lg font-semibold text-foreground">
-                  Gemini CLI UI
+                  easy-llm-cli-ui
                 </h1>
                 <p className="text-sm text-muted-foreground">Projects</p>
               </div>
@@ -729,7 +725,8 @@ function Sidebar({
                           className={cn(
                             "p-3 mx-3 my-1 rounded-lg bg-card border border-border/50 active:scale-[0.98] transition-all duration-150",
                             isSelected && "bg-primary/5 border-primary/20",
-                            isStarred && !isSelected &&
+                            isStarred &&
+                              !isSelected &&
                               "bg-yellow-50/50 dark:bg-yellow-900/5 border-yellow-200/30 dark:border-yellow-800/30",
                           )}
                           onClick={() => {
@@ -909,7 +906,8 @@ function Sidebar({
                         className={cn(
                           "hidden md:flex w-full justify-between p-2 h-auto font-normal hover:bg-accent/50",
                           isSelected && "bg-accent text-accent-foreground",
-                          isStarred && !isSelected &&
+                          isStarred &&
+                            !isSelected &&
                             "bg-yellow-50/50 dark:bg-yellow-900/10 hover:bg-yellow-100/50 dark:hover:bg-yellow-900/20",
                         )}
                         onClick={() => {

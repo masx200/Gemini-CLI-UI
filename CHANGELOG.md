@@ -4,18 +4,18 @@
 
 ### 追加
 
-- Gemini 2.5 Proモデルのサポート
+- Gemini 2.5 Pro モデルのサポート
 - モデル選択機能（設定画面から選択可能）
-- YOLOモード（--yoloフラグ対応）
+- YOLO モード（--yolo フラグ対応）
 - チャット画面にモデル表示
 - 画像添付機能の改善
-- 日本語README
+- 日本語 README
 
 ### 変更
 
-- Claude CLI UIからGemini CLI UIへの移行
-- デフォルトモデルをgemini-2.5-proに変更
-- UIの各種ブランディング更新
+- Claude CLI UI から easy-llm-cli-ui への移行
+- デフォルトモデルを gemini-2.5-pro に変更
+- UI の各種ブランディング更新
 - 不要なデバッグログの削除
 
 ### 修正
@@ -26,6 +26,6 @@
 
 ### 削除
 
-- Claude関連のファイルとコンポーネント
-- MCP Servers機能（一時的に）
+- Claude 関連のファイルとコンポーネント
+- MCP Servers 機能（一時的に）
 - 不要なデバッグログ出力

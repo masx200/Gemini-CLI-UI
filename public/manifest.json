@@ -1,7 +1,7 @@
 {
-  "name": "Gemini CLI UI",
+  "name": "easy-llm-cli-ui",
   "short_name": "Gemini UI",
-  "description": "Gemini CLI UI - A stylish web interface for Gemini",
+  "description": "easy-llm-cli-ui - A stylish web interface for Gemini",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

@@ -96,7 +96,7 @@ function MainContent({
               />
             </div>
             <h2 className="text-xl font-semibold mb-2">
-              Loading Gemini CLI UI
+              Loading easy-llm-cli-ui
             </h2>
             <p>Setting up your workspace...</p>
           </div>
