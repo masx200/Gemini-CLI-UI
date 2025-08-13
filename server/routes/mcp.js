@@ -145,8 +145,9 @@ router.post("/cli/add-json", async (req, res) => {
         // Validate and parse JSON config
         let parsedConfig;
         try {
-            parsedConfig =
-                typeof jsonConfig === "string" ? JSON.parse(jsonConfig) : jsonConfig;
+            parsedConfig = typeof jsonConfig === "string"
+                ? JSON.parse(jsonConfig)
+                : jsonConfig;
         }
         catch (parseError) {
             return res.status(400).json({
@@ -455,7 +456,6 @@ router.get("/config/read", async (req, res) => {
         });
     }
 });
-// Helper functions to parse gemini cli output
 function parseClaudeListOutput(output) {
     const servers = [];
     const lines = output.split("\n").filter((line) => line.trim());
