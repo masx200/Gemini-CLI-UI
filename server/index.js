@@ -24,7 +24,7 @@ try {
 
 // console.log('PORT from env:', process.env.PORT);
 
-import { execSync } from "child_process";
+import { spawn } from "child_process";
 import cors from "cors";
 import express from "express";
 import { promises as fsPromises } from "fs";
@@ -59,6 +59,20 @@ import sessionManager from "./sessionManager.js";
 let projectsWatcher = null;
 const connectedClients = new Set();
 
+function run(cmd, args, opts = {}) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(cmd, args, { stdio: "pipe", ...opts });
+    const out = [],
+      err = [];
+    child.stdout?.on("data", (b) => out.push(b));
+    child.stderr?.on("data", (b) => err.push(b));
+    child.on("close", (code) =>
+      code === 0
+        ? resolve(Buffer.concat(out).toString())
+        : reject(new Error(Buffer.concat(err).toString()))
+    );
+  });
+}
 // Setup file system watcher for Gemini projects folder using chokidar
 async function setupProjectsWatcher() {
   const chokidar = (await import("chokidar")).default;
@@ -593,16 +607,27 @@ function handleShellConnection(ws) {
             const args = [];
             if (process.platform === "win32") {
               args.push("/c");
-              args.push(cmd);
+              args.push(process.env.GEMINI_PATH || `which ${geminiPath}`);
             }
-            execSync(cmd, {
+            args.push("--version");
+            const version = await run(cmd, args, {
+              cwd: projectPath,
+              stdio: "pipe",
+              shell: false,
+              env: process.env,
+              args: args,
+            });
+            console.log("Gemini version:", version);
+          } catch (error) {
+            console.error(error);
+            console.log({
+              cwd: projectPath,
+              cmd,
               stdio: "ignore",
               shell: true,
               env: process.env,
               args: args,
             });
-          } catch (error) {
-            console.error(error);
             console.error("❌ Gemini CLI not found in PATH or GEMINI_PATH");
             console.error("GEMINI_PATH:", process.env.GEMINI_PATH || "gemini");
             ws.send(
