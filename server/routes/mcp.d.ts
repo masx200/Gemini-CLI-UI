@@ -1,9 +1,11 @@
 declare const router: import("express-serve-static-core").Router;
 export interface geminiServerConfig {
+    type?: "stdio" | "http" | "sse";
     command?: string;
     args?: string[];
     env?: Record<string, string>;
     url?: string;
+    httpUrl?: string;
     transport?: "stdio" | "http" | "sse";
     headers?: Record<string, string>;
 }

@@ -150,9 +150,8 @@ router.post("/cli/add-json", async (req, res) => {
         // Validate and parse JSON config
         let parsedConfig;
         try {
-            parsedConfig = typeof jsonConfig === "string"
-                ? JSON.parse(jsonConfig)
-                : jsonConfig;
+            parsedConfig =
+                typeof jsonConfig === "string" ? JSON.parse(jsonConfig) : jsonConfig;
         }
         catch (parseError) {
             return res.status(400).json({
@@ -409,14 +408,25 @@ router.get("/config/read", async (req, res) => {
                     raw: config,
                 };
                 // Determine transport type and extract config
-                if (config.command) {
+                if (config.command ||
+                    config.type == "stdio" ||
+                    config.transport == "stdio") {
                     server.type = "stdio";
                     server.config.command = config.command;
                     server.config.args = config.args || [];
                     server.config.env = config.env || {};
                 }
-                else if (config.url) {
+                else if (config.httpUrl ||
+                    config.type == "http" ||
+                    config.transport == "http") {
                     server.type = config.transport || "http";
+                    server.config.url = config.url;
+                    server.config.headers = config.headers || {};
+                }
+                else if (config.url ||
+                    config.type == "sse" ||
+                    config.transport == "sse") {
+                    server.type = config.transport || "sse";
                     server.config.url = config.url;
                     server.config.headers = config.headers || {};
                 }
