@@ -341,7 +341,7 @@ customizations.
 
 **Major Changes:**
 
-- Adapted from Claude CLI to Gemini CLI
+- Adapted from gemini cli to Gemini CLI
 - Added authentication system (SQLite-based)
 - Gemini-specific model selection feature
 - Enhanced Japanese language support

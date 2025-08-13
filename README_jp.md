@@ -304,7 +304,7 @@ GNU General Public License v3.0 -
 
 **主な変更点:**
 
-- Claude CLI から Gemini CLI への対応変更
+- gemini cli から Gemini CLI への対応変更
 - 認証システムの追加（SQLite ベース）
 - Gemini 専用のモデル選択機能
 - 日本語対応の強化

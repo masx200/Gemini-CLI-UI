@@ -99,7 +99,7 @@ temp/
 .netlify
 
 # Claude specific
-.claude/
+.gemini/
 
 # Database files
 *.db

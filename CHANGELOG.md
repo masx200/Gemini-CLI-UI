@@ -13,7 +13,7 @@
 
 ### 変更
 
-- Claude CLI UI から easy-llm-cli-ui への移行
+- gemini cli UI から easy-llm-cli-ui への移行
 - デフォルトモデルを gemini-2.5-pro に変更
 - UI の各種ブランディング更新
 - 不要なデバッグログの削除

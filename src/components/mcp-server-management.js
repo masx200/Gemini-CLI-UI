@@ -1,17 +1,17 @@
+import { Globe, Plus, Server, Terminal, X, Zap } from "lucide-react";
 import {
   Fragment as _Fragment,
   jsx as _jsx,
   jsxs as _jsxs,
 } from "react/jsx-runtime";
-import { Globe, Plus, Server, Terminal, X, Zap } from "lucide-react";
 //@ts-ignore
-import { Input } from "./ui/input.jsx";
 import { Edit3, FolderOpen, Trash2 } from "lucide-react";
+import { Input } from "./ui/input.jsx";
 //@ts-ignore
 import { Badge } from "./ui/badge.jsx";
 //@ts-ignore
-import { Button } from "./ui/button.jsx";
 import { useState } from "react";
+import { Button } from "./ui/button.jsx";
 export default function McpServerManagement({ projects = [], setSaveStatus }) {
   const testMcpServer = async (serverId, scope = "user") => {
     try {
@@ -21,10 +21,10 @@ export default function McpServerManagement({ projects = [], setSaveStatus }) {
         {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        },
+        }
       );
       if (response.ok) {
         const data = await response.json();
@@ -74,7 +74,7 @@ export default function McpServerManagement({ projects = [], setSaveStatus }) {
           return;
         }
       }
-      // Fallback to Claude CLI
+      // Fallback to gemini cli
       const cliResponse = await fetch("/api/mcp/cli/list", {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -125,7 +125,7 @@ export default function McpServerManagement({ projects = [], setSaveStatus }) {
   const deleteMcpServer = async (serverId, scope = "user") => {
     try {
       const token = localStorage.getItem("auth-token");
-      // Use Claude CLI to remove the server with proper scope
+      // Use gemini cli to remove the server with proper scope
       const response = await fetch(
         `/api/mcp/cli/remove/${serverId}?scope=${scope}`,
         {
@@ -134,7 +134,7 @@ export default function McpServerManagement({ projects = [], setSaveStatus }) {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        },
+        }
       );
       if (response.ok) {
         const result = await response.json();
@@ -143,7 +143,7 @@ export default function McpServerManagement({ projects = [], setSaveStatus }) {
           return true;
         } else {
           throw new Error(
-            result.error || "Failed to delete server via Claude CLI",
+            result.error || "Failed to delete server via gemini cli"
           );
         }
       } else {
@@ -162,7 +162,7 @@ export default function McpServerManagement({ projects = [], setSaveStatus }) {
         // For editing, remove old server and add new one
         await deleteMcpServer(editingMcpServer.id, "user");
       }
-      // Use Claude CLI to add the server
+      // Use gemini cli to add the server
       const response = await fetch("/api/mcp/cli/add", {
         method: "POST",
         headers: {
@@ -188,7 +188,7 @@ export default function McpServerManagement({ projects = [], setSaveStatus }) {
           return true;
         } else {
           throw new Error(
-            result.error || "Failed to save server via Claude CLI",
+            result.error || "Failed to save server via gemini cli"
           );
         }
       } else {
@@ -224,7 +224,7 @@ export default function McpServerManagement({ projects = [], setSaveStatus }) {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        },
+        }
       );
       if (response.ok) {
         const data = await response.json();
@@ -387,7 +387,7 @@ export default function McpServerManagement({ projects = [], setSaveStatus }) {
     setShowMcpForm(true);
   };
   const [mcpServers, setMcpServers] = useState([]);
-  return (_jsxs(_Fragment, {
+  return _jsxs(_Fragment, {
     children: [
       _jsxs("div", {
         className: "space-y-4",
@@ -425,881 +425,969 @@ export default function McpServerManagement({ projects = [], setSaveStatus }) {
           _jsxs("div", {
             className: "space-y-2",
             children: [
-              mcpServers.map((server) => (_jsx("div", {
-                className:
-                  "bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4",
-                children: _jsxs("div", {
-                  className: "flex items-start justify-between",
-                  children: [
-                    _jsxs("div", {
-                      className: "flex-1",
+              mcpServers.map((server) =>
+                _jsx(
+                  "div",
+                  {
+                    className:
+                      "bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4",
+                    children: _jsxs("div", {
+                      className: "flex items-start justify-between",
                       children: [
                         _jsxs("div", {
-                          className: "flex items-center gap-2 mb-2",
+                          className: "flex-1",
                           children: [
-                            getTransportIcon(server.type),
-                            _jsx("span", {
-                              className: "font-medium text-foreground",
-                              children: server.name,
+                            _jsxs("div", {
+                              className: "flex items-center gap-2 mb-2",
+                              children: [
+                                getTransportIcon(server.type),
+                                _jsx("span", {
+                                  className: "font-medium text-foreground",
+                                  children: server.name,
+                                }),
+                                _jsx(Badge, {
+                                  variant: "outline",
+                                  className: "text-xs",
+                                  children: server.type,
+                                }),
+                                _jsx(Badge, {
+                                  variant: "outline",
+                                  className: "text-xs",
+                                  children:
+                                    server.scope === "local"
+                                      ? "📁 local"
+                                      : server.scope === "user"
+                                      ? "👤 user"
+                                      : server.scope,
+                                }),
+                                server.projectPath &&
+                                  _jsx(Badge, {
+                                    variant: "outline",
+                                    className:
+                                      "text-xs bg-purple-50 dark:bg-purple-900/20",
+                                    title: server.projectPath,
+                                    children: server.projectPath
+                                      .split("/")
+                                      .pop(),
+                                  }),
+                              ],
                             }),
-                            _jsx(Badge, {
-                              variant: "outline",
-                              className: "text-xs",
-                              children: server.type,
-                            }),
-                            _jsx(Badge, {
-                              variant: "outline",
-                              className: "text-xs",
-                              children: server.scope === "local"
-                                ? "📁 local"
-                                : server.scope === "user"
-                                ? "👤 user"
-                                : server.scope,
-                            }),
-                            server.projectPath &&
-                            (_jsx(Badge, {
-                              variant: "outline",
+                            _jsxs("div", {
                               className:
-                                "text-xs bg-purple-50 dark:bg-purple-900/20",
-                              title: server.projectPath,
-                              children: server.projectPath.split("/").pop(),
-                            })),
+                                "text-sm text-muted-foreground space-y-1",
+                              children: [
+                                server.type === "stdio" &&
+                                  server.config.command &&
+                                  _jsxs("div", {
+                                    children: [
+                                      "Command:",
+                                      " ",
+                                      _jsx("code", {
+                                        className:
+                                          "bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs",
+                                        children: server.config.command,
+                                      }),
+                                    ],
+                                  }),
+                                (server.type === "sse" ||
+                                  server.type === "http") &&
+                                  server.config.url &&
+                                  _jsxs("div", {
+                                    children: [
+                                      "URL:",
+                                      " ",
+                                      _jsx("code", {
+                                        className:
+                                          "bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs",
+                                        children: server.config.url,
+                                      }),
+                                    ],
+                                  }),
+                                server.config.args &&
+                                  server.config.args.length > 0 &&
+                                  _jsxs("div", {
+                                    children: [
+                                      "Args:",
+                                      " ",
+                                      _jsx("code", {
+                                        className:
+                                          "bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs",
+                                        children: server.config.args.join(" "),
+                                      }),
+                                    ],
+                                  }),
+                                server.config.env &&
+                                  Object.keys(server.config.env).length > 0 &&
+                                  _jsxs("div", {
+                                    children: [
+                                      "Environment:",
+                                      " ",
+                                      _jsx("code", {
+                                        className:
+                                          "bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs",
+                                        children: Object.entries(
+                                          server.config.env
+                                        )
+                                          .map(([k, v]) => `${k}=${v}`)
+                                          .join(", "),
+                                      }),
+                                    ],
+                                  }),
+                                server.raw &&
+                                  _jsxs("details", {
+                                    className: "mt-2",
+                                    children: [
+                                      _jsx("summary", {
+                                        className:
+                                          "cursor-pointer text-xs text-muted-foreground hover:text-foreground",
+                                        children: "View full config",
+                                      }),
+                                      _jsx("pre", {
+                                        className:
+                                          "mt-1 text-xs bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-x-auto",
+                                        children: JSON.stringify(
+                                          server.raw,
+                                          null,
+                                          2
+                                        ),
+                                      }),
+                                    ],
+                                  }),
+                              ],
+                            }),
+                            mcpTestResults[server.id] &&
+                              _jsxs("div", {
+                                className: `mt-2 p-2 rounded text-xs ${
+                                  mcpTestResults[server.id].success
+                                    ? "bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200"
+                                    : "bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200"
+                                }`,
+                                children: [
+                                  _jsx("div", {
+                                    className: "font-medium",
+                                    children: mcpTestResults[server.id].message,
+                                  }),
+                                  mcpTestResults[server.id].details &&
+                                    mcpTestResults[server.id].details.length >
+                                      0 &&
+                                    _jsx("ul", {
+                                      className: "mt-1 space-y-0.5",
+                                      children: mcpTestResults[
+                                        server.id
+                                      ].details.map((detail, i) =>
+                                        _jsxs(
+                                          "li",
+                                          { children: ["\u2022 ", detail] },
+                                          i
+                                        )
+                                      ),
+                                    }),
+                                ],
+                              }),
+                            mcpServerTools[server.id] &&
+                              _jsxs("div", {
+                                className:
+                                  "mt-2 p-2 rounded text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 border border-blue-200 dark:border-blue-800",
+                                children: [
+                                  _jsx("div", {
+                                    className: "font-medium mb-2",
+                                    children: "Available Tools & Resources",
+                                  }),
+                                  mcpServerTools[server.id].tools &&
+                                    mcpServerTools[server.id].tools.length >
+                                      0 &&
+                                    _jsxs("div", {
+                                      className: "mb-2",
+                                      children: [
+                                        _jsxs("div", {
+                                          className: "font-medium text-xs mb-1",
+                                          children: [
+                                            "Tools (",
+                                            mcpServerTools[server.id].tools
+                                              .length,
+                                            "):",
+                                          ],
+                                        }),
+                                        _jsx("ul", {
+                                          className: "space-y-0.5",
+                                          children: mcpServerTools[
+                                            server.id
+                                          ].tools.map((tool, i) =>
+                                            _jsxs(
+                                              "li",
+                                              {
+                                                className:
+                                                  "flex items-start gap-1",
+                                                children: [
+                                                  _jsx("span", {
+                                                    className:
+                                                      "text-blue-400 mt-0.5",
+                                                    children: "\u2022",
+                                                  }),
+                                                  _jsxs("div", {
+                                                    children: [
+                                                      _jsx("code", {
+                                                        className:
+                                                          "bg-blue-100 dark:bg-blue-800 px-1 rounded",
+                                                        children: tool.name,
+                                                      }),
+                                                      tool.description &&
+                                                        tool.description !==
+                                                          "No description provided" &&
+                                                        _jsxs("span", {
+                                                          className:
+                                                            "ml-1 text-xs opacity-75",
+                                                          children: [
+                                                            "- ",
+                                                            tool.description,
+                                                          ],
+                                                        }),
+                                                    ],
+                                                  }),
+                                                ],
+                                              },
+                                              i
+                                            )
+                                          ),
+                                        }),
+                                      ],
+                                    }),
+                                  mcpServerTools[server.id].resources &&
+                                    mcpServerTools[server.id].resources.length >
+                                      0 &&
+                                    _jsxs("div", {
+                                      className: "mb-2",
+                                      children: [
+                                        _jsxs("div", {
+                                          className: "font-medium text-xs mb-1",
+                                          children: [
+                                            "Resources (",
+                                            mcpServerTools[server.id].resources
+                                              .length,
+                                            "):",
+                                          ],
+                                        }),
+                                        _jsx("ul", {
+                                          className: "space-y-0.5",
+                                          children: mcpServerTools[
+                                            server.id
+                                          ].resources.map((resource, i) =>
+                                            _jsxs(
+                                              "li",
+                                              {
+                                                className:
+                                                  "flex items-start gap-1",
+                                                children: [
+                                                  _jsx("span", {
+                                                    className:
+                                                      "text-blue-400 mt-0.5",
+                                                    children: "\u2022",
+                                                  }),
+                                                  _jsxs("div", {
+                                                    children: [
+                                                      _jsx("code", {
+                                                        className:
+                                                          "bg-blue-100 dark:bg-blue-800 px-1 rounded",
+                                                        children: resource.name,
+                                                      }),
+                                                      resource.description &&
+                                                        resource.description !==
+                                                          "No description provided" &&
+                                                        _jsxs("span", {
+                                                          className:
+                                                            "ml-1 text-xs opacity-75",
+                                                          children: [
+                                                            "- ",
+                                                            resource.description,
+                                                          ],
+                                                        }),
+                                                    ],
+                                                  }),
+                                                ],
+                                              },
+                                              i
+                                            )
+                                          ),
+                                        }),
+                                      ],
+                                    }),
+                                  mcpServerTools[server.id].prompts &&
+                                    mcpServerTools[server.id].prompts.length >
+                                      0 &&
+                                    _jsxs("div", {
+                                      children: [
+                                        _jsxs("div", {
+                                          className: "font-medium text-xs mb-1",
+                                          children: [
+                                            "Prompts (",
+                                            mcpServerTools[server.id].prompts
+                                              .length,
+                                            "):",
+                                          ],
+                                        }),
+                                        _jsx("ul", {
+                                          className: "space-y-0.5",
+                                          children: mcpServerTools[
+                                            server.id
+                                          ].prompts.map((prompt, i) =>
+                                            _jsxs(
+                                              "li",
+                                              {
+                                                className:
+                                                  "flex items-start gap-1",
+                                                children: [
+                                                  _jsx("span", {
+                                                    className:
+                                                      "text-blue-400 mt-0.5",
+                                                    children: "\u2022",
+                                                  }),
+                                                  _jsxs("div", {
+                                                    children: [
+                                                      _jsx("code", {
+                                                        className:
+                                                          "bg-blue-100 dark:bg-blue-800 px-1 rounded",
+                                                        children: prompt.name,
+                                                      }),
+                                                      prompt.description &&
+                                                        prompt.description !==
+                                                          "No description provided" &&
+                                                        _jsxs("span", {
+                                                          className:
+                                                            "ml-1 text-xs opacity-75",
+                                                          children: [
+                                                            "- ",
+                                                            prompt.description,
+                                                          ],
+                                                        }),
+                                                    ],
+                                                  }),
+                                                ],
+                                              },
+                                              i
+                                            )
+                                          ),
+                                        }),
+                                      ],
+                                    }),
+                                  (!mcpServerTools[server.id].tools ||
+                                    mcpServerTools[server.id].tools.length ===
+                                      0) &&
+                                    (!mcpServerTools[server.id].resources ||
+                                      mcpServerTools[server.id].resources
+                                        .length === 0) &&
+                                    (!mcpServerTools[server.id].prompts ||
+                                      mcpServerTools[server.id].prompts
+                                        .length === 0) &&
+                                    _jsx("div", {
+                                      className: "text-xs opacity-75",
+                                      children:
+                                        "No tools, resources, or prompts discovered",
+                                    }),
+                                ],
+                              }),
                           ],
                         }),
                         _jsxs("div", {
-                          className: "text-sm text-muted-foreground space-y-1",
+                          className: "flex items-center gap-2 ml-4",
                           children: [
-                            server.type === "stdio" && server.config.command &&
-                            (_jsxs("div", {
-                              children: [
-                                "Command:",
-                                " ",
-                                _jsx("code", {
-                                  className:
-                                    "bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs",
-                                  children: server.config.command,
-                                }),
-                              ],
-                            })),
-                            (server.type === "sse" || server.type === "http") &&
-                            server.config.url &&
-                            (_jsxs("div", {
-                              children: [
-                                "URL:",
-                                " ",
-                                _jsx("code", {
-                                  className:
-                                    "bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs",
-                                  children: server.config.url,
-                                }),
-                              ],
-                            })),
-                            server.config.args &&
-                            server.config.args.length > 0 &&
-                            (_jsxs("div", {
-                              children: [
-                                "Args:",
-                                " ",
-                                _jsx("code", {
-                                  className:
-                                    "bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs",
-                                  children: server.config.args.join(" "),
-                                }),
-                              ],
-                            })),
-                            server.config.env &&
-                            Object.keys(server.config.env).length > 0 &&
-                            (_jsxs("div", {
-                              children: [
-                                "Environment:",
-                                " ",
-                                _jsx("code", {
-                                  className:
-                                    "bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs",
-                                  children: Object.entries(server.config.env)
-                                    .map(([k, v]) => `${k}=${v}`)
-                                    .join(", "),
-                                }),
-                              ],
-                            })),
-                            server.raw && (_jsxs("details", {
-                              className: "mt-2",
-                              children: [
-                                _jsx("summary", {
-                                  className:
-                                    "cursor-pointer text-xs text-muted-foreground hover:text-foreground",
-                                  children: "View full config",
-                                }),
-                                _jsx("pre", {
-                                  className:
-                                    "mt-1 text-xs bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-x-auto",
-                                  children: JSON.stringify(server.raw, null, 2),
-                                }),
-                              ],
-                            })),
-                          ],
-                        }),
-                        mcpTestResults[server.id] &&
-                        (_jsxs("div", {
-                          className: `mt-2 p-2 rounded text-xs ${
-                            mcpTestResults[server.id].success
-                              ? "bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200"
-                              : "bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200"
-                          }`,
-                          children: [
-                            _jsx("div", {
-                              className: "font-medium",
-                              children: mcpTestResults[server.id].message,
+                            _jsx(Button, {
+                              onClick: () => openMcpForm(server),
+                              variant: "ghost",
+                              size: "sm",
+                              className:
+                                "text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300",
+                              title: "Edit server",
+                              children: _jsx(Edit3, { className: "w-4 h-4" }),
                             }),
-                            mcpTestResults[server.id].details &&
-                            mcpTestResults[server.id].details.length > 0 &&
-                            (_jsx("ul", {
-                              className: "mt-1 space-y-0.5",
-                              children: mcpTestResults[server.id].details.map((
-                                detail,
-                                i,
-                              ) =>
-                                _jsxs(
-                                  "li",
-                                  { children: ["\u2022 ", detail] },
-                                  i,
-                                )
-                              ),
-                            })),
-                          ],
-                        })),
-                        mcpServerTools[server.id] && (_jsxs("div", {
-                          className:
-                            "mt-2 p-2 rounded text-xs bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 border border-blue-200 dark:border-blue-800",
-                          children: [
-                            _jsx("div", {
-                              className: "font-medium mb-2",
-                              children: "Available Tools & Resources",
+                            _jsx(Button, {
+                              onClick: () =>
+                                handleMcpDelete(server.id, server.scope),
+                              variant: "ghost",
+                              size: "sm",
+                              className:
+                                "text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300",
+                              title: "Delete server",
+                              children: _jsx(Trash2, { className: "w-4 h-4" }),
                             }),
-                            mcpServerTools[server.id].tools &&
-                            mcpServerTools[server.id].tools.length > 0 &&
-                            (_jsxs("div", {
-                              className: "mb-2",
-                              children: [
-                                _jsxs("div", {
-                                  className: "font-medium text-xs mb-1",
-                                  children: [
-                                    "Tools (",
-                                    mcpServerTools[server.id].tools.length,
-                                    "):",
-                                  ],
-                                }),
-                                _jsx("ul", {
-                                  className: "space-y-0.5",
-                                  children: mcpServerTools[server.id].tools.map(
-                                    (tool, i) => (_jsxs("li", {
-                                      className: "flex items-start gap-1",
-                                      children: [
-                                        _jsx("span", {
-                                          className: "text-blue-400 mt-0.5",
-                                          children: "\u2022",
-                                        }),
-                                        _jsxs("div", {
-                                          children: [
-                                            _jsx("code", {
-                                              className:
-                                                "bg-blue-100 dark:bg-blue-800 px-1 rounded",
-                                              children: tool.name,
-                                            }),
-                                            tool.description &&
-                                            tool.description !==
-                                              "No description provided" &&
-                                            (_jsxs("span", {
-                                              className:
-                                                "ml-1 text-xs opacity-75",
-                                              children: [
-                                                "- ",
-                                                tool.description,
-                                              ],
-                                            })),
-                                          ],
-                                        }),
-                                      ],
-                                    }, i)),
-                                  ),
-                                }),
-                              ],
-                            })),
-                            mcpServerTools[server.id].resources &&
-                            mcpServerTools[server.id].resources.length > 0 &&
-                            (_jsxs("div", {
-                              className: "mb-2",
-                              children: [
-                                _jsxs("div", {
-                                  className: "font-medium text-xs mb-1",
-                                  children: [
-                                    "Resources (",
-                                    mcpServerTools[server.id].resources.length,
-                                    "):",
-                                  ],
-                                }),
-                                _jsx("ul", {
-                                  className: "space-y-0.5",
-                                  children: mcpServerTools[server.id].resources
-                                    .map((resource, i) => (_jsxs("li", {
-                                      className: "flex items-start gap-1",
-                                      children: [
-                                        _jsx("span", {
-                                          className: "text-blue-400 mt-0.5",
-                                          children: "\u2022",
-                                        }),
-                                        _jsxs("div", {
-                                          children: [
-                                            _jsx("code", {
-                                              className:
-                                                "bg-blue-100 dark:bg-blue-800 px-1 rounded",
-                                              children: resource.name,
-                                            }),
-                                            resource.description &&
-                                            resource.description !==
-                                              "No description provided" &&
-                                            (_jsxs("span", {
-                                              className:
-                                                "ml-1 text-xs opacity-75",
-                                              children: [
-                                                "- ",
-                                                resource.description,
-                                              ],
-                                            })),
-                                          ],
-                                        }),
-                                      ],
-                                    }, i))),
-                                }),
-                              ],
-                            })),
-                            mcpServerTools[server.id].prompts &&
-                            mcpServerTools[server.id].prompts.length > 0 &&
-                            (_jsxs("div", {
-                              children: [
-                                _jsxs("div", {
-                                  className: "font-medium text-xs mb-1",
-                                  children: [
-                                    "Prompts (",
-                                    mcpServerTools[server.id].prompts.length,
-                                    "):",
-                                  ],
-                                }),
-                                _jsx("ul", {
-                                  className: "space-y-0.5",
-                                  children: mcpServerTools[server.id].prompts
-                                    .map((prompt, i) => (_jsxs("li", {
-                                      className: "flex items-start gap-1",
-                                      children: [
-                                        _jsx("span", {
-                                          className: "text-blue-400 mt-0.5",
-                                          children: "\u2022",
-                                        }),
-                                        _jsxs("div", {
-                                          children: [
-                                            _jsx("code", {
-                                              className:
-                                                "bg-blue-100 dark:bg-blue-800 px-1 rounded",
-                                              children: prompt.name,
-                                            }),
-                                            prompt.description &&
-                                            prompt.description !==
-                                              "No description provided" &&
-                                            (_jsxs("span", {
-                                              className:
-                                                "ml-1 text-xs opacity-75",
-                                              children: [
-                                                "- ",
-                                                prompt.description,
-                                              ],
-                                            })),
-                                          ],
-                                        }),
-                                      ],
-                                    }, i))),
-                                }),
-                              ],
-                            })),
-                            (!mcpServerTools[server.id].tools ||
-                              mcpServerTools[server.id].tools.length === 0) &&
-                            (!mcpServerTools[server.id].resources ||
-                              mcpServerTools[server.id].resources.length ===
-                                0) &&
-                            (!mcpServerTools[server.id].prompts ||
-                              mcpServerTools[server.id].prompts.length === 0) &&
-                            (_jsx("div", {
-                              className: "text-xs opacity-75",
-                              children:
-                                "No tools, resources, or prompts discovered",
-                            })),
                           ],
-                        })),
-                      ],
-                    }),
-                    _jsxs("div", {
-                      className: "flex items-center gap-2 ml-4",
-                      children: [
-                        _jsx(Button, {
-                          onClick: () => openMcpForm(server),
-                          variant: "ghost",
-                          size: "sm",
-                          className:
-                            "text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300",
-                          title: "Edit server",
-                          children: _jsx(Edit3, { className: "w-4 h-4" }),
-                        }),
-                        _jsx(Button, {
-                          onClick: () =>
-                            handleMcpDelete(server.id, server.scope),
-                          variant: "ghost",
-                          size: "sm",
-                          className:
-                            "text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300",
-                          title: "Delete server",
-                          children: _jsx(Trash2, { className: "w-4 h-4" }),
                         }),
                       ],
                     }),
-                  ],
-                }),
-              }, server.id))),
+                  },
+                  server.id
+                )
+              ),
               mcpServers.length === 0 &&
-              (_jsx("div", {
-                className: "text-center py-8 text-gray-500 dark:text-gray-400",
-                children: "No MCP servers configured",
-              })),
+                _jsx("div", {
+                  className:
+                    "text-center py-8 text-gray-500 dark:text-gray-400",
+                  children: "No MCP servers configured",
+                }),
             ],
           }),
         ],
       }),
-      showMcpForm && (_jsx("div", {
-        className:
-          "fixed inset-0 bg-black/50 flex items-center justify-center z-[110] p-4",
-        children: _jsxs("div", {
+      showMcpForm &&
+        _jsx("div", {
           className:
-            "bg-background border border-border rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto",
-          children: [
-            _jsxs("div", {
-              className:
-                "flex items-center justify-between p-4 border-b border-border",
-              children: [
-                _jsx("h3", {
-                  className: "text-lg font-medium text-foreground",
-                  children: editingMcpServer
-                    ? "Edit MCP Server"
-                    : "Add MCP Server",
-                }),
-                _jsx(Button, {
-                  variant: "ghost",
-                  size: "sm",
-                  onClick: resetMcpForm,
-                  children: _jsx(X, { className: "w-4 h-4" }),
-                }),
-              ],
-            }),
-            _jsxs("form", {
-              onSubmit: handleMcpSubmit,
-              className: "p-4 space-y-4",
-              children: [
-                !editingMcpServer &&
-                (_jsxs("div", {
-                  className: "flex gap-2 mb-4",
-                  children: [
-                    _jsx("button", {
-                      type: "button",
-                      onClick: () =>
-                        setMcpFormData((prev) => ({
-                          ...prev,
-                          importMode: "form",
-                        })),
-                      className:
-                        `px-4 py-2 rounded-lg font-medium transition-colors ${
-                          mcpFormData.importMode === "form"
-                            ? "bg-blue-600 text-white"
-                            : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-                        }`,
-                      children: "Form Input",
-                    }),
-                    _jsx("button", {
-                      type: "button",
-                      onClick: () =>
-                        setMcpFormData((prev) => ({
-                          ...prev,
-                          importMode: "json",
-                        })),
-                      className:
-                        `px-4 py-2 rounded-lg font-medium transition-colors ${
-                          mcpFormData.importMode === "json"
-                            ? "bg-blue-600 text-white"
-                            : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-                        }`,
-                      children: "JSON Import",
-                    }),
-                  ],
-                })),
-                mcpFormData.importMode === "form" && editingMcpServer &&
-                (_jsxs("div", {
-                  className:
-                    "bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-3",
-                  children: [
-                    _jsx("label", {
-                      className:
-                        "block text-sm font-medium text-foreground mb-2",
-                      children: "Scope",
-                    }),
+            "fixed inset-0 bg-black/50 flex items-center justify-center z-[110] p-4",
+          children: _jsxs("div", {
+            className:
+              "bg-background border border-border rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto",
+            children: [
+              _jsxs("div", {
+                className:
+                  "flex items-center justify-between p-4 border-b border-border",
+                children: [
+                  _jsx("h3", {
+                    className: "text-lg font-medium text-foreground",
+                    children: editingMcpServer
+                      ? "Edit MCP Server"
+                      : "Add MCP Server",
+                  }),
+                  _jsx(Button, {
+                    variant: "ghost",
+                    size: "sm",
+                    onClick: resetMcpForm,
+                    children: _jsx(X, { className: "w-4 h-4" }),
+                  }),
+                ],
+              }),
+              _jsxs("form", {
+                onSubmit: handleMcpSubmit,
+                className: "p-4 space-y-4",
+                children: [
+                  !editingMcpServer &&
                     _jsxs("div", {
-                      className: "flex items-center gap-2",
+                      className: "flex gap-2 mb-4",
                       children: [
-                        mcpFormData.scope === "user"
-                          ? _jsx(Globe, { className: "w-4 h-4" })
-                          : _jsx(FolderOpen, { className: "w-4 h-4" }),
-                        _jsx("span", {
-                          className: "text-sm",
-                          children: mcpFormData.scope === "user"
-                            ? "User (Global)"
-                            : "Project (Local)",
+                        _jsx("button", {
+                          type: "button",
+                          onClick: () =>
+                            setMcpFormData((prev) => ({
+                              ...prev,
+                              importMode: "form",
+                            })),
+                          className: `px-4 py-2 rounded-lg font-medium transition-colors ${
+                            mcpFormData.importMode === "form"
+                              ? "bg-blue-600 text-white"
+                              : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                          }`,
+                          children: "Form Input",
                         }),
-                        mcpFormData.scope === "local" &&
-                        mcpFormData.projectPath &&
-                        (_jsxs("span", {
-                          className: "text-xs text-muted-foreground",
-                          children: ["- ", mcpFormData.projectPath],
-                        })),
+                        _jsx("button", {
+                          type: "button",
+                          onClick: () =>
+                            setMcpFormData((prev) => ({
+                              ...prev,
+                              importMode: "json",
+                            })),
+                          className: `px-4 py-2 rounded-lg font-medium transition-colors ${
+                            mcpFormData.importMode === "json"
+                              ? "bg-blue-600 text-white"
+                              : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                          }`,
+                          children: "JSON Import",
+                        }),
                       ],
                     }),
-                    _jsx("p", {
-                      className: "text-xs text-muted-foreground mt-2",
-                      children:
-                        "Scope cannot be changed when editing an existing server",
-                    }),
-                  ],
-                })),
-                mcpFormData.importMode === "form" && !editingMcpServer &&
-                (_jsxs("div", {
-                  className: "space-y-4",
-                  children: [
+                  mcpFormData.importMode === "form" &&
+                    editingMcpServer &&
                     _jsxs("div", {
+                      className:
+                        "bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-3",
                       children: [
                         _jsx("label", {
                           className:
                             "block text-sm font-medium text-foreground mb-2",
-                          children: "Scope *",
+                          children: "Scope",
                         }),
                         _jsxs("div", {
-                          className: "flex gap-2",
+                          className: "flex items-center gap-2",
                           children: [
-                            _jsx("button", {
-                              type: "button",
-                              onClick: () =>
-                                setMcpFormData((prev) => ({
-                                  ...prev,
-                                  scope: "user",
-                                  projectPath: "",
-                                })),
-                              className:
-                                `flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${
-                                  mcpFormData.scope === "user"
-                                    ? "bg-blue-600 text-white"
-                                    : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-                                }`,
-                              children: _jsxs("div", {
-                                className:
-                                  "flex items-center justify-center gap-2",
-                                children: [
-                                  _jsx(Globe, { className: "w-4 h-4" }),
-                                  _jsx("span", { children: "User (Global)" }),
-                                ],
-                              }),
+                            mcpFormData.scope === "user"
+                              ? _jsx(Globe, { className: "w-4 h-4" })
+                              : _jsx(FolderOpen, { className: "w-4 h-4" }),
+                            _jsx("span", {
+                              className: "text-sm",
+                              children:
+                                mcpFormData.scope === "user"
+                                  ? "User (Global)"
+                                  : "Project (Local)",
                             }),
-                            _jsx("button", {
-                              type: "button",
-                              onClick: () =>
-                                setMcpFormData((prev) => ({
-                                  ...prev,
-                                  scope: "local",
-                                })),
-                              className:
-                                `flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${
-                                  mcpFormData.scope === "local"
-                                    ? "bg-blue-600 text-white"
-                                    : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-                                }`,
-                              children: _jsxs("div", {
-                                className:
-                                  "flex items-center justify-center gap-2",
-                                children: [
-                                  _jsx(FolderOpen, { className: "w-4 h-4" }),
-                                  _jsx("span", { children: "Project (Local)" }),
-                                ],
+                            mcpFormData.scope === "local" &&
+                              mcpFormData.projectPath &&
+                              _jsxs("span", {
+                                className: "text-xs text-muted-foreground",
+                                children: ["- ", mcpFormData.projectPath],
                               }),
-                            }),
                           ],
                         }),
                         _jsx("p", {
                           className: "text-xs text-muted-foreground mt-2",
-                          children: mcpFormData.scope === "user"
-                            ? "User scope: Available across all projects on your machine"
-                            : "Local scope: Only available in the selected project",
+                          children:
+                            "Scope cannot be changed when editing an existing server",
                         }),
                       ],
                     }),
-                    mcpFormData.scope === "local" && !editingMcpServer &&
-                    (_jsxs("div", {
-                      children: [
-                        _jsx("label", {
-                          className:
-                            "block text-sm font-medium text-foreground mb-2",
-                          children: "Project *",
-                        }),
-                        _jsxs("select", {
-                          value: mcpFormData.projectPath,
-                          onChange: (e) =>
-                            setMcpFormData((prev) => ({
-                              ...prev,
-                              projectPath: e.target.value,
-                            })),
-                          className:
-                            "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500",
-                          required: mcpFormData.scope === "local",
-                          children: [
-                            _jsx("option", {
-                              value: "",
-                              children: "Select a project...",
-                            }),
-                            projects.map((
-                              project,
-                            ) => (_jsx("option", {
-                              value: project.path || project.fullPath,
-                              children: project.displayName || project.name,
-                            }, project.name))),
-                          ],
-                        }),
-                        mcpFormData.projectPath &&
-                        (_jsxs("p", {
-                          className: "text-xs text-muted-foreground mt-1",
-                          children: ["Path: ", mcpFormData.projectPath],
-                        })),
-                      ],
-                    })),
-                  ],
-                })),
-                _jsxs("div", {
-                  className: "grid grid-cols-1 md:grid-cols-2 gap-4",
-                  children: [
+                  mcpFormData.importMode === "form" &&
+                    !editingMcpServer &&
                     _jsxs("div", {
-                      className: mcpFormData.importMode === "json"
-                        ? "md:col-span-2"
-                        : "",
+                      className: "space-y-4",
                       children: [
-                        _jsx("label", {
-                          className:
-                            "block text-sm font-medium text-foreground mb-2",
-                          children: "Server Name *",
-                        }),
-                        _jsx(Input, {
-                          value: mcpFormData.name,
-                          onChange: (e) => {
-                            setMcpFormData((prev) => ({
-                              ...prev,
-                              name: e.target.value,
-                            }));
-                          },
-                          placeholder: "my-server",
-                          required: true,
-                        }),
-                      ],
-                    }),
-                    mcpFormData.importMode === "form" && (_jsxs("div", {
-                      children: [
-                        _jsx("label", {
-                          className:
-                            "block text-sm font-medium text-foreground mb-2",
-                          children: "Transport Type *",
-                        }),
-                        _jsxs("select", {
-                          value: mcpFormData.type,
-                          onChange: (e) => {
-                            setMcpFormData((prev) => ({
-                              ...prev,
-                              type: e.target.value,
-                            }));
-                          },
-                          className:
-                            "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500",
+                        _jsxs("div", {
                           children: [
-                            _jsx("option", {
-                              value: "stdio",
-                              children: "stdio",
+                            _jsx("label", {
+                              className:
+                                "block text-sm font-medium text-foreground mb-2",
+                              children: "Scope *",
                             }),
-                            _jsx("option", { value: "sse", children: "SSE" }),
-                            _jsx("option", { value: "http", children: "HTTP" }),
+                            _jsxs("div", {
+                              className: "flex gap-2",
+                              children: [
+                                _jsx("button", {
+                                  type: "button",
+                                  onClick: () =>
+                                    setMcpFormData((prev) => ({
+                                      ...prev,
+                                      scope: "user",
+                                      projectPath: "",
+                                    })),
+                                  className: `flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${
+                                    mcpFormData.scope === "user"
+                                      ? "bg-blue-600 text-white"
+                                      : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                                  }`,
+                                  children: _jsxs("div", {
+                                    className:
+                                      "flex items-center justify-center gap-2",
+                                    children: [
+                                      _jsx(Globe, { className: "w-4 h-4" }),
+                                      _jsx("span", {
+                                        children: "User (Global)",
+                                      }),
+                                    ],
+                                  }),
+                                }),
+                                _jsx("button", {
+                                  type: "button",
+                                  onClick: () =>
+                                    setMcpFormData((prev) => ({
+                                      ...prev,
+                                      scope: "local",
+                                    })),
+                                  className: `flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${
+                                    mcpFormData.scope === "local"
+                                      ? "bg-blue-600 text-white"
+                                      : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
+                                  }`,
+                                  children: _jsxs("div", {
+                                    className:
+                                      "flex items-center justify-center gap-2",
+                                    children: [
+                                      _jsx(FolderOpen, {
+                                        className: "w-4 h-4",
+                                      }),
+                                      _jsx("span", {
+                                        children: "Project (Local)",
+                                      }),
+                                    ],
+                                  }),
+                                }),
+                              ],
+                            }),
+                            _jsx("p", {
+                              className: "text-xs text-muted-foreground mt-2",
+                              children:
+                                mcpFormData.scope === "user"
+                                  ? "User scope: Available across all projects on your machine"
+                                  : "Local scope: Only available in the selected project",
+                            }),
                           ],
                         }),
-                      ],
-                    })),
-                  ],
-                }),
-                editingMcpServer &&
-                mcpFormData.raw &&
-                mcpFormData.importMode === "form" && (_jsxs("div", {
-                  className:
-                    "bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4",
-                  children: [
-                    _jsxs("h4", {
-                      className: "text-sm font-medium text-foreground mb-2",
-                      children: [
-                        "Configuration Details (from",
-                        " ",
-                        editingMcpServer.scope === "global"
-                          ? "~/.claude.json"
-                          : "project config",
-                        ")",
+                        mcpFormData.scope === "local" &&
+                          !editingMcpServer &&
+                          _jsxs("div", {
+                            children: [
+                              _jsx("label", {
+                                className:
+                                  "block text-sm font-medium text-foreground mb-2",
+                                children: "Project *",
+                              }),
+                              _jsxs("select", {
+                                value: mcpFormData.projectPath,
+                                onChange: (e) =>
+                                  setMcpFormData((prev) => ({
+                                    ...prev,
+                                    projectPath: e.target.value,
+                                  })),
+                                className:
+                                  "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500",
+                                required: mcpFormData.scope === "local",
+                                children: [
+                                  _jsx("option", {
+                                    value: "",
+                                    children: "Select a project...",
+                                  }),
+                                  projects.map((project) =>
+                                    _jsx(
+                                      "option",
+                                      {
+                                        value: project.path || project.fullPath,
+                                        children:
+                                          project.displayName || project.name,
+                                      },
+                                      project.name
+                                    )
+                                  ),
+                                ],
+                              }),
+                              mcpFormData.projectPath &&
+                                _jsxs("p", {
+                                  className:
+                                    "text-xs text-muted-foreground mt-1",
+                                  children: ["Path: ", mcpFormData.projectPath],
+                                }),
+                            ],
+                          }),
                       ],
                     }),
-                    _jsx("pre", {
-                      className:
-                        "text-xs bg-gray-100 dark:bg-gray-800 p-3 rounded overflow-x-auto",
-                      children: JSON.stringify(mcpFormData.raw, null, 2),
-                    }),
-                  ],
-                })),
-                mcpFormData.importMode === "json" && (_jsx("div", {
-                  className: "space-y-4",
-                  children: _jsxs("div", {
+                  _jsxs("div", {
+                    className: "grid grid-cols-1 md:grid-cols-2 gap-4",
                     children: [
-                      _jsx("label", {
+                      _jsxs("div", {
                         className:
-                          "block text-sm font-medium text-foreground mb-2",
-                        children: "JSON Configuration *",
-                      }),
-                      _jsx("textarea", {
-                        value: mcpFormData.jsonInput,
-                        onChange: (e) => {
-                          setMcpFormData((prev) => ({
-                            ...prev,
-                            jsonInput: e.target.value,
-                          }));
-                          // Validate JSON as user types
-                          try {
-                            if (e.target.value.trim()) {
-                              const parsed = JSON.parse(e.target.value);
-                              // Basic validation
-                              if (!parsed.type) {
-                                setJsonValidationError(
-                                  "Missing required field: type",
-                                );
-                              } else if (
-                                parsed.type === "stdio" &&
-                                !parsed.command
-                              ) {
-                                setJsonValidationError(
-                                  "stdio type requires a command field",
-                                );
-                              } else if (
-                                (parsed.type === "http" ||
-                                  parsed.type === "sse") &&
-                                !parsed.url
-                              ) {
-                                setJsonValidationError(
-                                  `${parsed.type} type requires a url field`,
-                                );
-                              } else {
-                                setJsonValidationError("");
-                              }
-                            }
-                          } catch (err) {
-                            if (e.target.value.trim()) {
-                              setJsonValidationError("Invalid JSON format");
-                            } else {
-                              setJsonValidationError("");
-                            }
-                          }
-                        },
-                        className: `w-full px-3 py-2 border ${
-                          jsonValidationError
-                            ? "border-red-500"
-                            : "border-gray-300 dark:border-gray-600"
-                        } bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500 font-mono text-sm`,
-                        rows: 8,
-                        placeholder:
-                          '{\n  "type": "stdio",\n  "command": "/path/to/server",\n  "args": ["--api-key", "abc123"],\n  "env": {\n    "CACHE_DIR": "/tmp"\n  }\n}',
-                        required: true,
-                      }),
-                      jsonValidationError &&
-                      (_jsx("p", {
-                        className: "text-xs text-red-500 mt-1",
-                        children: jsonValidationError,
-                      })),
-                      _jsxs("p", {
-                        className: "text-xs text-muted-foreground mt-2",
+                          mcpFormData.importMode === "json"
+                            ? "md:col-span-2"
+                            : "",
                         children: [
-                          "Paste your MCP server configuration in JSON format. Example formats:",
-                          _jsx("br", {}),
-                          "\u2022 stdio:",
-                          " ",
-                          `{"type":"stdio","command":"npx","args":["@upstash/context7-mcp"]}`,
-                          _jsx("br", {}),
-                          "\u2022 http/sse:",
-                          " ",
-                          `{"type":"http","url":"https://api.example.com/mcp"}`,
+                          _jsx("label", {
+                            className:
+                              "block text-sm font-medium text-foreground mb-2",
+                            children: "Server Name *",
+                          }),
+                          _jsx(Input, {
+                            value: mcpFormData.name,
+                            onChange: (e) => {
+                              setMcpFormData((prev) => ({
+                                ...prev,
+                                name: e.target.value,
+                              }));
+                            },
+                            placeholder: "my-server",
+                            required: true,
+                          }),
                         ],
                       }),
+                      mcpFormData.importMode === "form" &&
+                        _jsxs("div", {
+                          children: [
+                            _jsx("label", {
+                              className:
+                                "block text-sm font-medium text-foreground mb-2",
+                              children: "Transport Type *",
+                            }),
+                            _jsxs("select", {
+                              value: mcpFormData.type,
+                              onChange: (e) => {
+                                setMcpFormData((prev) => ({
+                                  ...prev,
+                                  type: e.target.value,
+                                }));
+                              },
+                              className:
+                                "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500",
+                              children: [
+                                _jsx("option", {
+                                  value: "stdio",
+                                  children: "stdio",
+                                }),
+                                _jsx("option", {
+                                  value: "sse",
+                                  children: "SSE",
+                                }),
+                                _jsx("option", {
+                                  value: "http",
+                                  children: "HTTP",
+                                }),
+                              ],
+                            }),
+                          ],
+                        }),
                     ],
                   }),
-                })),
-                mcpFormData.importMode === "form" &&
-                mcpFormData.type === "stdio" && (_jsxs("div", {
-                  className: "space-y-4",
-                  children: [
+                  editingMcpServer &&
+                    mcpFormData.raw &&
+                    mcpFormData.importMode === "form" &&
+                    _jsxs("div", {
+                      className:
+                        "bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4",
+                      children: [
+                        _jsxs("h4", {
+                          className: "text-sm font-medium text-foreground mb-2",
+                          children: [
+                            "Configuration Details (from",
+                            " ",
+                            editingMcpServer.scope === "global"
+                              ? "~/.gemini.json"
+                              : "project config",
+                            ")",
+                          ],
+                        }),
+                        _jsx("pre", {
+                          className:
+                            "text-xs bg-gray-100 dark:bg-gray-800 p-3 rounded overflow-x-auto",
+                          children: JSON.stringify(mcpFormData.raw, null, 2),
+                        }),
+                      ],
+                    }),
+                  mcpFormData.importMode === "json" &&
+                    _jsx("div", {
+                      className: "space-y-4",
+                      children: _jsxs("div", {
+                        children: [
+                          _jsx("label", {
+                            className:
+                              "block text-sm font-medium text-foreground mb-2",
+                            children: "JSON Configuration *",
+                          }),
+                          _jsx("textarea", {
+                            value: mcpFormData.jsonInput,
+                            onChange: (e) => {
+                              setMcpFormData((prev) => ({
+                                ...prev,
+                                jsonInput: e.target.value,
+                              }));
+                              // Validate JSON as user types
+                              try {
+                                if (e.target.value.trim()) {
+                                  const parsed = JSON.parse(e.target.value);
+                                  // Basic validation
+                                  if (!parsed.type) {
+                                    setJsonValidationError(
+                                      "Missing required field: type"
+                                    );
+                                  } else if (
+                                    parsed.type === "stdio" &&
+                                    !parsed.command
+                                  ) {
+                                    setJsonValidationError(
+                                      "stdio type requires a command field"
+                                    );
+                                  } else if (
+                                    (parsed.type === "http" ||
+                                      parsed.type === "sse") &&
+                                    !parsed.url
+                                  ) {
+                                    setJsonValidationError(
+                                      `${parsed.type} type requires a url field`
+                                    );
+                                  } else {
+                                    setJsonValidationError("");
+                                  }
+                                }
+                              } catch (err) {
+                                if (e.target.value.trim()) {
+                                  setJsonValidationError("Invalid JSON format");
+                                } else {
+                                  setJsonValidationError("");
+                                }
+                              }
+                            },
+                            className: `w-full px-3 py-2 border ${
+                              jsonValidationError
+                                ? "border-red-500"
+                                : "border-gray-300 dark:border-gray-600"
+                            } bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500 font-mono text-sm`,
+                            rows: 8,
+                            placeholder:
+                              '{\n  "type": "stdio",\n  "command": "/path/to/server",\n  "args": ["--api-key", "abc123"],\n  "env": {\n    "CACHE_DIR": "/tmp"\n  }\n}',
+                            required: true,
+                          }),
+                          jsonValidationError &&
+                            _jsx("p", {
+                              className: "text-xs text-red-500 mt-1",
+                              children: jsonValidationError,
+                            }),
+                          _jsxs("p", {
+                            className: "text-xs text-muted-foreground mt-2",
+                            children: [
+                              "Paste your MCP server configuration in JSON format. Example formats:",
+                              _jsx("br", {}),
+                              "\u2022 stdio:",
+                              " ",
+                              `{"type":"stdio","command":"npx","args":["@upstash/context7-mcp"]}`,
+                              _jsx("br", {}),
+                              "\u2022 http/sse:",
+                              " ",
+                              `{"type":"http","url":"https://api.example.com/mcp"}`,
+                            ],
+                          }),
+                        ],
+                      }),
+                    }),
+                  mcpFormData.importMode === "form" &&
+                    mcpFormData.type === "stdio" &&
+                    _jsxs("div", {
+                      className: "space-y-4",
+                      children: [
+                        _jsxs("div", {
+                          children: [
+                            _jsx("label", {
+                              className:
+                                "block text-sm font-medium text-foreground mb-2",
+                              children: "Command *",
+                            }),
+                            _jsx(Input, {
+                              value: mcpFormData.config.command,
+                              onChange: (e) =>
+                                updateMcpConfig("command", e.target.value),
+                              placeholder: "/path/to/mcp-server",
+                              required: true,
+                            }),
+                          ],
+                        }),
+                        _jsxs("div", {
+                          children: [
+                            _jsx("label", {
+                              className:
+                                "block text-sm font-medium text-foreground mb-2",
+                              children: "Arguments (one per line)",
+                            }),
+                            _jsx("textarea", {
+                              value: Array.isArray(mcpFormData.config.args)
+                                ? mcpFormData.config.args.join("\n")
+                                : "",
+                              onChange: (e) =>
+                                updateMcpConfig(
+                                  "args",
+                                  e.target.value
+                                    .split("\n")
+                                    .filter((arg) => arg.trim())
+                                ),
+                              className:
+                                "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500",
+                              rows: 3,
+                              placeholder: "--api-key\nabc123",
+                            }),
+                          ],
+                        }),
+                      ],
+                    }),
+                  mcpFormData.importMode === "form" &&
+                    (mcpFormData.type === "sse" ||
+                      mcpFormData.type === "http") &&
                     _jsxs("div", {
                       children: [
                         _jsx("label", {
                           className:
                             "block text-sm font-medium text-foreground mb-2",
-                          children: "Command *",
+                          children: "URL *",
                         }),
                         _jsx(Input, {
-                          value: mcpFormData.config.command,
+                          value: mcpFormData.config.url,
                           onChange: (e) =>
-                            updateMcpConfig("command", e.target.value),
-                          placeholder: "/path/to/mcp-server",
+                            updateMcpConfig("url", e.target.value),
+                          placeholder: "https://api.example.com/mcp",
+                          type: "url",
                           required: true,
                         }),
                       ],
                     }),
+                  mcpFormData.importMode === "form" &&
                     _jsxs("div", {
                       children: [
                         _jsx("label", {
                           className:
                             "block text-sm font-medium text-foreground mb-2",
-                          children: "Arguments (one per line)",
+                          children:
+                            "Environment Variables (KEY=value, one per line)",
                         }),
                         _jsx("textarea", {
-                          value: Array.isArray(mcpFormData.config.args)
-                            ? mcpFormData.config.args.join("\n")
-                            : "",
-                          onChange: (e) =>
-                            updateMcpConfig(
-                              "args",
-                              e.target.value
-                                .split("\n")
-                                .filter((arg) => arg.trim()),
-                            ),
+                          value: Object.entries(mcpFormData.config.env || {})
+                            .map(([k, v]) => `${k}=${v}`)
+                            .join("\n"),
+                          onChange: (e) => {
+                            const env = {};
+                            e.target.value.split("\n").forEach((line) => {
+                              const [key, ...valueParts] = line.split("=");
+                              if (key && key.trim()) {
+                                env[key.trim()] = valueParts.join("=").trim();
+                              }
+                            });
+                            updateMcpConfig("env", env);
+                          },
                           className:
                             "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500",
                           rows: 3,
-                          placeholder: "--api-key\nabc123",
+                          placeholder: "API_KEY=your-key\nDEBUG=true",
                         }),
                       ],
                     }),
-                  ],
-                })),
-                mcpFormData.importMode === "form" &&
-                (mcpFormData.type === "sse" || mcpFormData.type === "http") &&
-                (_jsxs("div", {
-                  children: [
-                    _jsx("label", {
-                      className:
-                        "block text-sm font-medium text-foreground mb-2",
-                      children: "URL *",
+                  mcpFormData.importMode === "form" &&
+                    (mcpFormData.type === "sse" ||
+                      mcpFormData.type === "http") &&
+                    _jsxs("div", {
+                      children: [
+                        _jsx("label", {
+                          className:
+                            "block text-sm font-medium text-foreground mb-2",
+                          children: "Headers (KEY=value, one per line)",
+                        }),
+                        _jsx("textarea", {
+                          value: Object.entries(
+                            mcpFormData.config.headers || {}
+                          )
+                            .map(([k, v]) => `${k}=${v}`)
+                            .join("\n"),
+                          onChange: (e) => {
+                            const headers = {};
+                            e.target.value.split("\n").forEach((line) => {
+                              const [key, ...valueParts] = line.split("=");
+                              if (key && key.trim()) {
+                                headers[key.trim()] = valueParts
+                                  .join("=")
+                                  .trim();
+                              }
+                            });
+                            updateMcpConfig("headers", headers);
+                          },
+                          className:
+                            "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500",
+                          rows: 3,
+                          placeholder:
+                            "Authorization=Bearer token\nX-API-Key=your-key",
+                        }),
+                      ],
                     }),
-                    _jsx(Input, {
-                      value: mcpFormData.config.url,
-                      onChange: (e) => updateMcpConfig("url", e.target.value),
-                      placeholder: "https://api.example.com/mcp",
-                      type: "url",
-                      required: true,
-                    }),
-                  ],
-                })),
-                mcpFormData.importMode === "form" && (_jsxs("div", {
-                  children: [
-                    _jsx("label", {
-                      className:
-                        "block text-sm font-medium text-foreground mb-2",
-                      children:
-                        "Environment Variables (KEY=value, one per line)",
-                    }),
-                    _jsx("textarea", {
-                      value: Object.entries(mcpFormData.config.env || {})
-                        .map(([k, v]) => `${k}=${v}`)
-                        .join("\n"),
-                      onChange: (e) => {
-                        const env = {};
-                        e.target.value.split("\n").forEach((line) => {
-                          const [key, ...valueParts] = line.split("=");
-                          if (key && key.trim()) {
-                            env[key.trim()] = valueParts.join("=").trim();
-                          }
-                        });
-                        updateMcpConfig("env", env);
-                      },
-                      className:
-                        "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500",
-                      rows: 3,
-                      placeholder: "API_KEY=your-key\nDEBUG=true",
-                    }),
-                  ],
-                })),
-                mcpFormData.importMode === "form" &&
-                (mcpFormData.type === "sse" || mcpFormData.type === "http") &&
-                (_jsxs("div", {
-                  children: [
-                    _jsx("label", {
-                      className:
-                        "block text-sm font-medium text-foreground mb-2",
-                      children: "Headers (KEY=value, one per line)",
-                    }),
-                    _jsx("textarea", {
-                      value: Object.entries(mcpFormData.config.headers || {})
-                        .map(([k, v]) => `${k}=${v}`)
-                        .join("\n"),
-                      onChange: (e) => {
-                        const headers = {};
-                        e.target.value.split("\n").forEach((line) => {
-                          const [key, ...valueParts] = line.split("=");
-                          if (key && key.trim()) {
-                            headers[key.trim()] = valueParts.join("=").trim();
-                          }
-                        });
-                        updateMcpConfig("headers", headers);
-                      },
-                      className:
-                        "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500",
-                      rows: 3,
-                      placeholder:
-                        "Authorization=Bearer token\nX-API-Key=your-key",
-                    }),
-                  ],
-                })),
-                _jsxs("div", {
-                  className: "flex justify-end gap-2 pt-4",
-                  children: [
-                    _jsx(Button, {
-                      type: "button",
-                      variant: "outline",
-                      onClick: resetMcpForm,
-                      children: "Cancel",
-                    }),
-                    _jsx(Button, {
-                      type: "submit",
-                      disabled: mcpLoading,
-                      className:
-                        "bg-purple-600 hover:bg-purple-700 disabled:opacity-50",
-                      children: mcpLoading
-                        ? "Saving..."
-                        : editingMcpServer
-                        ? "Update Server"
-                        : "Add Server",
-                    }),
-                  ],
-                }),
-              ],
-            }),
-          ],
+                  _jsxs("div", {
+                    className: "flex justify-end gap-2 pt-4",
+                    children: [
+                      _jsx(Button, {
+                        type: "button",
+                        variant: "outline",
+                        onClick: resetMcpForm,
+                        children: "Cancel",
+                      }),
+                      _jsx(Button, {
+                        type: "submit",
+                        disabled: mcpLoading,
+                        className:
+                          "bg-purple-600 hover:bg-purple-700 disabled:opacity-50",
+                        children: mcpLoading
+                          ? "Saving..."
+                          : editingMcpServer
+                          ? "Update Server"
+                          : "Add Server",
+                      }),
+                    ],
+                  }),
+                ],
+              }),
+            ],
+          }),
         }),
-      })),
     ],
-  }));
+  });
 }
 //# sourceMappingURL=mcp-server-management.js.map
