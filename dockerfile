@@ -76,8 +76,6 @@ run cnpm i -g --force npm cnpm yarn
 
 
 
-run sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
-
 # Install system dependencies required for runtime and native modules
 RUN apk add  nano sudo  --no-cache \
     python3 py3-pip\
@@ -124,12 +122,9 @@ RUN npm run build
 # Create default .env file for Docker deployment
 RUN echo "PORT=4008\nNODE_ENV=production\nDB_PATH=/app/data/auth.db\nHOME=/opt/docker" > .env
 env HOME=/opt/docker
-# Create non-root user for security
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S nodejs -u 1001
 
-# Set up directory permissions
-RUN chown -R nodejs:nodejs /app
+
+
 
 # Switch to non-root user
 USER root
