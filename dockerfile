@@ -38,8 +38,8 @@ run pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 run corepack enable
 
-# Install dependencies using yarn install --force for reproducible builds
-RUN yarn install --force --omit=dev --detial && npm cache clean --force
+# Install dependencies using corepack up --force for reproducible builds
+RUN corepack up 
 
 
 
@@ -99,7 +99,7 @@ run pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
 
 # Install production dependencies only
-RUN yarn install --force --detail --omit=dev && npm cache clean --force
+RUN corepack up 
 
 
 
@@ -110,7 +110,7 @@ COPY package*.json ./
 COPY .env.example ./
 
 
-RUN yarn install --force
+RUN corepack up 
 # Create directory for SQLite database
 RUN mkdir -p /app/data
 copy . .
