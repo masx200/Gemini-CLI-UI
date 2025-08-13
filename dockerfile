@@ -5,12 +5,10 @@ FROM docker.cnb.cool/masx200/docker_mirror/node:22-alpine-linux-amd64 AS base
 
 
 
-run yarn config set registry https://registry.npmmirror.com
-
 
 run npm install -g cnpm --registry=https://registry.npmmirror.com
 run npm config set registry https://registry.npmmirror.com
-run cnpm i -g --force npm cnpm yarn
+run cnpm i -g --force npm cnpm 
 
 
 run sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
@@ -46,7 +44,7 @@ RUN corepack up
 
 run npm install -g cnpm --registry=https://registry.npmmirror.com
 run npm config set registry https://registry.npmmirror.com
-run cnpm i -g --force npm cnpm yarn
+run cnpm i -g --force npm cnpm 
 
 
 
@@ -67,11 +65,10 @@ COPY . .
 
 
 
-run yarn config set registry https://registry.npmmirror.com
 
 run npm install -g cnpm --registry=https://registry.npmmirror.com
 run npm config set registry https://registry.npmmirror.com
-run cnpm i -g --force npm cnpm yarn
+run cnpm i -g --force npm cnpm 
 
 
 
@@ -114,6 +111,7 @@ RUN corepack up
 RUN mkdir -p /app/data
 copy . .
 # 构建后端
+run yarn install
 RUN npm run build
 
 # Create default .env file for Docker deployment
