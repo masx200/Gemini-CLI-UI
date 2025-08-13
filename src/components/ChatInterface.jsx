@@ -30,27 +30,27 @@ import GeminiLogo from "./GeminiLogo.jsx";
 import TodoList from "./TodoList";
 
 import { api } from "../utils/api";
-import { playNotificationSound } from "../utils/notificationSound";
+
 import GeminiStatus from "./GeminiStatus";
 import { MicButton } from "./MicButton.jsx";
 
 // Memoized message component to prevent unnecessary re-renders
 const MessageComponent = memo(
-  (
-    {
-      message,
-      index,
-      prevMessage,
-      createDiff,
-      onFileOpen,
-      onShowSettings,
-      autoExpandTools,
-      showRawParameters,
-    },
-  ) => {
-    const isGrouped = prevMessage && prevMessage.type === message.type &&
+  ({
+    message,
+    index,
+    prevMessage,
+    createDiff,
+    onFileOpen,
+    onShowSettings,
+    autoExpandTools,
+    showRawParameters,
+  }) => {
+    const isGrouped = prevMessage &&
+      prevMessage.type === message.type &&
       prevMessage.type === "assistant" &&
-      !prevMessage.isToolUse && !message.isToolUse;
+      !prevMessage.isToolUse &&
+      !message.isToolUse;
     const messageRef = React.useRef(null);
     const [isExpanded, setIsExpanded] = React.useState(false);
     React.useEffect(() => {
@@ -224,12 +224,14 @@ const MessageComponent = memo(
                           </button>
                         )}
                       </div>
-                      {message.toolInput && message.toolName === "Edit" &&
+                      {message.toolInput &&
+                        message.toolName === "Edit" &&
                         (() => {
                           try {
                             const input = JSON.parse(message.toolInput);
                             if (
-                              input.file_path && input.old_string &&
+                              input.file_path &&
+                              input.old_string &&
                               input.new_string
                             ) {
                               return (
@@ -324,7 +326,7 @@ const MessageComponent = memo(
                                           View raw parameters
                                         </summary>
                                         <pre className="mt-2 text-xs bg-blue-100 dark:bg-blue-800/30 p-2 rounded whitespace-pre-wrap break-words overflow-hidden text-blue-900 dark:text-blue-100">
-                                  {message.toolInput}
+                                      {message.toolInput}
                                         </pre>
                                       </details>
                                     )}
@@ -341,12 +343,13 @@ const MessageComponent = memo(
                                 View input parameters
                               </summary>
                               <pre className="mt-2 text-xs bg-blue-100 dark:bg-blue-800/30 p-2 rounded whitespace-pre-wrap break-words overflow-hidden text-blue-900 dark:text-blue-100">
-                        {message.toolInput}
+                            {message.toolInput}
                               </pre>
                             </details>
                           );
                         })()}
-                      {message.toolInput && message.toolName !== "Edit" &&
+                      {message.toolInput &&
+                        message.toolName !== "Edit" &&
                         (() => {
                           // Debug log to see what we're dealing with
                           // Debug - Tool display
@@ -422,33 +425,32 @@ const MessageComponent = memo(
                                           </span>
                                         </div>
                                         <div className="text-xs font-mono">
-                                          {createDiff("", input.content).map((
-                                            diffLine,
-                                            i,
-                                          ) => (
-                                            <div key={i} className="flex">
-                                              <span
-                                                className={`w-8 text-center border-r ${
-                                                  diffLine.type === "removed"
-                                                    ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800"
-                                                    : "bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border-green-200 dark:border-green-800"
-                                                }`}
-                                              >
-                                                {diffLine.type === "removed"
-                                                  ? "-"
-                                                  : "+"}
-                                              </span>
-                                              <span
-                                                className={`px-2 py-0.5 flex-1 whitespace-pre-wrap ${
-                                                  diffLine.type === "removed"
-                                                    ? "bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200"
-                                                    : "bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200"
-                                                }`}
-                                              >
-                                                {diffLine.content}
-                                              </span>
-                                            </div>
-                                          ))}
+                                          {createDiff("", input.content).map(
+                                            (diffLine, i) => (
+                                              <div key={i} className="flex">
+                                                <span
+                                                  className={`w-8 text-center border-r ${
+                                                    diffLine.type === "removed"
+                                                      ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800"
+                                                      : "bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border-green-200 dark:border-green-800"
+                                                  }`}
+                                                >
+                                                  {diffLine.type === "removed"
+                                                    ? "-"
+                                                    : "+"}
+                                                </span>
+                                                <span
+                                                  className={`px-2 py-0.5 flex-1 whitespace-pre-wrap ${
+                                                    diffLine.type === "removed"
+                                                      ? "bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200"
+                                                      : "bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200"
+                                                  }`}
+                                                >
+                                                  {diffLine.content}
+                                                </span>
+                                              </div>
+                                            ),
+                                          )}
                                         </div>
                                       </div>
                                       {showRawParameters && (
@@ -460,7 +462,7 @@ const MessageComponent = memo(
                                             View raw parameters
                                           </summary>
                                           <pre className="mt-2 text-xs bg-blue-100 dark:bg-blue-800/30 p-2 rounded whitespace-pre-wrap break-words overflow-hidden text-blue-900 dark:text-blue-100">
-                                    {message.toolInput}
+                                        {message.toolInput}
                                           </pre>
                                         </details>
                                       )}
@@ -510,7 +512,7 @@ const MessageComponent = memo(
                                             View raw parameters
                                           </summary>
                                           <pre className="mt-2 text-xs bg-blue-100 dark:bg-blue-800/30 p-2 rounded overflow-x-auto text-blue-900 dark:text-blue-100">
-                                    {message.toolInput}
+                                        {message.toolInput}
                                           </pre>
                                         </details>
                                       )}
@@ -583,7 +585,7 @@ const MessageComponent = memo(
                                           View raw parameters
                                         </summary>
                                         <pre className="mt-2 text-xs bg-blue-100 dark:bg-blue-800/30 p-2 rounded whitespace-pre-wrap break-words overflow-hidden text-blue-900 dark:text-blue-100">
-                                  {message.toolInput}
+                                      {message.toolInput}
                                         </pre>
                                       </details>
                                     )}
@@ -686,7 +688,7 @@ const MessageComponent = memo(
                                 View input parameters
                               </summary>
                               <pre className="mt-2 text-xs bg-blue-100 dark:bg-blue-800/30 p-2 rounded whitespace-pre-wrap break-words overflow-hidden text-blue-900 dark:text-blue-100">
-                        {message.toolInput}
+                            {message.toolInput}
                               </pre>
                             </details>
                           );
@@ -848,7 +850,8 @@ const MessageComponent = memo(
                                 const promptIndex = lines.findIndex((line) =>
                                   line.includes("Do you want to proceed?")
                                 );
-                                const beforePrompt = lines.slice(0, promptIndex)
+                                const beforePrompt = lines
+                                  .slice(0, promptIndex)
                                   .join("\n");
                                 const promptLines = lines.slice(promptIndex);
 
@@ -883,7 +886,9 @@ const MessageComponent = memo(
                                   <div className="space-y-3">
                                     {beforePrompt && (
                                       <div className="bg-gray-900 dark:bg-gray-950 text-gray-100 rounded-lg p-3 font-mono text-xs overflow-x-auto">
-                                        <pre className="whitespace-pre-wrap break-words">{beforePrompt}</pre>
+                                        <pre className="whitespace-pre-wrap break-words">
+                                      {beforePrompt}
+                                        </pre>
                                       </div>
                                     )}
                                     <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
@@ -1157,12 +1162,13 @@ const MessageComponent = memo(
                             Interactive Prompt
                           </h4>
                           {(() => {
-                            const lines = message.content.split("\n").filter(
-                              (line) => line.trim(),
-                            );
+                            const lines = message.content
+                              .split("\n")
+                              .filter((line) => line.trim());
                             const questionLine =
                               lines.find((line) => line.includes("?")) ||
-                              lines[0] || "";
+                              lines[0] ||
+                              "";
                             const options = [];
 
                             // Parse the menu options
@@ -1309,7 +1315,8 @@ const MessageComponent = memo(
                       {message.type === "error" && (
                         <button
                           onClick={() => {
-                            navigator.clipboard.writeText(message.content)
+                            navigator.clipboard
+                              .writeText(message.content)
                               .catch(() => {
                                 // Silently fail if clipboard access is denied
                               });
@@ -1331,15 +1338,13 @@ const MessageComponent = memo(
                           >
                             <ReactMarkdown
                               components={{
-                                code: (
-                                  {
-                                    node,
-                                    inline,
-                                    className,
-                                    children,
-                                    ...props
-                                  },
-                                ) => {
+                                code: ({
+                                  node,
+                                  inline,
+                                  className,
+                                  children,
+                                  ...props
+                                }) => {
                                   return inline
                                     ? (
                                       <strong
@@ -1376,9 +1381,7 @@ const MessageComponent = memo(
                                   </a>
                                 ),
                                 p: ({ children }) => (
-                                  <p className="mb-2 last:mb-0">
-                                    {children}
-                                  </p>
+                                  <p className="mb-2 last:mb-0">{children}</p>
                                 ),
                               }}
                             >
@@ -1709,7 +1712,8 @@ function ChatInterface({
 
         // Skip command messages and empty content
         if (
-          content && !content.startsWith("<command-name>") &&
+          content &&
+          !content.startsWith("<command-name>") &&
           !content.startsWith("[Request interrupted")
         ) {
           converted.push({
@@ -1740,9 +1744,9 @@ function ChatInterface({
                 toolName: part.name,
                 toolInput: JSON.stringify(part.input),
                 toolResult: toolResult
-                  ? (typeof toolResult.content === "string"
+                  ? typeof toolResult.content === "string"
                     ? toolResult.content
-                    : JSON.stringify(toolResult.content))
+                    : JSON.stringify(toolResult.content)
                   : null,
                 toolError: toolResult?.isError || false,
                 toolResultTimestamp: toolResult?.timestamp || new Date(),
@@ -1933,12 +1937,15 @@ function ChatInterface({
       if (e.key === "gemini-tools-settings") {
         checkSettings();
         // Add a system message to notify settings have been applied
-        setChatMessages((prev) => [...prev, {
-          id: `system-${Date.now()}`,
-          type: "system",
-          content: "⚙️ 設定が更新されました。",
-          timestamp: new Date().toISOString(),
-        }]);
+        setChatMessages((prev) => [
+          ...prev,
+          {
+            id: `system-${Date.now()}`,
+            type: "system",
+            content: "⚙️ 設定が更新されました。",
+            timestamp: new Date().toISOString(),
+          },
+        ]);
       }
     };
 
@@ -1955,273 +1962,306 @@ function ChatInterface({
   }, []);
 
   useEffect(() => {
-    // Handle WebSocket messages
-    if (messages.length > 0) {
-      const latestMessage = messages[messages.length - 1];
-      // console.log('Received WebSocket message:', latestMessage.type, latestMessage);
+    (async () => {
+      if (messages.length > 0) {
+        const latestMessage = messages[messages.length - 1];
+        // console.log('Received WebSocket message:', latestMessage.type, latestMessage);
 
-      switch (latestMessage.type) {
-        case "session-created":
-          // New session created by Gemini CLI - we receive the real session ID here
-          // Store it temporarily until conversation completes (prevents premature session association)
-          if (latestMessage.sessionId && !currentSessionId) {
-            sessionStorage.setItem("pendingSessionId", latestMessage.sessionId);
+        switch (latestMessage.type) {
+          case "session-created":
+            // New session created by Gemini CLI - we receive the real session ID here
+            // Store it temporarily until conversation completes (prevents premature session association)
+            if (latestMessage.sessionId && !currentSessionId) {
+              sessionStorage.setItem(
+                "pendingSessionId",
+                latestMessage.sessionId,
+              );
 
-            // Session Protection: Replace temporary "new-session-*" identifier with real session ID
-            // This maintains protection continuity - no gap between temp ID and real ID
-            // The temporary session is removed and real session is marked as active
-            if (onReplaceTemporarySession) {
-              onReplaceTemporarySession(latestMessage.sessionId);
-            }
-          }
-          break;
-
-        case "gemini-response":
-          const messageData = latestMessage.data.message || latestMessage.data;
-
-          // Handle Gemini CLI session duplication bug workaround:
-          // When resuming a session, Gemini CLI creates a new session instead of resuming.
-          // We detect this by checking for system/init messages with session_id that differs
-          // from our current session. When found, we need to switch the user to the new session.
-          if (
-            latestMessage.data.type === "system" &&
-            latestMessage.data.subtype === "init" &&
-            latestMessage.data.session_id &&
-            currentSessionId &&
-            latestMessage.data.session_id !== currentSessionId
-          ) {
-            // Debug - Gemini CLI session duplication detected
-
-            // Mark this as a system-initiated session change to preserve messages
-            setIsSystemSessionChange(true);
-
-            // Switch to the new session using React Router navigation
-            // This triggers the session loading logic in App.jsx without a page reload
-            if (onNavigateToSession) {
-              onNavigateToSession(latestMessage.data.session_id);
-            }
-            return; // Don't process the message further, let the navigation handle it
-          }
-
-          // Handle system/init for new sessions (when currentSessionId is null)
-          if (
-            latestMessage.data.type === "system" &&
-            latestMessage.data.subtype === "init" &&
-            latestMessage.data.session_id &&
-            !currentSessionId
-          ) {
-            // Debug - New session init detected
-
-            // Mark this as a system-initiated session change to preserve messages
-            setIsSystemSessionChange(true);
-
-            // Switch to the new session
-            if (onNavigateToSession) {
-              onNavigateToSession(latestMessage.data.session_id);
-            }
-            return; // Don't process the message further, let the navigation handle it
-          }
-
-          // For system/init messages that match current session, just ignore them
-          if (
-            latestMessage.data.type === "system" &&
-            latestMessage.data.subtype === "init" &&
-            latestMessage.data.session_id &&
-            currentSessionId &&
-            latestMessage.data.session_id === currentSessionId
-          ) {
-            // Debug - System init message for current session, ignoring
-            return; // Don't process the message further
-          }
-
-          // Handle different types of content in the response
-          if (Array.isArray(messageData.content)) {
-            for (const part of messageData.content) {
-              if (part.type === "tool_use") {
-                // Add tool use message
-                const toolInput = part.input
-                  ? JSON.stringify(part.input, null, 2)
-                  : "";
-                setChatMessages((prev) => [...prev, {
-                  type: "assistant",
-                  content: "",
-                  timestamp: new Date(),
-                  isToolUse: true,
-                  toolName: part.name,
-                  toolInput: toolInput,
-                  toolId: part.id,
-                  toolResult: null, // Will be updated when result comes in
-                }]);
-              } else if (part.type === "text" && part.text?.trim()) {
-                // Add regular text message
-                setChatMessages((prev) => [...prev, {
-                  type: "assistant",
-                  content: part.text,
-                  timestamp: new Date(),
-                }]);
+              // Session Protection: Replace temporary "new-session-*" identifier with real session ID
+              // This maintains protection continuity - no gap between temp ID and real ID
+              // The temporary session is removed and real session is marked as active
+              if (onReplaceTemporarySession) {
+                onReplaceTemporarySession(latestMessage.sessionId);
               }
             }
-          } else if (
-            typeof messageData.content === "string" &&
-            messageData.content.trim()
-          ) {
-            // Add regular text message
-            setChatMessages((prev) => [...prev, {
-              type: "assistant",
-              content: messageData.content,
-              timestamp: new Date(),
-            }]);
-          }
+            break;
 
-          // Handle tool results from user messages (these come separately)
-          if (
-            messageData.role === "user" && Array.isArray(messageData.content)
-          ) {
-            for (const part of messageData.content) {
-              if (part.type === "tool_result") {
-                // Find the corresponding tool use and update it with the result
-                setChatMessages((prev) =>
-                  prev.map((msg) => {
-                    if (msg.isToolUse && msg.toolId === part.tool_use_id) {
-                      return {
-                        ...msg,
-                        toolResult: {
-                          content: part.content,
-                          isError: part.is_error,
-                          timestamp: new Date(),
-                        },
-                      };
-                    }
-                    return msg;
-                  })
-                );
+          case "gemini-response":
+            const messageData = latestMessage.data.message ||
+              latestMessage.data;
+
+            // Handle Gemini CLI session duplication bug workaround:
+            // When resuming a session, Gemini CLI creates a new session instead of resuming.
+            // We detect this by checking for system/init messages with session_id that differs
+            // from our current session. When found, we need to switch the user to the new session.
+            if (
+              latestMessage.data.type === "system" &&
+              latestMessage.data.subtype === "init" &&
+              latestMessage.data.session_id &&
+              currentSessionId &&
+              latestMessage.data.session_id !== currentSessionId
+            ) {
+              // Debug - Gemini CLI session duplication detected
+
+              // Mark this as a system-initiated session change to preserve messages
+              setIsSystemSessionChange(true);
+
+              // Switch to the new session using React Router navigation
+              // This triggers the session loading logic in App.jsx without a page reload
+              if (onNavigateToSession) {
+                onNavigateToSession(latestMessage.data.session_id);
+              }
+              return; // Don't process the message further, let the navigation handle it
+            }
+
+            // Handle system/init for new sessions (when currentSessionId is null)
+            if (
+              latestMessage.data.type === "system" &&
+              latestMessage.data.subtype === "init" &&
+              latestMessage.data.session_id &&
+              !currentSessionId
+            ) {
+              // Debug - New session init detected
+
+              // Mark this as a system-initiated session change to preserve messages
+              setIsSystemSessionChange(true);
+
+              // Switch to the new session
+              if (onNavigateToSession) {
+                onNavigateToSession(latestMessage.data.session_id);
+              }
+              return; // Don't process the message further, let the navigation handle it
+            }
+
+            // For system/init messages that match current session, just ignore them
+            if (
+              latestMessage.data.type === "system" &&
+              latestMessage.data.subtype === "init" &&
+              latestMessage.data.session_id &&
+              currentSessionId &&
+              latestMessage.data.session_id === currentSessionId
+            ) {
+              // Debug - System init message for current session, ignoring
+              return; // Don't process the message further
+            }
+
+            // Handle different types of content in the response
+            if (Array.isArray(messageData.content)) {
+              for (const part of messageData.content) {
+                if (part.type === "tool_use") {
+                  // Add tool use message
+                  const toolInput = part.input
+                    ? JSON.stringify(part.input, null, 2)
+                    : "";
+                  setChatMessages((prev) => [
+                    ...prev,
+                    {
+                      type: "assistant",
+                      content: "",
+                      timestamp: new Date(),
+                      isToolUse: true,
+                      toolName: part.name,
+                      toolInput: toolInput,
+                      toolId: part.id,
+                      toolResult: null, // Will be updated when result comes in
+                    },
+                  ]);
+                } else if (part.type === "text" && part.text?.trim()) {
+                  // Add regular text message
+                  setChatMessages((prev) => [
+                    ...prev,
+                    {
+                      type: "assistant",
+                      content: part.text,
+                      timestamp: new Date(),
+                    },
+                  ]);
+                }
+              }
+            } else if (
+              typeof messageData.content === "string" &&
+              messageData.content.trim()
+            ) {
+              // Add regular text message
+              setChatMessages((prev) => [
+                ...prev,
+                {
+                  type: "assistant",
+                  content: messageData.content,
+                  timestamp: new Date(),
+                },
+              ]);
+            }
+
+            // Handle tool results from user messages (these come separately)
+            if (
+              messageData.role === "user" &&
+              Array.isArray(messageData.content)
+            ) {
+              for (const part of messageData.content) {
+                if (part.type === "tool_result") {
+                  // Find the corresponding tool use and update it with the result
+                  setChatMessages((prev) =>
+                    prev.map((msg) => {
+                      if (msg.isToolUse && msg.toolId === part.tool_use_id) {
+                        return {
+                          ...msg,
+                          toolResult: {
+                            content: part.content,
+                            isError: part.is_error,
+                            timestamp: new Date(),
+                          },
+                        };
+                      }
+                      return msg;
+                    })
+                  );
+                }
               }
             }
-          }
-          break;
+            break;
 
-        case "gemini-output":
-          setChatMessages((prev) => [...prev, {
-            type: "assistant",
-            content: latestMessage.data,
-            timestamp: new Date(),
-          }]);
-          break;
-        case "gemini-interactive-prompt":
-          // Handle interactive prompts from CLI
-          setChatMessages((prev) => [...prev, {
-            type: "assistant",
-            content: latestMessage.data,
-            timestamp: new Date(),
-            isInteractivePrompt: true,
-          }]);
-          break;
+          case "gemini-output":
+            setChatMessages((prev) => [
+              ...prev,
+              {
+                type: "assistant",
+                content: latestMessage.data,
+                timestamp: new Date(),
+              },
+            ]);
+            break;
+          case "gemini-interactive-prompt":
+            // Handle interactive prompts from CLI
+            setChatMessages((prev) => [
+              ...prev,
+              {
+                type: "assistant",
+                content: latestMessage.data,
+                timestamp: new Date(),
+                isInteractivePrompt: true,
+              },
+            ]);
+            break;
 
-        case "gemini-error":
-          // console.log('Gemini error, setting isLoading to false:', latestMessage.error);
-          setChatMessages((prev) => [...prev, {
-            type: "error",
-            content: `Error: ${latestMessage.error}`,
-            timestamp: new Date(),
-          }]);
-          setIsLoading(false);
-          setCanAbortSession(false);
-          setGeminiStatus(null);
-          break;
+          case "gemini-error":
+            // console.log('Gemini error, setting isLoading to false:', latestMessage.error);
+            setChatMessages((prev) => [
+              ...prev,
+              {
+                type: "error",
+                content: `Error: ${latestMessage.error}`,
+                timestamp: new Date(),
+              },
+            ]);
+            setIsLoading(false);
+            setCanAbortSession(false);
+            setGeminiStatus(null);
+            break;
 
-        case "gemini-complete":
-          // console.log('Gemini completed, setting isLoading to false');
-          setIsLoading(false);
-          setCanAbortSession(false);
-          setGeminiStatus(null);
+          case "gemini-complete":
+            // console.log('Gemini completed, setting isLoading to false');
+            setIsLoading(false);
+            setCanAbortSession(false);
+            setGeminiStatus(null);
 
-          // Play notification sound when response is complete
-          playNotificationSound();
+            const { playNotificationSound } = await import(
+              //@ts-ignore
+              "../utils/notificationSound.js"
+            );
+            // Play notification sound when response is complete
+            playNotificationSound();
 
-          // Session Protection: Mark session as inactive to re-enable automatic project updates
-          // Conversation is complete, safe to allow project updates again
-          // Use real session ID if available, otherwise use pending session ID
-          const activeSessionId = currentSessionId ||
-            sessionStorage.getItem("pendingSessionId");
-          if (activeSessionId && onSessionInactive) {
-            onSessionInactive(activeSessionId);
-          }
-
-          // If we have a pending session ID and the conversation completed successfully, use it
-          const pendingSessionId = sessionStorage.getItem("pendingSessionId");
-          if (
-            pendingSessionId && !currentSessionId &&
-            latestMessage.exitCode === 0
-          ) {
-            setCurrentSessionId(pendingSessionId);
-            sessionStorage.removeItem("pendingSessionId");
-          }
-
-          // Clear persisted chat messages after successful completion
-          if (selectedProject && latestMessage.exitCode === 0) {
-            localStorage.removeItem(`chat_messages_${selectedProject.name}`);
-          }
-          break;
-
-        case "session-aborted":
-          setIsLoading(false);
-          setCanAbortSession(false);
-          setGeminiStatus(null);
-
-          // Session Protection: Mark session as inactive when aborted
-          // User or system aborted the conversation, re-enable project updates
-          if (currentSessionId && onSessionInactive) {
-            onSessionInactive(currentSessionId);
-          }
-
-          setChatMessages((prev) => [...prev, {
-            type: "assistant",
-            content: "Session interrupted by user.",
-            timestamp: new Date(),
-          }]);
-          break;
-
-        case "gemini-status":
-          // Handle Gemini working status messages
-          // Debug - Received gemini-status message
-          const statusData = latestMessage.data;
-          if (statusData) {
-            // Parse the status message to extract relevant information
-            let statusInfo = {
-              text: "Working...",
-              tokens: 0,
-              can_interrupt: true,
-            };
-
-            // Check for different status message formats
-            if (statusData.message) {
-              statusInfo.text = statusData.message;
-            } else if (statusData.status) {
-              statusInfo.text = statusData.status;
-            } else if (typeof statusData === "string") {
-              statusInfo.text = statusData;
+            // Session Protection: Mark session as inactive to re-enable automatic project updates
+            // Conversation is complete, safe to allow project updates again
+            // Use real session ID if available, otherwise use pending session ID
+            const activeSessionId = currentSessionId ||
+              sessionStorage.getItem("pendingSessionId");
+            if (activeSessionId && onSessionInactive) {
+              onSessionInactive(activeSessionId);
             }
 
-            // Extract token count
-            if (statusData.tokens) {
-              statusInfo.tokens = statusData.tokens;
-            } else if (statusData.token_count) {
-              statusInfo.tokens = statusData.token_count;
+            // If we have a pending session ID and the conversation completed successfully, use it
+            const pendingSessionId = sessionStorage.getItem("pendingSessionId");
+            if (
+              pendingSessionId &&
+              !currentSessionId &&
+              latestMessage.exitCode === 0
+            ) {
+              setCurrentSessionId(pendingSessionId);
+              sessionStorage.removeItem("pendingSessionId");
             }
 
-            // Check if can interrupt
-            if (statusData.can_interrupt !== undefined) {
-              statusInfo.can_interrupt = statusData.can_interrupt;
+            // Clear persisted chat messages after successful completion
+            if (selectedProject && latestMessage.exitCode === 0) {
+              localStorage.removeItem(`chat_messages_${selectedProject.name}`);
+            }
+            break;
+
+          case "session-aborted":
+            setIsLoading(false);
+            setCanAbortSession(false);
+            setGeminiStatus(null);
+
+            // Session Protection: Mark session as inactive when aborted
+            // User or system aborted the conversation, re-enable project updates
+            if (currentSessionId && onSessionInactive) {
+              onSessionInactive(currentSessionId);
             }
 
-            // Debug - Setting claude status
-            setGeminiStatus(statusInfo);
-            setIsLoading(true);
-            setCanAbortSession(statusInfo.can_interrupt);
-          }
-          break;
+            setChatMessages((prev) => [
+              ...prev,
+              {
+                type: "assistant",
+                content: "Session interrupted by user.",
+                timestamp: new Date(),
+              },
+            ]);
+            break;
+
+          case "gemini-status":
+            // Handle Gemini working status messages
+            // Debug - Received gemini-status message
+            const statusData = latestMessage.data;
+            if (statusData) {
+              // Parse the status message to extract relevant information
+              let statusInfo = {
+                text: "Working...",
+                tokens: 0,
+                can_interrupt: true,
+              };
+
+              // Check for different status message formats
+              if (statusData.message) {
+                statusInfo.text = statusData.message;
+              } else if (statusData.status) {
+                statusInfo.text = statusData.status;
+              } else if (typeof statusData === "string") {
+                statusInfo.text = statusData;
+              }
+
+              // Extract token count
+              if (statusData.tokens) {
+                statusInfo.tokens = statusData.tokens;
+              } else if (statusData.token_count) {
+                statusInfo.tokens = statusData.token_count;
+              }
+
+              // Check if can interrupt
+              if (statusData.can_interrupt !== undefined) {
+                statusInfo.can_interrupt = statusData.can_interrupt;
+              }
+
+              // Debug - Setting claude status
+              setGeminiStatus(statusInfo);
+              setIsLoading(true);
+              setCanAbortSession(statusInfo.can_interrupt);
+            }
+            break;
+        }
       }
-    }
+    })().then(console.log, console.error);
+    // Handle WebSocket messages
   }, [messages]);
 
   // Load file list when project changes
@@ -2275,10 +2315,13 @@ function ChatInterface({
         setShowFileDropdown(true);
 
         // Filter files based on the text after @
-        const filtered = fileList.filter((file) =>
-          file.name.toLowerCase().includes(textAfterAt.toLowerCase()) ||
-          file.path.toLowerCase().includes(textAfterAt.toLowerCase())
-        ).slice(0, 10); // Limit to 10 results
+        const filtered = fileList
+          .filter(
+            (file) =>
+              file.name.toLowerCase().includes(textAfterAt.toLowerCase()) ||
+              file.path.toLowerCase().includes(textAfterAt.toLowerCase()),
+          )
+          .slice(0, 10); // Limit to 10 results
 
         setFilteredFiles(filtered);
         setSelectedFileIndex(-1);
@@ -2445,27 +2488,30 @@ function ChatInterface({
   }, []);
 
   // Handle clipboard paste for images
-  const handlePaste = useCallback(async (e) => {
-    const items = Array.from(e.clipboardData.items);
+  const handlePaste = useCallback(
+    async (e) => {
+      const items = Array.from(e.clipboardData.items);
 
-    for (const item of items) {
-      if (item.type.startsWith("image/")) {
-        const file = item.getAsFile();
-        if (file) {
-          handleImageFiles([file]);
+      for (const item of items) {
+        if (item.type.startsWith("image/")) {
+          const file = item.getAsFile();
+          if (file) {
+            handleImageFiles([file]);
+          }
         }
       }
-    }
 
-    // Fallback for some browsers/platforms
-    if (items.length === 0 && e.clipboardData.files.length > 0) {
-      const files = Array.from(e.clipboardData.files);
-      const imageFiles = files.filter((f) => f.type.startsWith("image/"));
-      if (imageFiles.length > 0) {
-        handleImageFiles(imageFiles);
+      // Fallback for some browsers/platforms
+      if (items.length === 0 && e.clipboardData.files.length > 0) {
+        const files = Array.from(e.clipboardData.files);
+        const imageFiles = files.filter((f) => f.type.startsWith("image/"));
+        if (imageFiles.length > 0) {
+          handleImageFiles(imageFiles);
+        }
       }
-    }
-  }, [handleImageFiles]);
+    },
+    [handleImageFiles],
+  );
 
   // Setup dropzone
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
@@ -2515,11 +2561,14 @@ function ChatInterface({
         uploadedImages = result.images;
       } catch (error) {
         // console.error('Image upload failed:', error);
-        setChatMessages((prev) => [...prev, {
-          type: "error",
-          content: `Failed to upload images: ${error.message}`,
-          timestamp: new Date(),
-        }]);
+        setChatMessages((prev) => [
+          ...prev,
+          {
+            type: "error",
+            content: `Failed to upload images: ${error.message}`,
+            timestamp: new Date(),
+          },
+        ]);
         return;
       }
     }
