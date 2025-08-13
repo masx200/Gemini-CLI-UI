@@ -133,3 +133,4 @@ projects_data/
 session_data/
 user_uploads/
 build/
+.yarn/

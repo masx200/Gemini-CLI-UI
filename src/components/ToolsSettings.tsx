@@ -482,9 +482,9 @@ function ToolsSettings({ isOpen, onClose, projects = [] }: {
                   <div className="flex flex-col sm:flex-row gap-2">
                     <Input
                       value={newAllowedTool}
-                      onChange={(e:any) => setNewAllowedTool(e.target.value)}
+                      onChange={(e: any) => setNewAllowedTool(e.target.value)}
                       placeholder='e.g., "Bash(git log:*)" or "Write"'
-                      onKeyPress={(e:any) => {
+                      onKeyPress={(e: any) => {
                         if (e.key === "Enter") {
                           addAllowedTool(newAllowedTool);
                         }
@@ -567,9 +567,10 @@ function ToolsSettings({ isOpen, onClose, projects = [] }: {
                   <div className="flex flex-col sm:flex-row gap-2">
                     <Input
                       value={newDisallowedTool}
-                      onChange={(e:any) => setNewDisallowedTool(e.target.value)}
+                      onChange={(e: any) =>
+                        setNewDisallowedTool(e.target.value)}
                       placeholder='e.g., "Bash(rm:*)" or "Write"'
-                      onKeyPress={(e:any) => {
+                      onKeyPress={(e: any) => {
                         if (e.key === "Enter") {
                           addDisallowedTool(newDisallowedTool);
                         }
@@ -657,12 +658,11 @@ function ToolsSettings({ isOpen, onClose, projects = [] }: {
             )}
 
             {activeTab === "mcp" && (
-              <McpServerManagement 
-              setSaveStatus={setSaveStatus}
-              
-              
-              
-              projects={projects}></McpServerManagement>
+              <McpServerManagement
+                setSaveStatus={setSaveStatus}
+                projects={projects}
+              >
+              </McpServerManagement>
             )}
           </div>
         </div>
