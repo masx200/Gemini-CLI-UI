@@ -36,7 +36,7 @@ COPY package.json package-lock.json ./
 run pip config set install.trusted-host 'https://pypi.tuna.tsinghua.edu.cn'
 run pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 
-
+run corepack enable
 
 # Install dependencies using yarn install --force for reproducible builds
 RUN yarn install --force --omit=dev --detial && npm cache clean --force
