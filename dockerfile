@@ -4,18 +4,6 @@ FROM docker.cnb.cool/masx200/docker_mirror/node:22-alpine-linux-amd64 AS base
 
 
 
-#https://unofficial-builds.nodejs.org/download/release/v22.18.0/node-v22.18.0-headers.tar.gz
-
-# 1) 把压缩包放进镜像
-COPY ./unofficial-builds.nodejs.org/node-v22.18.0-headers.tar.gz /tmp/node-v22.18.0.tar.gz
-
-# 2) 解压指定目录到 /usr/local/include/node
-RUN mkdir -p /usr/local/include \
-    && tar -xzf /tmp/node-v22.18.0.tar.gz \
-    -C /usr/local/include \
-    --strip-components=2 \
-    node-v22.18.0/include/node \
-    && rm -f /tmp/node-v22.18.0.tar.gz
 
 run yarn config set registry https://registry.npmmirror.com
 
@@ -53,8 +41,7 @@ run pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
 # Install dependencies using yarn install --force for reproducible builds
 RUN yarn install --force --omit=dev --detial && npm cache clean --force
 
-# Build stage for frontend
-# FROM base AS build
+
 
 
 
@@ -79,22 +66,7 @@ RUN yarn install --force
 # Build the frontend
 RUN npm run build
 
-# Production stage
-# FROM docker.cnb.cool/masx200/docker_mirror/node:22-alpine-linux-amd64 AS production
 
-
-#https://unofficial-builds.nodejs.org/download/release/v22.18.0/node-v22.18.0-headers.tar.gz
-
-# 1) 把压缩包放进镜像
-COPY ./unofficial-builds.nodejs.org/node-v22.18.0-headers.tar.gz /tmp/node-v22.18.0.tar.gz
-
-# 2) 解压指定目录到 /usr/local/include/node
-RUN mkdir -p /usr/local/include \
-    && tar -xzf /tmp/node-v22.18.0.tar.gz \
-    -C /usr/local/include \
-    --strip-components=2 \
-    node-v22.18.0/include/node \
-    && rm -f /tmp/node-v22.18.0.tar.gz
 
 run yarn config set registry https://registry.npmmirror.com
 
