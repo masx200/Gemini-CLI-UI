@@ -2,8 +2,8 @@ import jwt from "jsonwebtoken";
 import { userDb } from "../database/db.js";
 
 // Get JWT secret from environment or use default (for development)
-const JWT_SECRET = process.env.JWT_SECRET ||
-  "claude-ui-dev-secret-change-in-production";
+const JWT_SECRET =
+  process.env.JWT_SECRET || "gemini-ui-dev-secret-change-in-production";
 
 // Optional API key middleware
 const validateApiKey = (req, res, next) => {
@@ -52,7 +52,7 @@ const generateToken = (user) => {
       userId: user.id,
       username: user.username,
     },
-    JWT_SECRET,
+    JWT_SECRET
     // No expiration - token lasts forever
   );
 };
@@ -73,9 +73,9 @@ const authenticateWebSocket = (token) => {
 };
 
 export {
+  JWT_SECRET,
   authenticateToken,
   authenticateWebSocket,
   generateToken,
-  JWT_SECRET,
   validateApiKey,
 };

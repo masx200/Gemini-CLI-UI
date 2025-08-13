@@ -98,7 +98,7 @@ temp/
 # Local Netlify folder
 .netlify
 
-# Claude specific
+# gemini specific
 .gemini/
 
 # Database files

@@ -336,7 +336,7 @@ GPL v3 license.
 ### Original Project
 
 This project is based on
-[Claude Code UI](https://github.com/siteboon/claudecodeui) (GPL v3.0) with
+[gemini Code UI](https://github.com/siteboon/geminicodeui) (GPL v3.0) with
 customizations.
 
 **Major Changes:**
@@ -347,7 +347,7 @@ customizations.
 - Enhanced Japanese language support
 - UI adjustments and Gemini branding
 
-Thanks to the original Claude Code UI project.
+Thanks to the original gemini Code UI project.
 
 ## Acknowledgments
 

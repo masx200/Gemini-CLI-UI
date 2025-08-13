@@ -1,9 +1,9 @@
+import { SpawnOptions } from "child_process";
 import express from "express";
 import { promises as fs } from "fs";
 import os from "os";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
-import { SpawnOptions } from "child_process";
 const router = express.Router();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -31,7 +31,7 @@ router.get("/cli/list", async (req, res) => {
                 res.json({
                     success: true,
                     output: stdout,
-                    servers: parseClaudeListOutput(stdout),
+                    servers: parsegeminiListOutput(stdout),
                 });
             }
             else {
@@ -79,7 +79,7 @@ router.post("/cli/add", async (req, res) => {
             });
         }
         else {
-            // stdio (default): claude mcp add --scope user <name> <command> [args...]
+            // stdio (default): gemini mcp add --scope user <name> <command> [args...]
             cliArgs.push(name);
             // Add environment variables
             Object.entries(env).forEach(([key, value]) => {
@@ -145,9 +145,8 @@ router.post("/cli/add-json", async (req, res) => {
         // Validate and parse JSON config
         let parsedConfig;
         try {
-            parsedConfig = typeof jsonConfig === "string"
-                ? JSON.parse(jsonConfig)
-                : jsonConfig;
+            parsedConfig =
+                typeof jsonConfig === "string" ? JSON.parse(jsonConfig) : jsonConfig;
         }
         catch (parseError) {
             return res.status(400).json({
@@ -176,7 +175,7 @@ router.post("/cli/add-json", async (req, res) => {
             });
         }
         const { spawn } = await import("child_process");
-        // Build the command: claude mcp add-json --scope <scope> <name> '<json>'
+        // Build the command: gemini mcp add-json --scope <scope> <name> '<json>'
         const cliArgs = ["mcp", "add-json", "--scope", scope, name];
         // Add the JSON config as a properly formatted string
         const jsonString = JSON.stringify(parsedConfig);
@@ -318,7 +317,7 @@ router.get("/cli/get/:name", async (req, res) => {
                 res.json({
                     success: true,
                     output: stdout,
-                    server: parseClaudeGetOutput(stdout),
+                    server: parsegeminiGetOutput(stdout),
                 });
             }
             else {
@@ -343,10 +342,10 @@ router.get("/cli/get/:name", async (req, res) => {
         });
     }
 });
-// GET /api/mcp/config/read - Read MCP servers directly from Claude config files
+// GET /api/mcp/config/read - Read MCP servers directly from gemini config files
 router.get("/config/read", async (req, res) => {
     try {
-        console.log("📖 Reading MCP servers from Claude config files");
+        console.log("📖 Reading MCP servers from gemini config files");
         const homeDir = os.homedir();
         const configPaths = [
             path.join(homeDir, ".gemini.json"),
@@ -360,7 +359,7 @@ router.get("/config/read", async (req, res) => {
                 const fileContent = await fs.readFile(filepath, "utf8");
                 configData = JSON.parse(fileContent);
                 configPath = filepath;
-                console.log(`✅ Found Claude config at: ${filepath}`);
+                console.log(`✅ Found gemini config at: ${filepath}`);
                 break;
             }
             catch (error) {
@@ -371,7 +370,7 @@ router.get("/config/read", async (req, res) => {
         if (!configData) {
             return res.json({
                 success: false,
-                message: "No Claude configuration file found",
+                message: "No gemini configuration file found",
                 servers: [],
             });
         }
@@ -449,14 +448,14 @@ router.get("/config/read", async (req, res) => {
         });
     }
     catch (error) {
-        console.error("Error reading Claude config:", error);
+        console.error("Error reading gemini config:", error);
         res.status(500).json({
-            error: "Failed to read Claude configuration",
+            error: "Failed to read gemini configuration",
             details: error.message,
         });
     }
 });
-function parseClaudeListOutput(output) {
+function parsegeminiListOutput(output) {
     const servers = [];
     const lines = output.split("\n").filter((line) => line.trim());
     for (const line of lines) {
@@ -501,8 +500,8 @@ function parseClaudeListOutput(output) {
     console.log("🔍 Parsed gemini cli servers:", servers);
     return servers;
 }
-function parseClaudeGetOutput(output) {
-    // Parse the output from 'claude mcp get <name>' command
+function parsegeminiGetOutput(output) {
+    // Parse the output from 'gemini mcp get <name>' command
     // This is a simple parser - might need adjustment based on actual output format
     try {
         // Try to extract JSON if present

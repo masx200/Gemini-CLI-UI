@@ -1,5 +1,5 @@
 declare const router: import("express-serve-static-core").Router;
-export interface ClaudeServerConfig {
+export interface geminiServerConfig {
     command?: string;
     args?: string[];
     env?: Record<string, string>;
@@ -7,12 +7,12 @@ export interface ClaudeServerConfig {
     transport?: "stdio" | "http" | "sse";
     headers?: Record<string, string>;
 }
-export interface ClaudeProjectConfig {
-    mcpServers?: Record<string, ClaudeServerConfig>;
+export interface geminiProjectConfig {
+    mcpServers?: Record<string, geminiServerConfig>;
 }
-export interface ClaudeConfigData {
-    mcpServers?: Record<string, ClaudeServerConfig>;
-    projects?: Record<string, ClaudeProjectConfig>;
+export interface geminiConfigData {
+    mcpServers?: Record<string, geminiServerConfig>;
+    projects?: Record<string, geminiProjectConfig>;
 }
 export interface MCPServerResponse {
     id: string;
@@ -26,7 +26,7 @@ export interface MCPServerResponse {
         url?: string;
         headers?: Record<string, string>;
     };
-    raw: ClaudeServerConfig;
+    raw: geminiServerConfig;
     projectPath?: string;
 }
 export interface ConfigReadResponse {
@@ -37,13 +37,13 @@ export interface ConfigReadResponse {
     error?: string;
     details?: string;
 }
-export interface ClaudeListServer {
+export interface geminiListServer {
     name: string;
     type: string;
     status: string;
     description: string;
 }
-export interface ClaudeGetOutput {
+export interface geminiGetOutput {
     name?: string;
     type?: string;
     command?: string;

@@ -299,7 +299,7 @@ GNU General Public License v3.0 -
 
 ### オリジナルプロジェクト
 
-このプロジェクトは[Claude Code UI](https://github.com/siteboon/claudecodeui)
+このプロジェクトは[gemini Code UI](https://github.com/siteboon/geminicodeui)
 (GPL v3.0)をベースにカスタマイズしています。
 
 **主な変更点:**
@@ -310,7 +310,7 @@ GNU General Public License v3.0 -
 - 日本語対応の強化
 - UI の調整と Gemini ブランディング
 
-オリジナルの Claude Code UI プロジェクトに感謝します。
+オリジナルの gemini Code UI プロジェクトに感謝します。
 
 ## 謝辞
 

@@ -1,4 +1,4 @@
-# Multi-stage build for Claude Code UI Docker deployment
+# Multi-stage build for gemini Code UI Docker deployment
 FROM docker.cnb.cool/masx200/docker_mirror/node:22-alpine-linux-amd64 AS base
 
 

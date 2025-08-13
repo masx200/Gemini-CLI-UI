@@ -12,7 +12,7 @@ Create the following icon files in this directory:
 - icon-512x512.png
 
 You can use any icon generator tool or create them manually. The icons should be
-square and represent your Claude Code UI application.
+square and represent your gemini Code UI application.
 
 For a quick solution, you can:
 
