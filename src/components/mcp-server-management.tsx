@@ -45,11 +45,9 @@ export interface MCPServerData {
 export default function McpServerManagement({
   projects = [],
   setSaveStatus,
-  
 }: {
   projects: Project[];
   setSaveStatus: (status: string) => void;
- 
 }): JSX.Element {
   useEffect(() => {
     fetchMcpServers().then(console.log, console.error);

@@ -1134,7 +1134,11 @@ async function startServer() {
     // Initialize authentication database
     await initializeDatabase();
     // console.log('✅ Database initialization skipped (testing)');
-
+    server.on("error", (error) => {
+      if (error) {
+        throw error; // e.g. EADDRINUSE
+      }
+    });
     server.listen(PORT, "0.0.0.0", async () => {
       // console.log(`Gemini CLI UI server running on http://0.0.0.0:${PORT}`);
 
