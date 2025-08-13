@@ -652,19 +652,25 @@ function handleShellConnection(ws) {
           // Create shell command that cds to the project directory first
           const shellCommand = `cd "${projectPath}" && ${geminiCommand}`;
 
+          // Detect operating system and use appropriate shell
+          const isWindows = process.platform === "win32";
+          const shell = isWindows ? "cmd.exe" : "bash";
+          const shellArgs = isWindows ? ["/c", shellCommand] : ["-c", shellCommand];
+          const homeDir = isWindows ? process.env.USERPROFILE : (process.env.HOME || "/");
+
           // Start shell using PTY for proper terminal emulation
-          shellProcess = pty.spawn("bash", ["-c", shellCommand], {
+          shellProcess = pty.spawn(shell, shellArgs, {
             name: "xterm-256color",
             cols: 80,
             rows: 24,
-            cwd: process.env.HOME || "/", // Start from home directory
+            cwd: homeDir, // Start from home directory
             env: {
               ...process.env,
               TERM: "xterm-256color",
               COLORTERM: "truecolor",
               FORCE_COLOR: "3",
               // Override browser opening commands to echo URL for detection
-              BROWSER: 'echo "OPEN_URL:"',
+              BROWSER: isWindows ? 'echo OPEN_URL:' : 'echo "OPEN_URL:"',
             },
           });
 
@@ -740,7 +746,7 @@ function handleShellConnection(ws) {
             shellProcess = null;
           });
         } catch (spawnError) {
-          // console.error('❌ Error spawning process:', spawnError);
+          console.error('❌ Error spawning process:', spawnError);
           ws.send(
             JSON.stringify({
               type: "output",
