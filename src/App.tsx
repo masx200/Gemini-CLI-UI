@@ -20,35 +20,40 @@
 
 import { useEffect, useState } from "react";
 import {
-  BrowserRouter as Router,
   Route,
+  BrowserRouter as Router,
   Routes,
   useNavigate,
   useParams,
 } from "react-router-dom";
-import ErrorBoundary from "./components/ErrorBoundary";
-import MainContent from "./components/MainContent";
-import MobileNav from "./components/MobileNav";
-import QuickSettingsPanel from "./components/QuickSettingsPanel";
-import Sidebar from "./components/Sidebar";
+//@ts-ignore
+import ErrorBoundary from "./components/ErrorBoundary.jsx";
+//@ts-ignore
+import MainContent from "./components/MainContent.jsx";
+//@ts-ignore
+import MobileNav from "./components/MobileNav.jsx";
+//@ts-ignore
+import QuickSettingsPanel from "./components/QuickSettingsPanel.jsx";
+//@ts-ignore
+import Sidebar from "./components/Sidebar.tsx";
 import ToolsSettings from "./components/ToolsSettings.tsx";
-
-import ProtectedRoute from "./components/ProtectedRoute";
-import { AuthProvider } from "./contexts/AuthContext";
-import { ThemeProvider } from "./contexts/ThemeContext";
-import { useVersionCheck } from "./hooks/useVersionCheck";
-import { api } from "./utils/api";
-import { useWebSocket } from "./utils/websocket";
-
+//@ts-ignore
+import ProtectedRoute from "./components/ProtectedRoute.jsx";
+//@ts-ignore
+import { AuthProvider } from "./contexts/AuthContext.jsx";
+//@ts-ignore
+import { ThemeProvider } from "./contexts/ThemeContext.jsx";
+//@ts-ignore
+import { api } from "./utils/api.js";
+//@ts-ignore
+import { useWebSocket } from "./utils/websocket.js";
+//@ts-ignore
+import { useVersionCheck } from "./hooks/useVersionCheck.ts";
 // Main App component with routing
 function AppContent() {
   const navigate = useNavigate();
   const { sessionId } = useParams();
-
-  const { updateAvailable, latestVersion, currentVersion } = useVersionCheck(
-    "siteboon",
-    "geminicodeui",
-  );
+  const { currentVersion } = useVersionCheck();
   const [showVersionModal, setShowVersionModal] = useState(false);
 
   const [projects, setProjects] = useState([]);
@@ -87,7 +92,7 @@ function AppContent() {
     };
 
     // Add debounce to prevent layout thrashing
-    let resizeTimeout;
+    let resizeTimeout: number | undefined;
     const debouncedCheckMobile = () => {
       clearTimeout(resizeTimeout);
       resizeTimeout = setTimeout(checkMobile, 150);
@@ -113,7 +118,7 @@ function AppContent() {
     currentProjects,
     updatedProjects,
     selectedProject,
-    selectedSession,
+    selectedSession
   ) => {
     if (!selectedProject || !selectedSession) {
       // No active session to protect, allow all updates
@@ -122,10 +127,10 @@ function AppContent() {
 
     // Find the selected project in both current and updated data
     const currentSelectedProject = currentProjects?.find(
-      (p) => p.name === selectedProject.name,
+      (p) => p.name === selectedProject.name
     );
     const updatedSelectedProject = updatedProjects?.find(
-      (p) => p.name === selectedProject.name,
+      (p) => p.name === selectedProject.name
     );
 
     if (!currentSelectedProject || !updatedSelectedProject) {
@@ -135,10 +140,10 @@ function AppContent() {
 
     // Find the selected session in both current and updated project data
     const currentSelectedSession = currentSelectedProject.sessions?.find(
-      (s) => s.id === selectedSession.id,
+      (s) => s.id === selectedSession.id
     );
     const updatedSelectedSession = updatedSelectedProject.sessions?.find(
-      (s) => s.id === selectedSession.id,
+      (s) => s.id === selectedSession.id
     );
 
     if (!currentSelectedSession || !updatedSelectedSession) {
@@ -187,7 +192,7 @@ function AppContent() {
             currentProjects,
             updatedProjects,
             selectedProject,
-            selectedSession,
+            selectedSession
           );
 
           if (!isAdditiveUpdate) {
@@ -204,16 +209,16 @@ function AppContent() {
         // Update selected project if it exists in the updated projects
         if (selectedProject) {
           const updatedSelectedProject = updatedProjects.find(
-            (p) => p.name === selectedProject.name,
+            (p) => p.name === selectedProject.name
           );
           if (updatedSelectedProject) {
             setSelectedProject(updatedSelectedProject);
 
             // Update selected session only if it was deleted - avoid unnecessary reloads
             if (selectedSession) {
-              const updatedSelectedSession = updatedSelectedProject.sessions
-                ?.find(
-                  (s) => s.id === selectedSession.id,
+              const updatedSelectedSession =
+                updatedSelectedProject.sessions?.find(
+                  (s) => s.id === selectedSession.id
                 );
               if (!updatedSelectedSession) {
                 // Session was deleted
@@ -241,21 +246,22 @@ function AppContent() {
         }
 
         // Check if the projects data has actually changed
-        const hasChanges = data.some((newProject, index) => {
-          const prevProject = prevProjects[index];
-          if (!prevProject) return true;
+        const hasChanges =
+          data.some((newProject, index) => {
+            const prevProject = prevProjects[index];
+            if (!prevProject) return true;
 
-          // Compare key properties that would affect UI
-          return (
-            newProject.name !== prevProject.name ||
-            newProject.displayName !== prevProject.displayName ||
-            newProject.fullPath !== prevProject.fullPath ||
-            JSON.stringify(newProject.sessionMeta) !==
-              JSON.stringify(prevProject.sessionMeta) ||
-            JSON.stringify(newProject.sessions) !==
-              JSON.stringify(prevProject.sessions)
-          );
-        }) || data.length !== prevProjects.length;
+            // Compare key properties that would affect UI
+            return (
+              newProject.name !== prevProject.name ||
+              newProject.displayName !== prevProject.displayName ||
+              newProject.fullPath !== prevProject.fullPath ||
+              JSON.stringify(newProject.sessionMeta) !==
+                JSON.stringify(prevProject.sessionMeta) ||
+              JSON.stringify(newProject.sessions) !==
+                JSON.stringify(prevProject.sessions)
+            );
+          }) || data.length !== prevProjects.length;
 
         // Only update if there are actual changes
         return hasChanges ? data : prevProjects;
@@ -276,8 +282,8 @@ function AppContent() {
   useEffect(() => {
     if (sessionId && projects.length > 0) {
       // Only switch tabs on initial load, not on every project update
-      const shouldSwitchTab = !selectedSession ||
-        selectedSession.id !== sessionId;
+      const shouldSwitchTab =
+        !selectedSession || selectedSession.id !== sessionId;
       // Find the session across all projects
       for (const project of projects) {
         const session = project.sessions?.find((s) => s.id === sessionId);
@@ -360,20 +366,21 @@ function AppContent() {
       // Optimize to preserve object references and minimize re-renders
       setProjects((prevProjects) => {
         // Check if projects data has actually changed
-        const hasChanges = freshProjects.some((newProject, index) => {
-          const prevProject = prevProjects[index];
-          if (!prevProject) return true;
+        const hasChanges =
+          freshProjects.some((newProject, index) => {
+            const prevProject = prevProjects[index];
+            if (!prevProject) return true;
 
-          return (
-            newProject.name !== prevProject.name ||
-            newProject.displayName !== prevProject.displayName ||
-            newProject.fullPath !== prevProject.fullPath ||
-            JSON.stringify(newProject.sessionMeta) !==
-              JSON.stringify(prevProject.sessionMeta) ||
-            JSON.stringify(newProject.sessions) !==
-              JSON.stringify(prevProject.sessions)
-          );
-        }) || freshProjects.length !== prevProjects.length;
+            return (
+              newProject.name !== prevProject.name ||
+              newProject.displayName !== prevProject.displayName ||
+              newProject.fullPath !== prevProject.fullPath ||
+              JSON.stringify(newProject.sessionMeta) !==
+                JSON.stringify(prevProject.sessionMeta) ||
+              JSON.stringify(newProject.sessions) !==
+                JSON.stringify(prevProject.sessions)
+            );
+          }) || freshProjects.length !== prevProjects.length;
 
         return hasChanges ? freshProjects : prevProjects;
       });
@@ -381,7 +388,7 @@ function AppContent() {
       // If we have a selected project, make sure it's still selected after refresh
       if (selectedProject) {
         const refreshedProject = freshProjects.find(
-          (p) => p.name === selectedProject.name,
+          (p) => p.name === selectedProject.name
         );
         if (refreshedProject) {
           // Only update selected project if it actually changed
@@ -394,7 +401,7 @@ function AppContent() {
           // If we have a selected session, try to find it in the refreshed project
           if (selectedSession) {
             const refreshedSession = refreshedProject.sessions?.find(
-              (s) => s.id === selectedSession.id,
+              (s) => s.id === selectedSession.id
             );
             if (
               refreshedSession &&
@@ -536,14 +543,6 @@ function AppContent() {
                 {currentVersion}
               </span>
             </div>
-            <div className="flex justify-between items-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
-              <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                Latest Version
-              </span>
-              <span className="text-sm text-blue-900 dark:text-blue-100 font-mono">
-                {latestVersion}
-              </span>
-            </div>
           </div>
 
           {/* Upgrade Instructions */}
@@ -608,10 +607,7 @@ function AppContent() {
               isLoading={isLoadingProjects}
               onRefresh={handleSidebarRefresh}
               onShowSettings={() => setShowToolsSettings(true)}
-              updateAvailable={updateAvailable}
-              latestVersion={latestVersion}
-              currentVersion={currentVersion}
-              onShowVersionModal={() => setShowVersionModal(true)}
+           
             />
           </div>
         </div>
@@ -655,10 +651,7 @@ function AppContent() {
               isLoading={isLoadingProjects}
               onRefresh={handleSidebarRefresh}
               onShowSettings={() => setShowToolsSettings(true)}
-              updateAvailable={updateAvailable}
-              latestVersion={latestVersion}
-              currentVersion={currentVersion}
-              onShowVersionModal={() => setShowVersionModal(true)}
+          
             />
           </div>
         </div>
