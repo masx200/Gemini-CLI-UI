@@ -34,7 +34,6 @@ import MainContent from "./components/MainContent.jsx";
 import MobileNav from "./components/MobileNav.jsx";
 //@ts-ignore
 import QuickSettingsPanel from "./components/QuickSettingsPanel.jsx";
-//@ts-ignore
 import Sidebar from "./components/Sidebar.tsx";
 import ToolsSettings from "./components/ToolsSettings.tsx";
 //@ts-ignore
@@ -46,20 +45,47 @@ import { ThemeProvider } from "./contexts/ThemeContext.jsx";
 //@ts-ignore
 import { api } from "./utils/api.js";
 //@ts-ignore
-import { useWebSocket } from "./utils/websocket.js";
-//@ts-ignore
 import { useVersionCheck } from "./hooks/useVersionCheck.ts";
+//@ts-ignore
+import { useWebSocket } from "./utils/websocket.js";
+export
+interface Session {
+  id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+  lastActivity: string;
+  messageCount?: number;
+}
+export
+interface SessionMeta {
+  total: number;
+  hasMore?: boolean;
+}
+export
+interface Project {
+  name: string;
+  displayName: string;
+  fullPath: string;
+  sessions?: Session[];
+  sessionMeta?: SessionMeta;
+}
+
+
+
 // Main App component with routing
 function AppContent() {
   const navigate = useNavigate();
-  const { sessionId } = useParams();
+  const { sessionId } = useParams<{ sessionId?: string }>();
   const { currentVersion } = useVersionCheck();
   const [showVersionModal, setShowVersionModal] = useState(false);
 
-  const [projects, setProjects] = useState([]);
-  const [selectedProject, setSelectedProject] = useState(null);
-  const [selectedSession, setSelectedSession] = useState(null);
-  const [activeTab, setActiveTab] = useState("chat"); // 'chat' or 'files'
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+  const [activeTab, setActiveTab] = useState<
+    "chat" | "files" | "git" | "preview"
+  >("chat");
   const [isMobile, setIsMobile] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoadingProjects, setIsLoadingProjects] = useState(true);
@@ -78,11 +104,12 @@ function AppContent() {
     const saved = localStorage.getItem("autoScrollToBottom");
     return saved !== null ? JSON.parse(saved) : true;
   });
+
   // Session Protection System: Track sessions with active conversations to prevent
   // automatic project updates from interrupting ongoing chats. When a user sends
   // a message, the session is marked as "active" and project updates are paused
   // until the conversation completes or is aborted.
-  const [activeSessions, setActiveSessions] = useState(new Set()); // Track sessions with active conversations
+  const [activeSessions, setActiveSessions] = useState<Set<string>>(new Set());
 
   const { ws, sendMessage, messages } = useWebSocket();
 
@@ -115,11 +142,11 @@ function AppContent() {
   // Helper function to determine if an update is purely additive (new sessions/projects)
   // vs modifying existing selected items that would interfere with active conversations
   const isUpdateAdditive = (
-    currentProjects,
-    updatedProjects,
-    selectedProject,
-    selectedSession
-  ) => {
+    currentProjects: Project[],
+    updatedProjects: Project[],
+    selectedProject: Project | null,
+    selectedSession: Session | null
+  ): boolean => {
     if (!selectedProject || !selectedSession) {
       // No active session to protect, allow all updates
       return true;
@@ -236,10 +263,10 @@ function AppContent() {
     try {
       setIsLoadingProjects(true);
       const response = await api.projects();
-      const data = await response.json();
+      const data: Project[] = await response.json();
 
       // Optimize to preserve object references when data hasn't changed
-      setProjects((prevProjects) => {
+      setProjects((prevProjects: Project[]) => {
         // If no previous projects, just set the new data
         if (prevProjects.length === 0) {
           return data;
@@ -247,7 +274,7 @@ function AppContent() {
 
         // Check if the projects data has actually changed
         const hasChanges =
-          data.some((newProject, index) => {
+          data.some((newProject: Project, index: number) => {
             const prevProject = prevProjects[index];
             if (!prevProject) return true;
 
@@ -276,6 +303,8 @@ function AppContent() {
   };
 
   // Expose fetchProjects globally for component access
+
+  //@ts-ignore
   window.refreshProjects = fetchProjects;
 
   // Handle URL-based session loading
@@ -304,7 +333,7 @@ function AppContent() {
     }
   }, [sessionId, projects, navigate]);
 
-  const handleProjectSelect = (project) => {
+  const handleProjectSelect = (project: Project) => {
     setSelectedProject(project);
     setSelectedSession(null);
     navigate("/");
@@ -313,7 +342,9 @@ function AppContent() {
     }
   };
 
-  const handleSessionSelect = (session) => {
+  const handleSessionSelect = (session: Session) => {
+  
+
     setSelectedSession(session);
     // Only switch to chat tab when user explicitly selects a session
     // This prevents tab switching during automatic updates
@@ -336,7 +367,7 @@ function AppContent() {
     }
   };
 
-  const handleSessionDelete = (sessionId) => {
+  const handleSessionDelete = (sessionId: string) => {
     // If the deleted session was currently selected, clear it
     if (selectedSession?.id === sessionId) {
       setSelectedSession(null);
@@ -418,7 +449,7 @@ function AppContent() {
     }
   };
 
-  const handleProjectDelete = (projectName) => {
+  const handleProjectDelete = (projectName: string) => {
     // If the deleted project was currently selected, clear it
     if (selectedProject?.name === projectName) {
       setSelectedProject(null);
@@ -436,14 +467,14 @@ function AppContent() {
 
   // markSessionAsActive: Called when user sends a message to mark session as protected
   // This includes both real session IDs and temporary "new-session-*" identifiers
-  const markSessionAsActive = (sessionId) => {
+  const markSessionAsActive = (sessionId: string) => {
     if (sessionId) {
       setActiveSessions((prev) => new Set([...prev, sessionId]));
     }
   };
 
   // markSessionAsInactive: Called when conversation completes/aborts to re-enable project updates
-  const markSessionAsInactive = (sessionId) => {
+  const markSessionAsInactive = (sessionId: string) => {
     if (sessionId) {
       setActiveSessions((prev) => {
         const newSet = new Set(prev);
@@ -456,7 +487,7 @@ function AppContent() {
   // replaceTemporarySession: Called when WebSocket provides real session ID for new sessions
   // Removes temporary "new-session-*" identifiers and adds the real session ID
   // This maintains protection continuity during the transition from temporary to real session
-  const replaceTemporarySession = (realSessionId) => {
+  const replaceTemporarySession = (realSessionId: string) => {
     if (realSessionId) {
       setActiveSessions((prev) => {
         const newSet = new Set();
@@ -607,7 +638,6 @@ function AppContent() {
               isLoading={isLoadingProjects}
               onRefresh={handleSidebarRefresh}
               onShowSettings={() => setShowToolsSettings(true)}
-           
             />
           </div>
         </div>
@@ -651,7 +681,6 @@ function AppContent() {
               isLoading={isLoadingProjects}
               onRefresh={handleSidebarRefresh}
               onShowSettings={() => setShowToolsSettings(true)}
-          
             />
           </div>
         </div>
