@@ -3,7 +3,5 @@
 import { version } from "../../package.json";
 
 export const useVersionCheck = () => {
- 
-
-  return {  currentVersion: version };
+  return { currentVersion: version };
 };

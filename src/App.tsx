@@ -20,8 +20,8 @@
 
 import { useEffect, useState } from "react";
 import {
-  Route,
   BrowserRouter as Router,
+  Route,
   Routes,
   useNavigate,
   useParams,
@@ -48,8 +48,7 @@ import { api } from "./utils/api.js";
 import { useVersionCheck } from "./hooks/useVersionCheck.ts";
 //@ts-ignore
 import { useWebSocket } from "./utils/websocket.js";
-export
-interface Session {
+export interface Session {
   id: string;
   title: string;
   created_at: string;
@@ -57,21 +56,18 @@ interface Session {
   lastActivity: string;
   messageCount?: number;
 }
-export
-interface SessionMeta {
+export interface SessionMeta {
   total: number;
   hasMore?: boolean;
 }
-export
-interface Project {
+export interface Project {
+  path: string;
   name: string;
   displayName: string;
   fullPath: string;
   sessions?: Session[];
   sessionMeta?: SessionMeta;
 }
-
-
 
 // Main App component with routing
 function AppContent() {
@@ -145,7 +141,7 @@ function AppContent() {
     currentProjects: Project[],
     updatedProjects: Project[],
     selectedProject: Project | null,
-    selectedSession: Session | null
+    selectedSession: Session | null,
   ): boolean => {
     if (!selectedProject || !selectedSession) {
       // No active session to protect, allow all updates
@@ -154,10 +150,10 @@ function AppContent() {
 
     // Find the selected project in both current and updated data
     const currentSelectedProject = currentProjects?.find(
-      (p) => p.name === selectedProject.name
+      (p) => p.name === selectedProject.name,
     );
     const updatedSelectedProject = updatedProjects?.find(
-      (p) => p.name === selectedProject.name
+      (p) => p.name === selectedProject.name,
     );
 
     if (!currentSelectedProject || !updatedSelectedProject) {
@@ -167,10 +163,10 @@ function AppContent() {
 
     // Find the selected session in both current and updated project data
     const currentSelectedSession = currentSelectedProject.sessions?.find(
-      (s) => s.id === selectedSession.id
+      (s) => s.id === selectedSession.id,
     );
     const updatedSelectedSession = updatedSelectedProject.sessions?.find(
-      (s) => s.id === selectedSession.id
+      (s) => s.id === selectedSession.id,
     );
 
     if (!currentSelectedSession || !updatedSelectedSession) {
@@ -219,7 +215,7 @@ function AppContent() {
             currentProjects,
             updatedProjects,
             selectedProject,
-            selectedSession
+            selectedSession,
           );
 
           if (!isAdditiveUpdate) {
@@ -236,16 +232,16 @@ function AppContent() {
         // Update selected project if it exists in the updated projects
         if (selectedProject) {
           const updatedSelectedProject = updatedProjects.find(
-            (p) => p.name === selectedProject.name
+            (p: Project) => p.name === selectedProject.name,
           );
           if (updatedSelectedProject) {
             setSelectedProject(updatedSelectedProject);
 
             // Update selected session only if it was deleted - avoid unnecessary reloads
             if (selectedSession) {
-              const updatedSelectedSession =
-                updatedSelectedProject.sessions?.find(
-                  (s) => s.id === selectedSession.id
+              const updatedSelectedSession = updatedSelectedProject.sessions
+                ?.find(
+                  (s: Session) => s.id === selectedSession.id,
                 );
               if (!updatedSelectedSession) {
                 // Session was deleted
@@ -273,22 +269,21 @@ function AppContent() {
         }
 
         // Check if the projects data has actually changed
-        const hasChanges =
-          data.some((newProject: Project, index: number) => {
-            const prevProject = prevProjects[index];
-            if (!prevProject) return true;
+        const hasChanges = data.some((newProject: Project, index: number) => {
+          const prevProject = prevProjects[index];
+          if (!prevProject) return true;
 
-            // Compare key properties that would affect UI
-            return (
-              newProject.name !== prevProject.name ||
-              newProject.displayName !== prevProject.displayName ||
-              newProject.fullPath !== prevProject.fullPath ||
-              JSON.stringify(newProject.sessionMeta) !==
-                JSON.stringify(prevProject.sessionMeta) ||
-              JSON.stringify(newProject.sessions) !==
-                JSON.stringify(prevProject.sessions)
-            );
-          }) || data.length !== prevProjects.length;
+          // Compare key properties that would affect UI
+          return (
+            newProject.name !== prevProject.name ||
+            newProject.displayName !== prevProject.displayName ||
+            newProject.fullPath !== prevProject.fullPath ||
+            JSON.stringify(newProject.sessionMeta) !==
+              JSON.stringify(prevProject.sessionMeta) ||
+            JSON.stringify(newProject.sessions) !==
+              JSON.stringify(prevProject.sessions)
+          );
+        }) || data.length !== prevProjects.length;
 
         // Only update if there are actual changes
         return hasChanges ? data : prevProjects;
@@ -311,8 +306,8 @@ function AppContent() {
   useEffect(() => {
     if (sessionId && projects.length > 0) {
       // Only switch tabs on initial load, not on every project update
-      const shouldSwitchTab =
-        !selectedSession || selectedSession.id !== sessionId;
+      const shouldSwitchTab = !selectedSession ||
+        selectedSession.id !== sessionId;
       // Find the session across all projects
       for (const project of projects) {
         const session = project.sessions?.find((s) => s.id === sessionId);
@@ -343,8 +338,6 @@ function AppContent() {
   };
 
   const handleSessionSelect = (session: Session) => {
-  
-
     setSelectedSession(session);
     // Only switch to chat tab when user explicitly selects a session
     // This prevents tab switching during automatic updates
@@ -357,7 +350,7 @@ function AppContent() {
     navigate(`/session/${session.id}`);
   };
 
-  const handleNewSession = (project) => {
+  const handleNewSession = (project: Project) => {
     setSelectedProject(project);
     setSelectedSession(null);
     setActiveTab("chat");
@@ -398,7 +391,7 @@ function AppContent() {
       setProjects((prevProjects) => {
         // Check if projects data has actually changed
         const hasChanges =
-          freshProjects.some((newProject, index) => {
+          freshProjects.some((newProject: Project, index: number) => {
             const prevProject = prevProjects[index];
             if (!prevProject) return true;
 
@@ -419,7 +412,7 @@ function AppContent() {
       // If we have a selected project, make sure it's still selected after refresh
       if (selectedProject) {
         const refreshedProject = freshProjects.find(
-          (p) => p.name === selectedProject.name
+          (p: Project) => p.name === selectedProject.name,
         );
         if (refreshedProject) {
           // Only update selected project if it actually changed
@@ -432,7 +425,7 @@ function AppContent() {
           // If we have a selected session, try to find it in the refreshed project
           if (selectedSession) {
             const refreshedSession = refreshedProject.sessions?.find(
-              (s) => s.id === selectedSession.id
+              (s: Session) => s.id === selectedSession.id,
             );
             if (
               refreshedSession &&
@@ -489,8 +482,8 @@ function AppContent() {
   // This maintains protection continuity during the transition from temporary to real session
   const replaceTemporarySession = (realSessionId: string) => {
     if (realSessionId) {
-      setActiveSessions((prev) => {
-        const newSet = new Set();
+      setActiveSessions((prev: Set<string>): Set<string> => {
+        const newSet = new Set() as Set<string>;
         // Keep all non-temporary sessions and add the real session ID
         for (const sessionId of prev) {
           if (!sessionId.startsWith("new-session-")) {
@@ -630,8 +623,11 @@ function AppContent() {
               projects={projects}
               selectedProject={selectedProject}
               selectedSession={selectedSession}
+              //@ts-ignore
               onProjectSelect={handleProjectSelect}
+              //@ts-ignore
               onSessionSelect={handleSessionSelect}
+              //@ts-ignore
               onNewSession={handleNewSession}
               onSessionDelete={handleSessionDelete}
               onProjectDelete={handleProjectDelete}
@@ -673,8 +669,11 @@ function AppContent() {
               projects={projects}
               selectedProject={selectedProject}
               selectedSession={selectedSession}
+              //@ts-ignore
               onProjectSelect={handleProjectSelect}
+              //@ts-ignore
               onSessionSelect={handleSessionSelect}
+              //@ts-ignore
               onNewSession={handleNewSession}
               onSessionDelete={handleSessionDelete}
               onProjectDelete={handleProjectDelete}
@@ -703,7 +702,8 @@ function AppContent() {
           onSessionActive={markSessionAsActive}
           onSessionInactive={markSessionAsInactive}
           onReplaceTemporarySession={replaceTemporarySession}
-          onNavigateToSession={(sessionId) => navigate(`/session/${sessionId}`)}
+          onNavigateToSession={(sessionId: any) =>
+            navigate(`/session/${sessionId}`)}
           onShowSettings={() => setShowToolsSettings(true)}
           autoExpandTools={autoExpandTools}
           showRawParameters={showRawParameters}
@@ -725,17 +725,17 @@ function AppContent() {
           isOpen={showQuickSettings}
           onToggle={setShowQuickSettings}
           autoExpandTools={autoExpandTools}
-          onAutoExpandChange={(value) => {
+          onAutoExpandChange={(value: any) => {
             setAutoExpandTools(value);
             localStorage.setItem("autoExpandTools", JSON.stringify(value));
           }}
           showRawParameters={showRawParameters}
-          onShowRawParametersChange={(value) => {
+          onShowRawParametersChange={(value: any) => {
             setShowRawParameters(value);
             localStorage.setItem("showRawParameters", JSON.stringify(value));
           }}
           autoScrollToBottom={autoScrollToBottom}
-          onAutoScrollChange={(value) => {
+          onAutoScrollChange={(value: any) => {
             setAutoScrollToBottom(value);
             localStorage.setItem("autoScrollToBottom", JSON.stringify(value));
           }}
