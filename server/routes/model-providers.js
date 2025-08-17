@@ -25,6 +25,23 @@ router.get("/list", async (req, res) => {
         res.status(500).json({ error: "Failed to fetch providers" });
     }
 });
+router.get("/name/:name", async (req, res) => {
+    try {
+        const { name } = req.params;
+        const provider = db
+            .prepare("SELECT * FROM geminicliui_model_providers WHERE provider_name = ?")
+            .get(name);
+        if (!provider) {
+            return res.status(404).json({ error: "Provider not found" });
+        }
+        res.json({ provider });
+        return;
+    }
+    catch (error) {
+        console.error("Error fetching provider:", error);
+        res.status(500).json({ error: "Failed to fetch provider" });
+    }
+});
 router.get("/:id", async (req, res) => {
     try {
         const { id } = req.params;

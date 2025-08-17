@@ -44,7 +44,7 @@ CREATE TABLE
     );
 
 -- Indexes for performance
-CREATE INDEX IF NOT EXISTS idx_geminicliui_users_username ON geminicliui_users (username);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_geminicliui_users_username ON geminicliui_users (username);
 
 CREATE INDEX IF NOT EXISTS idx_geminicliui_users_active ON geminicliui_users (is_active);
 
@@ -52,4 +52,4 @@ CREATE INDEX IF NOT EXISTS idx_geminicliui_model_providers_type ON geminicliui_m
 
 CREATE INDEX IF NOT EXISTS idx_geminicliui_model_providers_active ON geminicliui_model_providers (is_active);
 
-CREATE INDEX IF NOT EXISTS idx_geminicliui_model_providers_name ON geminicliui_model_providers (provider_name);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_geminicliui_model_providers_name ON geminicliui_model_providers (provider_name);
