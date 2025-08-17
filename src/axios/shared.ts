@@ -1,7 +1,12 @@
-import type { AxiosHeaderValue, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
+import type {
+  AxiosHeaderValue,
+  AxiosResponse,
+  InternalAxiosRequestConfig,
+} from "axios";
 
 export function getContentType(config: InternalAxiosRequestConfig) {
-  const contentType: AxiosHeaderValue = config.headers?.['Content-Type'] || 'application/json';
+  const contentType: AxiosHeaderValue = config.headers?.["Content-Type"] ||
+    "application/json";
 
   return contentType;
 }
@@ -24,5 +29,5 @@ export function isHttpSuccess(status: number) {
 export function isResponseJson(response: AxiosResponse) {
   const { responseType } = response.config;
 
-  return responseType === 'json' || responseType === undefined;
+  return responseType === "json" || responseType === undefined;
 }

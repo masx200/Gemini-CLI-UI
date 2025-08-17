@@ -1,6 +1,6 @@
-import isDocumentVisible from './isDocumentVisible.ts';
+import isDocumentVisible from "./isDocumentVisible.ts";
 
-import { isBrowser } from './index.ts';
+import { isBrowser } from "./index.ts";
 
 type Listener = () => void;
 
@@ -23,7 +23,7 @@ if (isBrowser) {
       listener();
     }
   };
-  window.addEventListener('visibilitychange', revalidate, false);
+  window.addEventListener("visibilitychange", revalidate, false);
 }
 
 export default subscribe;

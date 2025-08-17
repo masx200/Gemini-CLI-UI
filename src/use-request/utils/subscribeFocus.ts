@@ -1,8 +1,8 @@
 // from swr
-import isDocumentVisible from './isDocumentVisible.ts';
-import isOnline from './isOnline.ts';
+import isDocumentVisible from "./isDocumentVisible.ts";
+import isOnline from "./isOnline.ts";
 
-import { isBrowser } from  './index.ts';
+import { isBrowser } from "./index.ts";
 
 type Listener = () => void;
 
@@ -27,8 +27,8 @@ if (isBrowser) {
       listener();
     }
   };
-  window.addEventListener('visibilitychange', revalidate, false);
-  window.addEventListener('focus', revalidate, false);
+  window.addEventListener("visibilitychange", revalidate, false);
+  window.addEventListener("focus", revalidate, false);
 }
 
 export default subscribe;

@@ -1,22 +1,30 @@
-import { nanoid } from '../utils/nanoid.ts';
-import axios, { AxiosError } from 'axios';
-import type { AxiosResponse, CreateAxiosDefaults, InternalAxiosRequestConfig } from 'axios';
-import axiosRetry from 'axios-retry';
+import { nanoid } from "../utils/nanoid.ts";
+import axios, { AxiosError } from "axios";
+import type {
+  AxiosResponse,
+  CreateAxiosDefaults,
+  InternalAxiosRequestConfig,
+} from "axios";
+import axiosRetry from "axios-retry";
 
-import { BACKEND_ERROR_CODE, REQUEST_ID_KEY } from './constant.ts';
-import { createAxiosConfig, createDefaultOptions, createRetryOptions } from './options.ts';
+import { BACKEND_ERROR_CODE, REQUEST_ID_KEY } from "./constant.ts";
+import {
+  createAxiosConfig,
+  createDefaultOptions,
+  createRetryOptions,
+} from "./options.ts";
 import type {
   CustomAxiosRequestConfig,
   FlatRequestInstance,
   MappedType,
   RequestInstance,
   RequestOption,
-  ResponseType
-} from './type.ts';
+  ResponseType,
+} from "./type.ts";
 
 function createCommonRequest<ResponseData = any>(
   axiosConfig?: CreateAxiosDefaults,
-  options?: Partial<RequestOption<ResponseData>>
+  options?: Partial<RequestOption<ResponseData>>,
 ) {
   const opts = createDefaultOptions<ResponseData>(options);
 
@@ -29,7 +37,7 @@ function createCommonRequest<ResponseData = any>(
   const retryOptions = createRetryOptions(axiosConf);
   axiosRetry(instance, retryOptions);
 
-  instance.interceptors.request.use(conf => {
+  instance.interceptors.request.use((conf) => {
     const config: InternalAxiosRequestConfig = { ...conf };
 
     // set request id
@@ -50,10 +58,11 @@ function createCommonRequest<ResponseData = any>(
   });
 
   instance.interceptors.response.use(
-    async response => {
-      const responseType: ResponseType = (response.config?.responseType as ResponseType) || 'json';
+    async (response) => {
+      const responseType: ResponseType =
+        (response.config?.responseType as ResponseType) || "json";
 
-      if (responseType !== 'json' || opts.isBackendSuccess(response)) {
+      if (responseType !== "json" || opts.isBackendSuccess(response)) {
         return Promise.resolve(response);
       }
 
@@ -63,11 +72,11 @@ function createCommonRequest<ResponseData = any>(
       }
 
       const backendError = new AxiosError<ResponseData>(
-        'the backend request error',
+        "the backend request error",
         BACKEND_ERROR_CODE,
         response.config,
         response.request,
-        response
+        response,
       );
 
       await opts.onError(backendError);
@@ -78,7 +87,7 @@ function createCommonRequest<ResponseData = any>(
       await opts.onError(error);
 
       return Promise.reject(error);
-    }
+    },
   );
 
   function cancelRequest(requestId: string) {
@@ -90,7 +99,7 @@ function createCommonRequest<ResponseData = any>(
   }
 
   function cancelAllRequest() {
-    abortControllerMap.forEach(abortController => {
+    abortControllerMap.forEach((abortController) => {
       abortController.abort();
     });
     abortControllerMap.clear();
@@ -100,11 +109,11 @@ function createCommonRequest<ResponseData = any>(
     cancelAllRequest,
     cancelRequest,
     instance,
-    opts
+    opts,
   };
 }
 
-export type * from './type.ts';
+export type * from "./type.ts";
 
 /**
  * create a request instance
@@ -112,20 +121,27 @@ export type * from './type.ts';
  * @param axiosConfig axios config
  * @param options request options
  */
-export function createRequest<ResponseData = any, State = Record<string, unknown>>(
+export function createRequest<
+  ResponseData = any,
+  State = Record<string, unknown>,
+>(
   axiosConfig?: CreateAxiosDefaults,
-  options?: Partial<RequestOption<ResponseData>>
+  options?: Partial<RequestOption<ResponseData>>,
 ) {
-  const { cancelAllRequest, cancelRequest, instance, opts } = createCommonRequest<ResponseData>(axiosConfig, options);
+  const { cancelAllRequest, cancelRequest, instance, opts } =
+    createCommonRequest<ResponseData>(axiosConfig, options);
 
-  const request: RequestInstance<State> = async function request<T = any, R extends ResponseType = 'json'>(
-    config: CustomAxiosRequestConfig
+  const request: RequestInstance<State> = async function request<
+    T = any,
+    R extends ResponseType = "json",
+  >(
+    config: CustomAxiosRequestConfig,
   ) {
     const response: AxiosResponse<ResponseData> = await instance(config);
 
-    const responseType = response.config?.responseType || 'json';
+    const responseType = response.config?.responseType || "json";
 
-    if (responseType === 'json') {
+    if (responseType === "json") {
       return opts.transformBackendResponse(response);
     }
 
@@ -147,32 +163,41 @@ export function createRequest<ResponseData = any, State = Record<string, unknown
  * @param axiosConfig axios config
  * @param options request options
  */
-export function createFlatRequest<ResponseData = any, State = Record<string, unknown>>(
+export function createFlatRequest<
+  ResponseData = any,
+  State = Record<string, unknown>,
+>(
   axiosConfig?: CreateAxiosDefaults,
-  options?: Partial<RequestOption<ResponseData>>
+  options?: Partial<RequestOption<ResponseData>>,
 ) {
-  const { cancelAllRequest, cancelRequest, instance, opts } = createCommonRequest<ResponseData>(axiosConfig, options);
+  const { cancelAllRequest, cancelRequest, instance, opts } =
+    createCommonRequest<ResponseData>(axiosConfig, options);
 
-  const flatRequest: FlatRequestInstance<State, ResponseData> = async function flatRequest<
-    T = any,
-    R extends ResponseType = 'json'
-  >(config: CustomAxiosRequestConfig) {
-    try {
-      const response: AxiosResponse<ResponseData> = await instance(config);
+  const flatRequest: FlatRequestInstance<State, ResponseData> =
+    async function flatRequest<
+      T = any,
+      R extends ResponseType = "json",
+    >(config: CustomAxiosRequestConfig) {
+      try {
+        const response: AxiosResponse<ResponseData> = await instance(config);
 
-      const responseType = response.config?.responseType || 'json';
+        const responseType = response.config?.responseType || "json";
 
-      if (responseType === 'json') {
-        const data = opts.transformBackendResponse(response);
+        if (responseType === "json") {
+          const data = opts.transformBackendResponse(response);
 
-        return { data, error: null, response };
+          return { data, error: null, response };
+        }
+
+        return { data: response.data as MappedType<R, T>, error: null };
+      } catch (error) {
+        return {
+          data: null,
+          error,
+          response: (error as AxiosError<ResponseData>).response,
+        };
       }
-
-      return { data: response.data as MappedType<R, T>, error: null };
-    } catch (error) {
-      return { data: null, error, response: (error as AxiosError<ResponseData>).response };
-    }
-  } as FlatRequestInstance<State, ResponseData>;
+    } as FlatRequestInstance<State, ResponseData>;
 
   flatRequest.cancelRequest = cancelRequest;
   flatRequest.cancelAllRequest = cancelAllRequest;

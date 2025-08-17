@@ -1,15 +1,23 @@
-
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-check
 
-import type { FlatResponseData } from "../axios/index.ts"
-import type { AxiosError } from 'axios';
-import type { MutableRefObject } from 'react';
+import type { FlatResponseData } from "../axios/index.ts";
+import type { AxiosError } from "axios";
+import type { MutableRefObject } from "react";
 
-import type { FetchState, Options, PluginReturn, Service, Subscribe } from './type.ts';
-import { isFunction } from './utils/index.ts';
+import type {
+  FetchState,
+  Options,
+  PluginReturn,
+  Service,
+  Subscribe,
+} from "./type.ts";
+import { isFunction } from "./utils/index.ts";
 
-export default class Fetch<TData extends FlatResponseData, TParams extends any[]> {
+export default class Fetch<
+  TData extends FlatResponseData,
+  TParams extends any[],
+> {
   //@ts-ignore
   pluginImpls: PluginReturn<TData, TParams>[];
 
@@ -18,23 +26,23 @@ export default class Fetch<TData extends FlatResponseData, TParams extends any[]
   options: Options<TData, TParams>;
 
   state: FetchState<TData, TParams> = {
-     //@ts-ignore
+    //@ts-ignore
     data: undefined,
     error: null,
     loading: false,
     params: undefined,
-    response: null
+    response: null,
   };
 
   constructor(
     public serviceRef: MutableRefObject<Service<TData, TParams>>,
-     //@ts-ignore
+    //@ts-ignore
     public options: Options<TData, TParams>,
-    public subscribe: Subscribe
+    public subscribe: Subscribe,
   ) {
     this.state = {
       ...this.state,
-      loading: !options.manual
+      loading: !options.manual,
     };
 
     this.options = options;
@@ -43,15 +51,15 @@ export default class Fetch<TData extends FlatResponseData, TParams extends any[]
   setState(s: Partial<FetchState<TData, TParams>> = {}) {
     this.state = {
       ...this.state,
-      ...s
+      ...s,
     };
 
     this.subscribe();
   }
 
   runPluginHandler(event: keyof PluginReturn<TData, TParams>, ...rest: any[]) {
-     //@ts-ignore
-    const r = this.pluginImpls.map(i => i[event]?.(...rest)).filter(Boolean);
+    //@ts-ignore
+    const r = this.pluginImpls.map((i) => i[event]?.(...rest)).filter(Boolean);
     return Object.assign({}, ...r);
   }
 
@@ -59,7 +67,8 @@ export default class Fetch<TData extends FlatResponseData, TParams extends any[]
     this.count += 1;
     const currentCount = this.count;
 
-    const { returnNow = false, stopNow = false, ...state } = this.runPluginHandler('onBefore', params);
+    const { returnNow = false, stopNow = false, ...state } = this
+      .runPluginHandler("onBefore", params);
 
     // stop request
     if (stopNow) {
@@ -69,7 +78,7 @@ export default class Fetch<TData extends FlatResponseData, TParams extends any[]
     this.setState({
       loading: true,
       params,
-      ...state
+      ...state,
     });
 
     // return now
@@ -81,7 +90,11 @@ export default class Fetch<TData extends FlatResponseData, TParams extends any[]
 
     try {
       // replace service
-      let { servicePromise } = this.runPluginHandler('onRequest', this.serviceRef.current, params);
+      let { servicePromise } = this.runPluginHandler(
+        "onRequest",
+        this.serviceRef.current,
+        params,
+      );
 
       if (!servicePromise) {
         servicePromise = this.serviceRef.current(...params);
@@ -100,16 +113,16 @@ export default class Fetch<TData extends FlatResponseData, TParams extends any[]
         data: res.data,
         error: null,
         loading: false,
-        response: res.response
+        response: res.response,
       });
 
       this.options.onSuccess?.(res.data, params);
-      this.runPluginHandler('onSuccess', res, params);
+      this.runPluginHandler("onSuccess", res, params);
 
       this.options.onFinally?.(params, res.data, null);
 
       if (currentCount === this.count) {
-        this.runPluginHandler('onFinally', params, res, null);
+        this.runPluginHandler("onFinally", params, res, null);
       }
 
       return res;
@@ -121,21 +134,21 @@ export default class Fetch<TData extends FlatResponseData, TParams extends any[]
       }
 
       this.setState({
-         //@ts-ignore
+        //@ts-ignore
         data: null,
         error: errorMessage,
         loading: false,
-         //@ts-ignore
-        response: error.response
+        //@ts-ignore
+        response: error.response,
       });
 
       this.options.onError?.(errorMessage, params);
-      this.runPluginHandler('onError', error, params);
+      this.runPluginHandler("onError", error, params);
 
       this.options.onFinally?.(params, undefined, errorMessage);
 
       if (currentCount === this.count) {
-        this.runPluginHandler('onFinally', params, undefined, error);
+        this.runPluginHandler("onFinally", params, undefined, error);
       }
 
       throw error;
@@ -143,7 +156,7 @@ export default class Fetch<TData extends FlatResponseData, TParams extends any[]
   }
 
   run(...params: TParams) {
-    this.runAsync(...params).catch(error => {
+    this.runAsync(...params).catch((error) => {
       if (!this.options.onError) {
         console.error(error);
       }
@@ -154,28 +167,28 @@ export default class Fetch<TData extends FlatResponseData, TParams extends any[]
     this.count += 1;
 
     this.setState({
-      loading: false
+      loading: false,
     });
 
-    this.runPluginHandler('onCancel');
+    this.runPluginHandler("onCancel");
   }
 
   refresh() {
-     //@ts-ignore
+    //@ts-ignore
     this.run(...(this.state.params || []));
   }
 
   refreshAsync() {
-     //@ts-ignore
+    //@ts-ignore
     return this.runAsync(...(this.state.params || []));
   }
 
   mutate(data?: TData | ((oldData: TData | null) => TData | null)) {
     const targetData = isFunction(data) ? data(this.state.data) : data;
-    this.runPluginHandler('onMutate', targetData);
+    this.runPluginHandler("onMutate", targetData);
     this.setState({
-       //@ts-ignore
-      data: targetData
+      //@ts-ignore
+      data: targetData,
     });
   }
 }

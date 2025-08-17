@@ -1,8 +1,11 @@
-import { useRef } from 'react';
+import { useRef } from "react";
 
-import type { Plugin, Timeout } from '../type.ts';
+import type { Plugin, Timeout } from "../type.ts";
 
-const useRetryPlugin: Plugin<any, any[]> = (fetchInstance, { retryCount, retryInterval }) => {
+const useRetryPlugin: Plugin<any, any[]> = (
+  fetchInstance,
+  { retryCount, retryInterval },
+) => {
   const timerRef = useRef<Timeout>(null);
   const countRef = useRef(0);
 
@@ -34,7 +37,8 @@ const useRetryPlugin: Plugin<any, any[]> = (fetchInstance, { retryCount, retryIn
       countRef.current += 1;
       if (retryCount === -1 || countRef.current <= retryCount) {
         // Exponential backoff
-        const timeout = retryInterval ?? Math.min(1000 * 2 ** countRef.current, 30000);
+        const timeout = retryInterval ??
+          Math.min(1000 * 2 ** countRef.current, 30000);
         //@ts-ignore
         timerRef.current = setTimeout(() => {
           triggerByRetry.current = true;
@@ -46,7 +50,7 @@ const useRetryPlugin: Plugin<any, any[]> = (fetchInstance, { retryCount, retryIn
     },
     onSuccess: () => {
       countRef.current = 0;
-    }
+    },
   };
 };
 

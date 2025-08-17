@@ -1,12 +1,12 @@
-import type { DebounceSettings, DebouncedFunc } from 'lodash-es';
-import { debounce } from 'lodash-es';
-import { useEffect, useMemo, useRef } from 'react';
+import type { DebouncedFunc, DebounceSettings } from "lodash-es";
+import { debounce } from "lodash-es";
+import { useEffect, useMemo, useRef } from "react";
 
-import type { Plugin } from '../type.ts';
+import type { Plugin } from "../type.ts";
 
 const useDebouncePlugin: Plugin<any, any[]> = (
   fetchInstance,
-  { debounceLeading, debounceMaxWait, debounceTrailing, debounceWait }
+  { debounceLeading, debounceMaxWait, debounceTrailing, debounceWait },
 ) => {
   const debouncedRef = useRef<DebouncedFunc<any>>(null);
 
@@ -27,13 +27,13 @@ const useDebouncePlugin: Plugin<any, any[]> = (
   useEffect(() => {
     if (debounceWait) {
       const _originRunAsync = fetchInstance.runAsync.bind(fetchInstance);
-//@ts-ignore
+      //@ts-ignore
       debouncedRef.current = debounce(
         (callback: () => void) => {
           callback();
         },
         debounceWait,
-        options
+        options,
       );
 
       // debounce runAsync should be promise
@@ -63,7 +63,7 @@ const useDebouncePlugin: Plugin<any, any[]> = (
   return {
     onCancel: () => {
       debouncedRef.current?.cancel();
-    }
+    },
   };
 };
 

@@ -27,7 +27,7 @@ router.get("/cli/list", async (req, res) => {
       ["mcp", "list"],
       {
         stdio: ["pipe", "pipe", "pipe"],
-      }
+      },
     );
 
     let stdout = "";
@@ -87,16 +87,15 @@ router.post("/cli/add", async (req, res) => {
 
     console.log(
       `➕ Adding MCP server using gemini cli (${scope} scope):`,
-      name
+      name,
     );
 
     if (scope === "local" && projectPath) {
       console.log("📁 Running in project directory:", projectPath);
     }
-    const configPath =
-      scope == "user"
-        ? path.join(os.homedir(), ".gemini", "settings.json")
-        : path.join(projectPath, ".gemini", "settings.json");
+    const configPath = scope == "user"
+      ? path.join(os.homedir(), ".gemini", "settings.json")
+      : path.join(projectPath, ".gemini", "settings.json");
     const mcm = new MCPConfigManager(configPath);
     if (type === "http") {
       const result = await mcm.addServer(name, {
@@ -183,8 +182,9 @@ router.post("/cli/add-json", async (req, res) => {
     // Validate and parse JSON config
     let parsedConfig;
     try {
-      parsedConfig =
-        typeof jsonConfig === "string" ? JSON.parse(jsonConfig) : jsonConfig;
+      parsedConfig = typeof jsonConfig === "string"
+        ? JSON.parse(jsonConfig)
+        : jsonConfig;
     } catch (parseError: any) {
       return res.status(400).json({
         error: "Invalid JSON configuration",
@@ -235,7 +235,7 @@ router.post("/cli/add-json", async (req, res) => {
       cliArgs[2],
       cliArgs[3],
       cliArgs[4],
-      jsonString
+      jsonString,
     );
 
     // For local scope, we need to run the command in the project directory
@@ -252,7 +252,7 @@ router.post("/cli/add-json", async (req, res) => {
       //@ts-ignore
       process.env.GEMINI_PATH || "gemini",
       cliArgs,
-      spawnOptions
+      spawnOptions,
     );
 
     let stdout = "";
@@ -316,7 +316,7 @@ router.delete("/cli/remove/:name", async (req, res) => {
       "🗑️ Removing MCP server using gemini cli:",
       actualName,
       "scope:",
-      actualScope
+      actualScope,
     );
 
     // Add scope flag if it's local scope
@@ -324,11 +324,10 @@ router.delete("/cli/remove/:name", async (req, res) => {
       console.log("📁 Running in project directory:", projectPath);
     }
     if (actualName) {
-      const configPath =
-        actualScope == "user"
-          ? path.join(os.homedir(), ".gemini", "settings.json")
-          : //@ts-ignore
-            path.join(projectPath, ".gemini", "settings.json");
+      const configPath = actualScope == "user"
+        ? path.join(os.homedir(), ".gemini", "settings.json")
+        //@ts-ignore
+        : path.join(projectPath, ".gemini", "settings.json");
       const mcm = new MCPConfigManager(configPath);
 
       const result = await mcm.removeServer(actualName);
@@ -342,8 +341,7 @@ router.delete("/cli/remove/:name", async (req, res) => {
       } else {
         res.status(404).json({
           success: false,
-          message:
-            `MCP server "${actualName}" not found` +
+          message: `MCP server "${actualName}" not found` +
             "\n" +
             "error:" +
             result.error,
@@ -373,7 +371,7 @@ router.get("/cli/get/:name", async (req, res) => {
       ["mcp", "get", name],
       {
         stdio: ["pipe", "pipe", "pipe"],
-      }
+      },
     );
 
     let stdout = "";
@@ -513,7 +511,7 @@ router.get(
       ) {
         console.log(
           "🔍 Found user-scoped MCP servers:",
-          Object.keys(configData.mcpServers)
+          Object.keys(configData.mcpServers),
         );
         for (const [name, config] of Object.entries(configData.mcpServers)) {
           const server: MCPServerResponse = {
@@ -571,11 +569,13 @@ router.get(
         ) {
           console.log(
             `🔍 Found local-scoped MCP servers for ${currentProjectPath}:`,
-            Object.keys(projectConfig.mcpServers)
+            Object.keys(projectConfig.mcpServers),
           );
-          for (const [name, config] of Object.entries(
-            projectConfig.mcpServers
-          )) {
+          for (
+            const [name, config] of Object.entries(
+              projectConfig.mcpServers,
+            )
+          ) {
             const server: MCPServerResponse = {
               id: `local:${name}`, // Prefix with scope for uniqueness
               name: name, // Keep original name
@@ -617,7 +617,7 @@ router.get(
         details: error?.message,
       });
     }
-  }
+  },
 );
 
 // Helper functions to parse gemini cli output

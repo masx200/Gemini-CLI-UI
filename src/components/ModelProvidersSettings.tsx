@@ -46,65 +46,70 @@ const ModelProvidersSettings: React.FC<ModelProvidersSettingsProps> = ({
 
   return (
     <div>
-      {!showManagement ? (
-        <Box sx={{ textAlign: "center", py: 4 }}>
-          <Stack
-            direction="row"
-            spacing={2}
-            alignItems="center"
-            alignContent="center"
-            justifyContent="center"
-          >
-            <span>当前选择的模型供应商</span>
-            {isLoading ? (
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: 256,
-                }}
-              >
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              </Box>
-            ) : (
-              <Select
-                value={getSelectedProvider()}
-                onChange={(e) => setSelectedProvider(e.target.value)}
-              >
-                {providers.map((provider) => (
-                  <MenuItem
-                    key={provider.provider_name}
-                    value={provider.provider_name}
+      {!showManagement
+        ? (
+          <Box sx={{ textAlign: "center", py: 4 }}>
+            <Stack
+              direction="row"
+              spacing={2}
+              alignItems="center"
+              alignContent="center"
+              justifyContent="center"
+            >
+              <span>当前选择的模型供应商</span>
+              {isLoading
+                ? (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: 256,
+                    }}
                   >
-                    {provider.provider_name}
-                  </MenuItem>
-                ))}
-              </Select>
-            )}
-          </Stack>
+                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600">
+                    </div>
+                  </Box>
+                )
+                : (
+                  <Select
+                    value={getSelectedProvider()}
+                    onChange={(e) => setSelectedProvider(e.target.value)}
+                  >
+                    {providers.map((provider) => (
+                      <MenuItem
+                        key={provider.provider_name}
+                        value={provider.provider_name}
+                      >
+                        {provider.provider_name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                )}
+            </Stack>
 
-          <Typography variant="h6" gutterBottom>
-            Manage Model Providers
-          </Typography>
-          <Typography variant="body1" color="text.secondary" paragraph>
-            Configure and manage your AI model providers including API keys and
-            settings.
-          </Typography>
-          <Button
-            variant="contained"
-            onClick={() => setShowManagement(true)}
-            size="large"
-          >
-            Open Provider Management
-          </Button>
-        </Box>
-      ) : (
-        <ModelProvidersManagement
-          isOpen={showManagement}
-          onClose={() => setShowManagement(false)}
-        />
-      )}
+            <Typography variant="h6" gutterBottom>
+              Manage Model Providers
+            </Typography>
+            <Typography variant="body1" color="text.secondary" paragraph>
+              Configure and manage your AI model providers including API keys
+              and settings.
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={() => setShowManagement(true)}
+              size="large"
+            >
+              Open Provider Management
+            </Button>
+          </Box>
+        )
+        : (
+          <ModelProvidersManagement
+            isOpen={showManagement}
+            onClose={() => setShowManagement(false)}
+          />
+        )}
     </div>
   );
 };

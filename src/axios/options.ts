@@ -1,17 +1,19 @@
-import type { CreateAxiosDefaults } from 'axios';
-import type { IAxiosRetryConfig } from 'axios-retry';
-import { stringify } from 'qs';
+import type { CreateAxiosDefaults } from "axios";
+import type { IAxiosRetryConfig } from "axios-retry";
+import { stringify } from "qs";
 
-import { isHttpSuccess } from './shared.ts';
-import type { RequestOption } from './type.ts';
+import { isHttpSuccess } from "./shared.ts";
+import type { RequestOption } from "./type.ts";
 
-export function createDefaultOptions<ResponseData = any>(options?: Partial<RequestOption<ResponseData>>) {
+export function createDefaultOptions<ResponseData = any>(
+  options?: Partial<RequestOption<ResponseData>>,
+) {
   const opts: RequestOption<ResponseData> = {
-    isBackendSuccess: _response => true,
+    isBackendSuccess: (_response) => true,
     onBackendFail: async () => {},
     onError: async () => {},
-    onRequest: async config => config,
-    transformBackendResponse: async response => response.data
+    onRequest: async (config) => config,
+    transformBackendResponse: async (response) => response.data,
   };
 
   Object.assign(opts, options);
@@ -23,7 +25,7 @@ export function createRetryOptions(config?: Partial<CreateAxiosDefaults>) {
   const retryConfig: IAxiosRetryConfig = {
     retries: 0,
     retryDelay: () => 1000,
-    shouldResetTimeout: true
+    shouldResetTimeout: true,
   };
 
   Object.assign(retryConfig, config);
@@ -36,13 +38,13 @@ export function createAxiosConfig(config?: Partial<CreateAxiosDefaults>) {
 
   const axiosConfig: CreateAxiosDefaults = {
     headers: {
-      'Content-Type': 'application/json'
+      "Content-Type": "application/json",
     },
-    paramsSerializer: params => {
+    paramsSerializer: (params) => {
       return stringify(params);
     },
     timeout: TEN_SECONDS,
-    validateStatus: isHttpSuccess
+    validateStatus: isHttpSuccess,
   };
 
   Object.assign(axiosConfig, config);

@@ -4,7 +4,7 @@ const listeners: Record<string, Listener[]> = {};
 const trigger = (key: string, data: any) => {
   if (listeners[key]) {
     //@ts-ignore
-    listeners[key].forEach(item => item(data));
+    listeners[key].forEach((item) => item(data));
   }
 };
 

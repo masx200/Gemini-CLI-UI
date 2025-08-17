@@ -80,11 +80,10 @@ function run(cmd: string, args: readonly string[] | undefined, opts = {}) {
     child.stderr?.on("data", (b) => err.push(b));
     child.on("close", (code) =>
       code === 0
-        ? //@ts-ignore
-          resolve(Buffer.concat(out).toString())
-        : //@ts-ignore
-          reject(new Error(Buffer.concat(err).toString()))
-    );
+        //@ts-ignore
+        ? resolve(Buffer.concat(out).toString())
+        //@ts-ignore
+        : reject(new Error(Buffer.concat(err).toString())));
   });
 }
 // Setup file system watcher for Gemini projects folder using chokidar
@@ -94,7 +93,7 @@ async function setupProjectsWatcher() {
     //@ts-ignore
     process.env.HOME || os.homedir(),
     ".gemini",
-    "projects"
+    "projects",
   );
 
   if (projectsWatcher) {
@@ -190,8 +189,7 @@ const wss = new WebSocketServer({
 
     // Extract token from query parameters or headers
     const url = new URL(info.req.url, "http://localhost");
-    const token =
-      url.searchParams.get("token") ||
+    const token = url.searchParams.get("token") ||
       info.req.headers.authorization?.split(" ")[1];
 
     // Verify token
@@ -273,7 +271,7 @@ app.get(
         //@ts-ignore
         parseInt(offset),
         //@ts-ignore
-        parseInt(offset) + parseInt(limit)
+        parseInt(offset) + parseInt(limit),
       );
 
       res.json({
@@ -284,7 +282,7 @@ app.get(
       //@ts-ignore
       res.status(500).json({ error: error.message });
     }
-  }
+  },
 );
 
 // Get messages for a specific session
@@ -300,7 +298,7 @@ app.get(
       //@ts-ignore
       res.status(500).json({ error: error.message });
     }
-  }
+  },
 );
 
 // Rename project endpoint
@@ -316,7 +314,7 @@ app.put(
       //@ts-ignore
       res.status(500).json({ error: error.message });
     }
-  }
+  },
 );
 
 // Delete session endpoint
@@ -332,7 +330,7 @@ app.delete(
       //@ts-ignore
       res.status(500).json({ error: error.message });
     }
-  }
+  },
 );
 
 // Delete project endpoint (only if empty)
@@ -348,7 +346,7 @@ app.delete(
       //@ts-ignore
       res.status(500).json({ error: error.message });
     }
-  }
+  },
 );
 
 // Create project endpoint
@@ -401,7 +399,7 @@ app.get(
         res.status(500).json({ error: error.message });
       }
     }
-  }
+  },
 );
 
 // Serve binary file content endpoint (for images, etc.)
@@ -454,7 +452,7 @@ app.get(
         res.status(500).json({ error: error.message });
       }
     }
-  }
+  },
 );
 
 // Save file content endpoint
@@ -509,7 +507,7 @@ app.put(
         res.status(500).json({ error: error.message });
       }
     }
-  }
+  },
 );
 
 app.get(
@@ -547,7 +545,7 @@ app.get(
       //@ts-ignore
       res.status(500).json({ error: error.message });
     }
-  }
+  },
 );
 
 // WebSocket connection handler that routes based on URL path
@@ -595,7 +593,7 @@ function handleChatConnection(ws: WebSocket) {
             type: "session-aborted",
             sessionId: data.sessionId,
             success,
-          })
+          }),
         );
       }
     } catch (error) {
@@ -606,7 +604,7 @@ function handleChatConnection(ws: WebSocket) {
           type: "error",
           //@ts-ignore
           error: error.message,
-        })
+        }),
       );
     }
   });
@@ -643,25 +641,23 @@ function handleShellConnection(ws: WebSocket) {
           JSON.stringify({
             type: "output",
             data: welcomeMsg,
-          })
+          }),
         );
 
         try {
           // Get gemini command from environment or use default
           //@ts-ignore
           const geminiPath = process.env.GEMINI_PATH || "gemini";
-          const cmd =
-            process.platform === "win32"
-              ? "cmd"
-              : //@ts-ignore
-                process.env.GEMINI_PATH || `which ${geminiPath}`;
+          const cmd = process.platform === "win32"
+            ? "cmd"
+            //@ts-ignore
+            : process.env.GEMINI_PATH || `which ${geminiPath}`;
           // First check if gemini CLI is available
           try {
-            const cmd =
-              process.platform === "win32"
-                ? "cmd"
-                : //@ts-ignore
-                  process.env.GEMINI_PATH || `which ${geminiPath}`;
+            const cmd = process.platform === "win32"
+              ? "cmd"
+              //@ts-ignore
+              : process.env.GEMINI_PATH || `which ${geminiPath}`;
             const args = [] as string[];
             if (process.platform === "win32") {
               args.push("/c");
@@ -700,8 +696,9 @@ function handleShellConnection(ws: WebSocket) {
             ws.send(
               JSON.stringify({
                 type: "output",
-                data: `\r\n\x1b[31mError: Gemini CLI not found. Please check:\x1b[0m\r\n\x1b[33m1. Install gemini globally: npm install -g @google/gemini-cli\x1b[0m\r\n\x1b[33m2. Or set GEMINI_PATH in .env file\x1b[0m\r\n`,
-              })
+                data:
+                  `\r\n\x1b[31mError: Gemini CLI not found. Please check:\x1b[0m\r\n\x1b[33m1. Install gemini globally: npm install -g @google/gemini-cli\x1b[0m\r\n\x1b[33m2. Or set GEMINI_PATH in .env file\x1b[0m\r\n`,
+              }),
             );
             return;
           }
@@ -711,7 +708,8 @@ function handleShellConnection(ws: WebSocket) {
 
           if (hasSession && sessionId) {
             // Try to resume session, but with fallback to new session if it fails
-            geminiCommand = `${geminiPath} --resume ${sessionId} || ${geminiPath}`;
+            geminiCommand =
+              `${geminiPath} --resume ${sessionId} || ${geminiPath}`;
           }
 
           // Create shell command that cds to the project directory first
@@ -724,10 +722,10 @@ function handleShellConnection(ws: WebSocket) {
             ? ["/c", shellCommand]
             : ["-c", shellCommand];
           const homeDir = isWindows
-            ? //@ts-ignore
-              process.env.USERPROFILE
-            : //@ts-ignore
-              process.env.HOME || "/";
+            //@ts-ignore
+            ? process.env.USERPROFILE
+            //@ts-ignore
+            : process.env.HOME || "/";
 
           // Start shell using PTY for proper terminal emulation
           shellProcess = pty.spawn(shell, shellArgs, {
@@ -777,14 +775,14 @@ function handleShellConnection(ws: WebSocket) {
                     JSON.stringify({
                       type: "url_open",
                       url: url,
-                    })
+                    }),
                   );
 
                   // Replace the OPEN_URL pattern with a user-friendly message
                   if (pattern.source.includes("OPEN_URL")) {
                     outputData = outputData.replace(
                       match[0],
-                      `🌐 Opening in browser: ${url}`
+                      `🌐 Opening in browser: ${url}`,
                     );
                   }
                 }
@@ -795,7 +793,7 @@ function handleShellConnection(ws: WebSocket) {
                 JSON.stringify({
                   type: "output",
                   data: outputData,
-                })
+                }),
               );
             }
           });
@@ -808,12 +806,11 @@ function handleShellConnection(ws: WebSocket) {
               ws.send(
                 JSON.stringify({
                   type: "output",
-                  data: `\r\n\x1b[33mProcess exited with code ${
-                    exitCode.exitCode
-                  }${
-                    exitCode.signal ? ` (${exitCode.signal})` : ""
-                  }\x1b[0m\r\n`,
-                })
+                  data:
+                    `\r\n\x1b[33mProcess exited with code ${exitCode.exitCode}${
+                      exitCode.signal ? ` (${exitCode.signal})` : ""
+                    }\x1b[0m\r\n`,
+                }),
               );
             }
             shellProcess = null;
@@ -826,7 +823,7 @@ function handleShellConnection(ws: WebSocket) {
 
               //@ts-ignore
               data: `\r\n\x1b[31mError: ${spawnError.message}\x1b[0m\r\n`,
-            })
+            }),
           );
         }
       } else if (data.type === "input") {
@@ -855,7 +852,7 @@ function handleShellConnection(ws: WebSocket) {
             type: "output",
             //@ts-ignore
             data: `\r\n\x1b[31mError: ${error.message}\x1b[0m\r\n`,
-          })
+          }),
         );
       }
     }
@@ -925,13 +922,13 @@ app.post("/api/transcribe", authenticateToken, async (req, res) => {
               ...formData.getHeaders(),
             },
             body: formData,
-          }
+          },
         );
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(
-            errorData.error?.message || `Whisper API error: ${response.status}`
+            errorData.error?.message || `Whisper API error: ${response.status}`,
           );
         }
 
@@ -966,7 +963,8 @@ app.post("/api/transcribe", authenticateToken, async (req, res) => {
             case "prompt":
               systemMessage =
                 "You are an expert prompt engineer who creates clear, detailed, and effective prompts.";
-              prompt = `You are an expert prompt engineer. Transform the following rough instruction into a clear, detailed, and context-aware AI prompt.
+              prompt =
+                `You are an expert prompt engineer. Transform the following rough instruction into a clear, detailed, and context-aware AI prompt.
 
 Your enhanced prompt should:
 1. Be specific and unambiguous
@@ -988,7 +986,8 @@ Enhanced prompt:`;
               systemMessage =
                 "You are a helpful assistant that formats ideas into clear, actionable instructions for AI agents.";
               temperature = 0.5; // Lower temperature for more controlled output
-              prompt = `Transform the following idea into clear, well-structured instructions that an AI agent can easily understand and execute.
+              prompt =
+                `Transform the following idea into clear, well-structured instructions that an AI agent can easily understand and execute.
 
 IMPORTANT RULES:
 - Format as clear, step-by-step instructions
@@ -1062,12 +1061,12 @@ app.post(
         destination: async (
           req: { user: { id: any } },
           file: any,
-          cb: (arg0: null, arg1: string) => void
+          cb: (arg0: null, arg1: string) => void,
         ) => {
           const uploadDir = path.join(
             os.tmpdir(),
             "gemini-ui-uploads",
-            String(req.user.id)
+            String(req.user.id),
           );
           await fs.mkdir(uploadDir, { recursive: true });
           cb(null, uploadDir);
@@ -1075,13 +1074,13 @@ app.post(
         filename: (
           req: any,
           file: { originalname: string },
-          cb: (arg0: null, arg1: string) => void
+          cb: (arg0: null, arg1: string) => void,
         ) => {
-          const uniqueSuffix =
-            Date.now() + "-" + Math.round(Math.random() * 1e9);
+          const uniqueSuffix = Date.now() + "-" +
+            Math.round(Math.random() * 1e9);
           const sanitizedName = file.originalname.replace(
             /[^a-zA-Z0-9.-]/g,
-            "_"
+            "_",
           );
           cb(null, uniqueSuffix + "-" + sanitizedName);
         },
@@ -1090,7 +1089,7 @@ app.post(
       const fileFilter = (
         req: any,
         file: { mimetype: string },
-        cb: (arg0: Error | null, arg1: boolean | undefined) => void
+        cb: (arg0: Error | null, arg1: boolean | undefined) => void,
       ) => {
         const allowedMimes = [
           "image/jpeg",
@@ -1105,8 +1104,8 @@ app.post(
           //@ts-ignore
           cb(
             new Error(
-              "Invalid file type. Only JPEG, PNG, GIF, WebP, and SVG are allowed."
-            )
+              "Invalid file type. Only JPEG, PNG, GIF, WebP, and SVG are allowed.",
+            ),
           );
         }
       };
@@ -1158,8 +1157,8 @@ app.post(
                   size: file.size,
                   mimeType: mimeType,
                 };
-              }
-            )
+              },
+            ),
           );
 
           res.json({ images: processedImages });
@@ -1170,7 +1169,7 @@ app.post(
             //@ts-ignore
             req.files.map((f: { path: fs.PathLike }) =>
               fs.unlink(f.path).catch(() => {})
-            )
+            ),
           );
           res.status(500).json({ error: "Failed to process images" });
         }
@@ -1179,7 +1178,7 @@ app.post(
       // console.error('Error in image upload endpoint:', error);
       res.status(500).json({ error: "Internal server error" });
     }
-  }
+  },
 );
 
 // Serve React app for all other routes
@@ -1199,7 +1198,7 @@ async function getFileTree(
   dirPath: string,
   maxDepth = 3,
   currentDepth = 0,
-  showHidden = true
+  showHidden = true,
 ) {
   // Using fsPromises from import
   const items = [];
@@ -1240,13 +1239,12 @@ async function getFileTree(
         const groupPerm = (mode >> 3) & 7;
         const otherPerm = mode & 7;
         //@ts-ignore
-        item.permissions =
-          ((mode >> 6) & 7).toString() +
+        item.permissions = ((mode >> 6) & 7).toString() +
           ((mode >> 3) & 7).toString() +
           (mode & 7).toString();
         //@ts-ignore
-        item.permissionsRwx =
-          permToRwx(ownerPerm) + permToRwx(groupPerm) + permToRwx(otherPerm);
+        item.permissionsRwx = permToRwx(ownerPerm) + permToRwx(groupPerm) +
+          permToRwx(otherPerm);
       } catch (statError) {
         // If stat fails, provide default values
         //@ts-ignore
@@ -1269,7 +1267,7 @@ async function getFileTree(
             item.path,
             maxDepth,
             currentDepth + 1,
-            showHidden
+            showHidden,
           );
         } catch (e) {
           // Silently skip directories we can't access (permission denied, etc.)
