@@ -3,6 +3,7 @@ import express from "express";
 import { promises as fs } from "fs";
 import os from "os";
 import path from "path";
+import { MCPConfigManager } from "../utils/mcp-config-manager.js";
 // import { fileURLToPath } from "url";
 
 const router = express.Router();
@@ -26,7 +27,7 @@ router.get("/cli/list", async (req, res) => {
       ["mcp", "list"],
       {
         stdio: ["pipe", "pipe", "pipe"],
-      },
+      }
     );
 
     let stdout = "";
@@ -86,97 +87,83 @@ router.post("/cli/add", async (req, res) => {
 
     console.log(
       `➕ Adding MCP server using gemini cli (${scope} scope):`,
-      name,
+      name
     );
-
-    const { spawn } = await import("child_process");
-
-    let cliArgs = ["mcp", "add"];
-
-    // Add scope flag
-    cliArgs.push("--scope", scope);
-
-    if (type === "http") {
-      cliArgs.push("--transport", "http", name, url);
-      // Add headers if provided
-      Object.entries(headers).forEach(([key, value]) => {
-        cliArgs.push("--header", `${key}: ${value}`);
-      });
-    } else if (type === "sse") {
-      cliArgs.push("--transport", "sse", name, url);
-      // Add headers if provided
-      Object.entries(headers).forEach(([key, value]) => {
-        cliArgs.push("--header", `${key}: ${value}`);
-      });
-    } else {
-      // stdio (default): gemini mcp add --scope user <name> <command> [args...]
-      cliArgs.push(name);
-      // Add environment variables
-      Object.entries(env).forEach(([key, value]) => {
-        cliArgs.push("-e", `${key}=${value}`);
-      });
-      cliArgs.push(command);
-      if (args && args.length > 0) {
-        cliArgs.push(...args);
-      }
-    }
-
-    console.log(
-      "🔧 Running gemini cli command:",
-      //@ts-ignore
-      process.env.GEMINI_PATH || "gemini",
-      cliArgs.join(" "),
-    );
-
-    // For local scope, we need to run the command in the project directory
-    const spawnOptions: SpawnOptions = {
-      stdio: ["pipe", "pipe", "pipe"],
-    } satisfies SpawnOptions;
 
     if (scope === "local" && projectPath) {
-      spawnOptions.cwd = projectPath;
       console.log("📁 Running in project directory:", projectPath);
     }
-
-    const process2 = spawn(
-      //@ts-ignore
-      process.env.GEMINI_PATH || "gemini",
-      cliArgs,
-      spawnOptions,
-    );
-
-    let stdout = "";
-    let stderr = "";
-
-    process2.stdout?.on("data", (data) => {
-      stdout += data.toString();
-    });
-
-    process2.stderr?.on("data", (data) => {
-      stderr += data.toString();
-    });
-
-    process2.on("close", (code) => {
-      if (code === 0) {
-        res.json({
-          success: true,
-          output: stdout,
-          message: `MCP server "${name}" added successfully`,
+    const configPath =
+      scope == "user"
+        ? path.join(os.homedir(), ".gemini", "settings.json")
+        : path.join(projectPath, ".gemini", "settings.json");
+    const mcm = new MCPConfigManager(configPath);
+    if (type === "http") {
+      const result = await mcm.addServer(name, {
+        type,
+        command,
+        args,
+        url,
+        transport: "http",
+        headers,
+        env,
+      });
+      if (result.error) {
+        return res.status(400).json({
+          error: "Failed to add MCP server",
+          details: result.error,
         });
       } else {
-        console.error("gemini cli error:", stderr);
-        res
-          .status(400)
-          .json({ error: "gemini cli command failed", details: stderr });
+        return res.status(200).json({
+          success: true,
+          message: `Server "${name}" added successfully`,
+        });
       }
-    });
+    } else if (type === "sse") {
+      const result = await mcm.addServer(name, {
+        type,
+        command,
+        args,
+        url,
+        transport: "sse",
+        headers,
+        env,
+      });
+      if (result.error) {
+        return res.status(400).json({
+          error: "Failed to add MCP server",
+          details: result.error,
+        });
+      } else {
+        return res.status(200).json({
+          success: true,
+          message: `Server "${name}" added successfully`,
+        });
+      }
+    } else {
+      const result = await mcm.addServer(name, {
+        type,
+        command,
+        args,
+        url,
+        transport: "stdio",
+        headers,
+        env,
+      });
+      if (result.error) {
+        return res.status(400).json({
+          error: "Failed to add MCP server",
+          details: result.error,
+        });
+      } else {
+        return res.status(200).json({
+          success: true,
+          message: `Server "${name}" added successfully`,
+        });
+      }
+    }
 
-    process2.on("error", (error) => {
-      console.error("Error running gemini cli:", error);
-      res
-        .status(500)
-        .json({ error: "Failed to run gemini cli", details: error.message });
-    });
+    // For local scope, we need to run the command in the project directory
   } catch (error: any) {
     console.error("Error adding MCP server via CLI:", error);
     res
@@ -195,9 +182,8 @@ router.post("/cli/add-json", async (req, res) => {
     // Validate and parse JSON config
     let parsedConfig;
     try {
-      parsedConfig = typeof jsonConfig === "string"
-        ? JSON.parse(jsonConfig)
-        : jsonConfig;
+      parsedConfig =
+        typeof jsonConfig === "string" ? JSON.parse(jsonConfig) : jsonConfig;
     } catch (parseError: any) {
       return res.status(400).json({
         error: "Invalid JSON configuration",
@@ -248,7 +234,7 @@ router.post("/cli/add-json", async (req, res) => {
       cliArgs[2],
       cliArgs[3],
       cliArgs[4],
-      jsonString,
+      jsonString
     );
 
     // For local scope, we need to run the command in the project directory
@@ -265,7 +251,7 @@ router.post("/cli/add-json", async (req, res) => {
       //@ts-ignore
       process.env.GEMINI_PATH || "gemini",
       cliArgs,
-      spawnOptions,
+      spawnOptions
     );
 
     let stdout = "";
@@ -329,7 +315,7 @@ router.delete("/cli/remove/:name", async (req, res) => {
       "🗑️ Removing MCP server using gemini cli:",
       actualName,
       "scope:",
-      actualScope,
+      actualScope
     );
 
     const { spawn } = await import("child_process");
@@ -352,7 +338,7 @@ router.delete("/cli/remove/:name", async (req, res) => {
       "🔧 Running gemini cli command:",
       //@ts-ignore
       process.env.GEMINI_PATH || "gemini",
-      cliArgs.join(" "),
+      cliArgs.join(" ")
     );
 
     const process2 = spawn(
@@ -362,7 +348,7 @@ router.delete("/cli/remove/:name", async (req, res) => {
       cliArgs,
       {
         stdio: ["pipe", "pipe", "pipe"],
-      },
+      }
     );
 
     let stdout = "";
@@ -420,7 +406,7 @@ router.get("/cli/get/:name", async (req, res) => {
       ["mcp", "get", name],
       {
         stdio: ["pipe", "pipe", "pipe"],
-      },
+      }
     );
 
     let stdout = "";
@@ -560,7 +546,7 @@ router.get(
       ) {
         console.log(
           "🔍 Found user-scoped MCP servers:",
-          Object.keys(configData.mcpServers),
+          Object.keys(configData.mcpServers)
         );
         for (const [name, config] of Object.entries(configData.mcpServers)) {
           const server: MCPServerResponse = {
@@ -618,13 +604,11 @@ router.get(
         ) {
           console.log(
             `🔍 Found local-scoped MCP servers for ${currentProjectPath}:`,
-            Object.keys(projectConfig.mcpServers),
+            Object.keys(projectConfig.mcpServers)
           );
-          for (
-            const [name, config] of Object.entries(
-              projectConfig.mcpServers,
-            )
-          ) {
+          for (const [name, config] of Object.entries(
+            projectConfig.mcpServers
+          )) {
             const server: MCPServerResponse = {
               id: `local:${name}`, // Prefix with scope for uniqueness
               name: name, // Keep original name
@@ -666,7 +650,7 @@ router.get(
         details: error?.message,
       });
     }
-  },
+  }
 );
 
 // Helper functions to parse gemini cli output

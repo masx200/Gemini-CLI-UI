@@ -23,6 +23,7 @@ export interface MCPServerConfig {
     };
     authProviderType?: "dynamic_discovery" | "google_credentials";
     type: "stdio" | "sse" | "http";
+    transport: "stdio" | "sse" | "http";
 }
 export interface MCPServersConfig {
     [serverName: string]: MCPServerConfig;

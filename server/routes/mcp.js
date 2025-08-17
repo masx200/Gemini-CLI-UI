@@ -2,6 +2,7 @@ import express from "express";
 import { promises as fs } from "fs";
 import os from "os";
 import path from "path";
+import { MCPConfigManager } from "../utils/mcp-config-manager.js";
 const router = express.Router();
 router.get("/cli/list", async (req, res) => {
     try {
@@ -51,69 +52,82 @@ router.post("/cli/add", async (req, res) => {
     try {
         const { name, type = "stdio", command, args = [], url, headers = {}, env = {}, scope = "user", projectPath, } = req.body;
         console.log(`➕ Adding MCP server using gemini cli (${scope} scope):`, name);
-        const { spawn } = await import("child_process");
-        let cliArgs = ["mcp", "add"];
-        cliArgs.push("--scope", scope);
-        if (type === "http") {
-            cliArgs.push("--transport", "http", name, url);
-            Object.entries(headers).forEach(([key, value]) => {
-                cliArgs.push("--header", `${key}: ${value}`);
-            });
-        }
-        else if (type === "sse") {
-            cliArgs.push("--transport", "sse", name, url);
-            Object.entries(headers).forEach(([key, value]) => {
-                cliArgs.push("--header", `${key}: ${value}`);
-            });
-        }
-        else {
-            cliArgs.push(name);
-            Object.entries(env).forEach(([key, value]) => {
-                cliArgs.push("-e", `${key}=${value}`);
-            });
-            cliArgs.push(command);
-            if (args && args.length > 0) {
-                cliArgs.push(...args);
-            }
-        }
-        console.log("🔧 Running gemini cli command:", process.env.GEMINI_PATH || "gemini", cliArgs.join(" "));
-        const spawnOptions = {
-            stdio: ["pipe", "pipe", "pipe"],
-        };
         if (scope === "local" && projectPath) {
-            spawnOptions.cwd = projectPath;
             console.log("📁 Running in project directory:", projectPath);
         }
-        const process2 = spawn(process.env.GEMINI_PATH || "gemini", cliArgs, spawnOptions);
-        let stdout = "";
-        let stderr = "";
-        process2.stdout?.on("data", (data) => {
-            stdout += data.toString();
-        });
-        process2.stderr?.on("data", (data) => {
-            stderr += data.toString();
-        });
-        process2.on("close", (code) => {
-            if (code === 0) {
-                res.json({
-                    success: true,
-                    output: stdout,
-                    message: `MCP server "${name}" added successfully`,
+        const configPath = scope == "user"
+            ? path.join(os.homedir(), ".gemini", "settings.json")
+            : path.join(projectPath, ".gemini", "settings.json");
+        const mcm = new MCPConfigManager(configPath);
+        if (type === "http") {
+            const result = await mcm.addServer(name, {
+                type,
+                command,
+                args,
+                url,
+                transport: "http",
+                headers,
+                env,
+            });
+            if (result.error) {
+                return res.status(400).json({
+                    error: "Failed to add MCP server",
+                    details: result.error,
                 });
             }
             else {
-                console.error("gemini cli error:", stderr);
-                res
-                    .status(400)
-                    .json({ error: "gemini cli command failed", details: stderr });
+                return res.status(200).json({
+                    success: true,
+                    message: `Server "${name}" added successfully`,
+                });
             }
-        });
-        process2.on("error", (error) => {
-            console.error("Error running gemini cli:", error);
-            res
-                .status(500)
-                .json({ error: "Failed to run gemini cli", details: error.message });
-        });
+        }
+        else if (type === "sse") {
+            const result = await mcm.addServer(name, {
+                type,
+                command,
+                args,
+                url,
+                transport: "sse",
+                headers,
+                env,
+            });
+            if (result.error) {
+                return res.status(400).json({
+                    error: "Failed to add MCP server",
+                    details: result.error,
+                });
+            }
+            else {
+                return res.status(200).json({
+                    success: true,
+                    message: `Server "${name}" added successfully`,
+                });
+            }
+        }
+        else {
+            const result = await mcm.addServer(name, {
+                type,
+                command,
+                args,
+                url,
+                transport: "stdio",
+                headers,
+                env,
+            });
+            if (result.error) {
+                return res.status(400).json({
+                    error: "Failed to add MCP server",
+                    details: result.error,
+                });
+            }
+            else {
+                return res.status(200).json({
+                    success: true,
+                    message: `Server "${name}" added successfully`,
+                });
+            }
+        }
     }
     catch (error) {
         console.error("Error adding MCP server via CLI:", error);
@@ -128,9 +142,8 @@ router.post("/cli/add-json", async (req, res) => {
         console.log("➕ Adding MCP server using JSON format:", name);
         let parsedConfig;
         try {
-            parsedConfig = typeof jsonConfig === "string"
-                ? JSON.parse(jsonConfig)
-                : jsonConfig;
+            parsedConfig =
+                typeof jsonConfig === "string" ? JSON.parse(jsonConfig) : jsonConfig;
         }
         catch (parseError) {
             return res.status(400).json({

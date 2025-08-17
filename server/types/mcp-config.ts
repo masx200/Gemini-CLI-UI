@@ -35,6 +35,7 @@ export interface MCPServerConfig {
   // 认证提供者类型
   authProviderType?: "dynamic_discovery" | "google_credentials";
   type: "stdio" | "sse" | "http";
+  transport: "stdio" | "sse" | "http";
 }
 
 export interface MCPServersConfig {
