@@ -10,16 +10,20 @@ import {
   X,
   Zap,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 //@ts-ignore
 import { useTheme } from "../contexts/ThemeContext.jsx";
 
 //@ts-ignore
+import type { OpenAIModel } from "../utils/fetchOpenAIModels.ts";
+//@ts-ignore
 import { Button } from "./ui/button.jsx";
-
 //@ts-ignore
 import ModelProvidersSettings from "./ModelProvidersSettings.tsx";
 import McpServerManagement, { type Project } from "./mcp-server-management.tsx";
+//@ts-ignore
+import { useRequest } from "ahooks";
+import { getModelsbyProvidername } from "../utils/getModelProvidersbyname.ts";
 //@ts-ignore
 import { Input } from "./ui/input.jsx";
 export interface ToolsSettingsLocal {
@@ -42,6 +46,22 @@ function ToolsSettings({
   projects: Project[];
 }) {
   const [selectedProvider, setSelectedProvider] = useState<string>("");
+  const { data, error, loading, run } = useRequest<OpenAIModel[], string[]>(
+    async function (selectedProvider) {
+      if (!selectedProvider) {
+        return [];
+      }
+      const models = await getModelsbyProvidername(selectedProvider);
+      return models;
+    },
+    { manual: true }
+  );
+  useEffect(() => {
+    if (!selectedProvider) {
+      return;
+    }
+    run(selectedProvider);
+  }, [selectedProvider]);
   useEffect(() => {
     try {
       setSelectedProvider(
@@ -90,18 +110,27 @@ function ToolsSettings({
   ];
 
   // Available Gemini models (tested and verified)
-  const availableModels = [
-    {
-      value: "gemini-2.5-flash",
-      label: "Gemini 2.5 Flash",
-      description: "Fast and efficient latest model (Recommended)",
-    },
-    {
-      value: "gemini-2.5-pro",
-      label: "Gemini 2.5 Pro",
-      description: "Most advanced model (Note: May have quota limits)",
-    },
-  ];
+  const availableModels = useMemo(() => {
+    if (data) {
+      return data.map((item) => ({
+        value: item.id,
+        label: item.id,
+        description: item.id,
+      }));
+    }
+    return [
+      {
+        value: "gemini-2.5-flash",
+        label: "Gemini 2.5 Flash",
+        description: "Fast and efficient latest model (Recommended)",
+      },
+      {
+        value: "gemini-2.5-pro",
+        label: "Gemini 2.5 Pro",
+        description: "Most advanced model (Note: May have quota limits)",
+      },
+    ];
+  }, [data]);
 
   useEffect(() => {
     if (isOpen) {
@@ -329,7 +358,13 @@ function ToolsSettings({
                       <label className="block text-sm font-medium text-foreground">
                         Select Model
                       </label>
+                      {error ? (
+                        <p>
+                          <span>Error:{String(error)}</span>
+                        </p>
+                      ) : null}
                       <select
+                        loading={loading}
                         value={selectedModel}
                         onChange={(e) => setSelectedModel(e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-cyan-500 focus:border-cyan-500"
