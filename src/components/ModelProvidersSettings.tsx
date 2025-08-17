@@ -16,7 +16,7 @@ export interface ModelProvidersSettingsProps {
 }
 
 //@ts-ignore
-import { authenticatedFetch } from "../../src/utils/api.js";
+import { authenticatedFetch } from "../utils/api.ts";
 
 const ModelProvidersSettings: React.FC<ModelProvidersSettingsProps> = ({
   getSelectedProvider,

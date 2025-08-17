@@ -20,8 +20,8 @@
 
 import { useEffect, useState } from "react";
 import {
-  BrowserRouter as Router,
   Route,
+  BrowserRouter as Router,
   Routes,
   useNavigate,
   useParams,
@@ -43,7 +43,7 @@ import { AuthProvider } from "./contexts/AuthContext.jsx";
 //@ts-ignore
 import { ThemeProvider } from "./contexts/ThemeContext.jsx";
 //@ts-ignore
-import { api } from "./utils/api.js";
+import { api } from "./utils/api.ts";
 //@ts-ignore
 import { useVersionCheck } from "./hooks/useVersionCheck.ts";
 //@ts-ignore
@@ -141,7 +141,7 @@ function AppContent() {
     currentProjects: Project[],
     updatedProjects: Project[],
     selectedProject: Project | null,
-    selectedSession: Session | null,
+    selectedSession: Session | null
   ): boolean => {
     if (!selectedProject || !selectedSession) {
       // No active session to protect, allow all updates
@@ -150,10 +150,10 @@ function AppContent() {
 
     // Find the selected project in both current and updated data
     const currentSelectedProject = currentProjects?.find(
-      (p) => p.name === selectedProject.name,
+      (p) => p.name === selectedProject.name
     );
     const updatedSelectedProject = updatedProjects?.find(
-      (p) => p.name === selectedProject.name,
+      (p) => p.name === selectedProject.name
     );
 
     if (!currentSelectedProject || !updatedSelectedProject) {
@@ -163,10 +163,10 @@ function AppContent() {
 
     // Find the selected session in both current and updated project data
     const currentSelectedSession = currentSelectedProject.sessions?.find(
-      (s) => s.id === selectedSession.id,
+      (s) => s.id === selectedSession.id
     );
     const updatedSelectedSession = updatedSelectedProject.sessions?.find(
-      (s) => s.id === selectedSession.id,
+      (s) => s.id === selectedSession.id
     );
 
     if (!currentSelectedSession || !updatedSelectedSession) {
@@ -215,7 +215,7 @@ function AppContent() {
             currentProjects,
             updatedProjects,
             selectedProject,
-            selectedSession,
+            selectedSession
           );
 
           if (!isAdditiveUpdate) {
@@ -232,16 +232,16 @@ function AppContent() {
         // Update selected project if it exists in the updated projects
         if (selectedProject) {
           const updatedSelectedProject = updatedProjects.find(
-            (p: Project) => p.name === selectedProject.name,
+            (p: Project) => p.name === selectedProject.name
           );
           if (updatedSelectedProject) {
             setSelectedProject(updatedSelectedProject);
 
             // Update selected session only if it was deleted - avoid unnecessary reloads
             if (selectedSession) {
-              const updatedSelectedSession = updatedSelectedProject.sessions
-                ?.find(
-                  (s: Session) => s.id === selectedSession.id,
+              const updatedSelectedSession =
+                updatedSelectedProject.sessions?.find(
+                  (s: Session) => s.id === selectedSession.id
                 );
               if (!updatedSelectedSession) {
                 // Session was deleted
@@ -269,21 +269,22 @@ function AppContent() {
         }
 
         // Check if the projects data has actually changed
-        const hasChanges = data.some((newProject: Project, index: number) => {
-          const prevProject = prevProjects[index];
-          if (!prevProject) return true;
+        const hasChanges =
+          data.some((newProject: Project, index: number) => {
+            const prevProject = prevProjects[index];
+            if (!prevProject) return true;
 
-          // Compare key properties that would affect UI
-          return (
-            newProject.name !== prevProject.name ||
-            newProject.displayName !== prevProject.displayName ||
-            newProject.fullPath !== prevProject.fullPath ||
-            JSON.stringify(newProject.sessionMeta) !==
-              JSON.stringify(prevProject.sessionMeta) ||
-            JSON.stringify(newProject.sessions) !==
-              JSON.stringify(prevProject.sessions)
-          );
-        }) || data.length !== prevProjects.length;
+            // Compare key properties that would affect UI
+            return (
+              newProject.name !== prevProject.name ||
+              newProject.displayName !== prevProject.displayName ||
+              newProject.fullPath !== prevProject.fullPath ||
+              JSON.stringify(newProject.sessionMeta) !==
+                JSON.stringify(prevProject.sessionMeta) ||
+              JSON.stringify(newProject.sessions) !==
+                JSON.stringify(prevProject.sessions)
+            );
+          }) || data.length !== prevProjects.length;
 
         // Only update if there are actual changes
         return hasChanges ? data : prevProjects;
@@ -306,8 +307,8 @@ function AppContent() {
   useEffect(() => {
     if (sessionId && projects.length > 0) {
       // Only switch tabs on initial load, not on every project update
-      const shouldSwitchTab = !selectedSession ||
-        selectedSession.id !== sessionId;
+      const shouldSwitchTab =
+        !selectedSession || selectedSession.id !== sessionId;
       // Find the session across all projects
       for (const project of projects) {
         const session = project.sessions?.find((s) => s.id === sessionId);
@@ -412,7 +413,7 @@ function AppContent() {
       // If we have a selected project, make sure it's still selected after refresh
       if (selectedProject) {
         const refreshedProject = freshProjects.find(
-          (p: Project) => p.name === selectedProject.name,
+          (p: Project) => p.name === selectedProject.name
         );
         if (refreshedProject) {
           // Only update selected project if it actually changed
@@ -425,7 +426,7 @@ function AppContent() {
           // If we have a selected session, try to find it in the refreshed project
           if (selectedSession) {
             const refreshedSession = refreshedProject.sessions?.find(
-              (s: Session) => s.id === selectedSession.id,
+              (s: Session) => s.id === selectedSession.id
             );
             if (
               refreshedSession &&
@@ -703,7 +704,8 @@ function AppContent() {
           onSessionInactive={markSessionAsInactive}
           onReplaceTemporarySession={replaceTemporarySession}
           onNavigateToSession={(sessionId: any) =>
-            navigate(`/session/${sessionId}`)}
+            navigate(`/session/${sessionId}`)
+          }
           onShowSettings={() => setShowToolsSettings(true)}
           autoExpandTools={autoExpandTools}
           showRawParameters={showRawParameters}
