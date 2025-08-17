@@ -5,6 +5,7 @@ import readline from "readline";
 
 // Cache for extracted project directories
 const projectDirectoryCache = new Map();
+  //@ts-ignore
 let cacheTimestamp = Date.now();
 
 // Clear cache when needed (called when project files change)
@@ -31,7 +32,7 @@ async function loadProjectConfig() {
 }
 
 // Save project configuration file
-async function saveProjectConfig(config) {
+async function saveProjectConfig(config: any) {
   const configPath = path.join(
     //@ts-ignore
     process.env.HOME || os.homedir(),
@@ -42,7 +43,7 @@ async function saveProjectConfig(config) {
 }
 
 // Generate better display name from path
-async function generateDisplayName(projectName, actualProjectDir = null) {
+async function generateDisplayName(projectName: string, actualProjectDir = null) {
   // Use actual project directory if provided, otherwise decode from project name
   let projectPath = actualProjectDir || projectName.replace(/-/g, "/");
 
@@ -76,7 +77,7 @@ async function generateDisplayName(projectName, actualProjectDir = null) {
 }
 
 // Extract the actual project directory from JSONL sessions (with caching)
-async function extractProjectDirectory(projectName) {
+async function extractProjectDirectory(projectName: string) {
   // Check cache first
   if (projectDirectoryCache.has(projectName)) {
     return projectDirectoryCache.get(projectName);
@@ -92,7 +93,7 @@ async function extractProjectDirectory(projectName) {
   const cwdCounts = new Map();
   let latestTimestamp = 0;
   let latestCwd = null;
-  let extractedPath;
+  let extractedPath: string | null;
 
   try {
     const files = await fs.readdir(projectDir);
@@ -173,6 +174,7 @@ async function extractProjectDirectory(projectName) {
         }
 
         // Fallback (shouldn't reach here)
+          //@ts-ignore
         if (!extractedPath) {
           try {
             extractedPath =
@@ -189,6 +191,7 @@ async function extractProjectDirectory(projectName) {
     }
 
     // Clean the extracted path by removing any non-printable characters
+      //@ts-ignore
     extractedPath = extractedPath.replace(/[^\x20-\x7E]/g, "").trim();
 
     // Cache the result
@@ -235,7 +238,7 @@ async function getProjects() {
     for (const entry of entries) {
       if (entry.isDirectory()) {
         existingProjects.add(entry.name);
-        const projectPath = path.join(geminiDir, entry.name);
+        // const projectPath = path.join(geminiDir, entry.name);
 
         // Extract actual project directory from JSONL sessions
         const actualProjectDir = await extractProjectDirectory(entry.name);
@@ -260,6 +263,7 @@ async function getProjects() {
         // Try to get sessions for this project (just first 5 for performance)
         try {
           // Use sessionManager to get sessions for this project
+            //@ts-ignore
           const sessionManager = (await import("./sessionManager.js")).default;
           const allSessions =
             sessionManager.getProjectSessions(actualProjectDir);
@@ -319,7 +323,7 @@ async function getProjects() {
   return projects;
 }
 
-async function getSessions(projectName, limit = 5, offset = 0) {
+async function getSessions(projectName: string, limit = 5, offset = 0) {
   const projectDir = path.join(
     //@ts-ignore
     process.env.HOME || os.homedir(),
@@ -401,7 +405,7 @@ async function getSessions(projectName, limit = 5, offset = 0) {
   }
 }
 
-async function parseJsonlSessions(filePath) {
+async function parseJsonlSessions(filePath: fsSync.PathLike) {
   const sessions = new Map();
 
   try {
@@ -481,7 +485,7 @@ async function parseJsonlSessions(filePath) {
 }
 
 // Get messages for a specific session
-async function getSessionMessages(projectName, sessionId) {
+async function getSessionMessages(projectName: string, sessionId: any) {
   const projectDir = path.join(  //@ts-ignore
     process.env.HOME || os.homedir(),
     ".gemini",
@@ -534,7 +538,7 @@ async function getSessionMessages(projectName, sessionId) {
 }
 
 // Rename a project's display name
-async function renameProject(projectName, newDisplayName) {
+async function renameProject(projectName: string | number, newDisplayName: string) {
   const config = await loadProjectConfig();
 
   if (!newDisplayName || newDisplayName.trim() === "") {
@@ -552,7 +556,7 @@ async function renameProject(projectName, newDisplayName) {
 }
 
 // Delete a session from a project
-async function deleteSession(projectName, sessionId) {
+async function deleteSession(projectName: string, sessionId: any) {
   const projectDir = path.join(  //@ts-ignore
     process.env.HOME || os.homedir(),
     ".gemini",
@@ -612,7 +616,7 @@ async function deleteSession(projectName, sessionId) {
 }
 
 // Check if a project is empty (has no sessions)
-async function isProjectEmpty(projectName) {
+async function isProjectEmpty(projectName: any) {
   try {
     const sessionsResult = await getSessions(projectName, 1, 0);
     return sessionsResult.total === 0;
@@ -623,7 +627,7 @@ async function isProjectEmpty(projectName) {
 }
 
 // Delete an empty project
-async function deleteProject(projectName) {
+async function deleteProject(projectName: string) {
   const projectDir = path.join(  //@ts-ignore
     process.env.HOME || os.homedir(),
     ".gemini",
@@ -654,7 +658,7 @@ async function deleteProject(projectName) {
 }
 
 // Add a project manually to the config (without creating folders)
-async function addProjectManually(projectPath, displayName = null) {
+async function addProjectManually(projectPath: string, displayName = null) {
   const absolutePath = path.resolve(projectPath);
 
   try {
@@ -685,7 +689,7 @@ async function addProjectManually(projectPath, displayName = null) {
   try {
     await fs.access(projectDir);
     throw new Error(`Project already exists for path: ${absolutePath}`);
-  } catch (error) {
+  } catch (error:any) {
     if (error.code !== "ENOENT") {
       throw error;
     }

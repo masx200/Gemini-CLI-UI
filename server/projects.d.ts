@@ -1,7 +1,8 @@
+import fsSync from "fs";
 declare function clearProjectDirectoryCache(): void;
 declare function loadProjectConfig(): Promise<any>;
 declare function saveProjectConfig(config: any): Promise<void>;
-declare function extractProjectDirectory(projectName: any): Promise<any>;
+declare function extractProjectDirectory(projectName: string): Promise<any>;
 declare function getProjects(): Promise<{
     name: string;
     path: any;
@@ -10,7 +11,7 @@ declare function getProjects(): Promise<{
     isCustomName: boolean;
     sessions: never[];
 }[]>;
-declare function getSessions(projectName: any, limit?: number, offset?: number): Promise<{
+declare function getSessions(projectName: string, limit?: number, offset?: number): Promise<{
     sessions: never[];
     hasMore: boolean;
     total: number;
@@ -23,13 +24,13 @@ declare function getSessions(projectName: any, limit?: number, offset?: number):
     offset: number;
     limit: number;
 }>;
-declare function parseJsonlSessions(filePath: any): Promise<any[]>;
-declare function getSessionMessages(projectName: any, sessionId: any): Promise<any[]>;
-declare function renameProject(projectName: any, newDisplayName: any): Promise<boolean>;
-declare function deleteSession(projectName: any, sessionId: any): Promise<boolean>;
+declare function parseJsonlSessions(filePath: fsSync.PathLike): Promise<any[]>;
+declare function getSessionMessages(projectName: string, sessionId: any): Promise<any[]>;
+declare function renameProject(projectName: string | number, newDisplayName: string): Promise<boolean>;
+declare function deleteSession(projectName: string, sessionId: any): Promise<boolean>;
 declare function isProjectEmpty(projectName: any): Promise<boolean>;
-declare function deleteProject(projectName: any): Promise<boolean>;
-declare function addProjectManually(projectPath: any, displayName?: null): Promise<{
+declare function deleteProject(projectName: string): Promise<boolean>;
+declare function addProjectManually(projectPath: string, displayName?: null): Promise<{
     name: string;
     path: string;
     fullPath: string;

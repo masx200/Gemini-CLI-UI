@@ -4,6 +4,7 @@ import path from "path";
 import readline from "readline";
 // Cache for extracted project directories
 const projectDirectoryCache = new Map();
+//@ts-ignore
 let cacheTimestamp = Date.now();
 // Clear cache when needed (called when project files change)
 function clearProjectDirectoryCache() {
@@ -153,6 +154,7 @@ async function extractProjectDirectory(projectName) {
                     }
                 }
                 // Fallback (shouldn't reach here)
+                //@ts-ignore
                 if (!extractedPath) {
                     try {
                         extractedPath =
@@ -166,6 +168,7 @@ async function extractProjectDirectory(projectName) {
             }
         }
         // Clean the extracted path by removing any non-printable characters
+        //@ts-ignore
         extractedPath = extractedPath.replace(/[^\x20-\x7E]/g, "").trim();
         // Cache the result
         projectDirectoryCache.set(projectName, extractedPath);
@@ -205,7 +208,7 @@ async function getProjects() {
         for (const entry of entries) {
             if (entry.isDirectory()) {
                 existingProjects.add(entry.name);
-                const projectPath = path.join(geminiDir, entry.name);
+                // const projectPath = path.join(geminiDir, entry.name);
                 // Extract actual project directory from JSONL sessions
                 const actualProjectDir = await extractProjectDirectory(entry.name);
                 // Get display name from config or generate one
@@ -223,6 +226,7 @@ async function getProjects() {
                 // Try to get sessions for this project (just first 5 for performance)
                 try {
                     // Use sessionManager to get sessions for this project
+                    //@ts-ignore
                     const sessionManager = (await import("./sessionManager.js")).default;
                     const allSessions = sessionManager.getProjectSessions(actualProjectDir);
                     // Paginate the sessions
