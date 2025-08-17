@@ -195,13 +195,17 @@ export default function McpServerManagement({
     }
   };
 
-  const deleteMcpServer = async (serverId: string, scope = "user") => {
+  const deleteMcpServer = async (
+    serverId: string,
+    projectPath: string,
+    scope = "user"
+  ) => {
     try {
       const token = localStorage.getItem("auth-token");
 
       // Use gemini cli to remove the server with proper scope
       const response = await fetch(
-        `/api/mcp/cli/remove/${serverId}?scope=${scope}`,
+        `/api/mcp/cli/remove/${serverId}?scope=${scope}&projectPath=${projectPath}`,
         {
           method: "DELETE",
           headers: {
@@ -235,17 +239,17 @@ export default function McpServerManagement({
     name: any;
     type: any;
     scope: any;
-    projectPath: any;
+    projectPath: string;
     config: any;
     jsonInput?: string;
     importMode?: string;
   }) => {
     try {
       const token = localStorage.getItem("auth-token");
-
+      const { projectPath } = serverData;
       if (editingMcpServer) {
         // For editing, remove old server and add new one
-        await deleteMcpServer(editingMcpServer.id, "user");
+        await deleteMcpServer(editingMcpServer.id, projectPath, "user");
       }
 
       // Use gemini cli to add the server
@@ -287,10 +291,14 @@ export default function McpServerManagement({
       throw error;
     }
   };
-  const handleMcpDelete = async (serverId: any, scope: string | undefined) => {
+  const handleMcpDelete = async (
+    serverId: any,
+    projectPath: string,
+    scope: string | undefined
+  ) => {
     if (confirm("Are you sure you want to delete this MCP server?")) {
       try {
-        await deleteMcpServer(serverId, scope);
+        await deleteMcpServer(serverId, projectPath, scope);
         setSaveStatus("success");
       } catch (error: any) {
         alert(`Error: ${error.message}`);
@@ -466,8 +474,7 @@ export default function McpServerManagement({
     importMode: "form", // 'form' or 'json'
   });
 
-
-  console.log(mcpFormData)
+  console.log(mcpFormData);
   const [showMcpForm, setShowMcpForm] = useState(false);
 
   const [editingMcpServer, setEditingMcpServer] =
@@ -860,7 +867,13 @@ export default function McpServerManagement({
                     <Edit3 className="w-4 h-4" />
                   </Button>
                   <Button
-                    onClick={() => handleMcpDelete(server.id, server.scope)}
+                    onClick={() =>
+                      handleMcpDelete(
+                        server.id,
+                        server.projectPath,
+                        server.scope
+                      )
+                    }
                     variant="ghost"
                     size="sm"
                     className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
@@ -1245,7 +1258,9 @@ export default function McpServerManagement({
                       URL *
                     </label>
                     <Input
-                      value={mcpFormData.config.httpUrl||mcpFormData.config.url}
+                      value={
+                        mcpFormData.config.httpUrl || mcpFormData.config.url
+                      }
                       onChange={(e: { target: { value: any } }) =>
                         updateMcpConfig("url", e.target.value)
                       }

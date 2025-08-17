@@ -107,6 +107,7 @@ router.post("/cli/add", async (req, res) => {
         transport: "http",
         headers,
         env,
+        httpUrl: url,
       });
       if (result.error) {
         return res.status(400).json({
@@ -298,7 +299,7 @@ router.post("/cli/add-json", async (req, res) => {
 router.delete("/cli/remove/:name", async (req, res) => {
   try {
     const { name } = req.params;
-    const { scope } = req.query; // Get scope from query params
+    const { scope, projectPath } = req.query; // Get scope from query params
 
     // Handle the ID format (remove scope prefix if present)
     let actualName: string | undefined = name;
@@ -318,71 +319,37 @@ router.delete("/cli/remove/:name", async (req, res) => {
       actualScope
     );
 
-    const { spawn } = await import("child_process");
-
-    // Build command args based on scope
-    let cliArgs = ["mcp", "remove"];
-
     // Add scope flag if it's local scope
     if (actualScope === "local") {
-      cliArgs.push("--scope", "local");
-    } else if (actualScope === "user" || !actualScope) {
-      // User scope is default, but we can be explicit
-      cliArgs.push("--scope", "user");
+      console.log("📁 Running in project directory:", projectPath);
     }
     if (actualName) {
-      cliArgs.push(actualName);
-    }
+      const configPath =
+        actualScope == "user"
+          ? path.join(os.homedir(), ".gemini", "settings.json")
+          : //@ts-ignore
+            path.join(projectPath, ".gemini", "settings.json");
+      const mcm = new MCPConfigManager(configPath);
 
-    console.log(
-      "🔧 Running gemini cli command:",
-      //@ts-ignore
-      process.env.GEMINI_PATH || "gemini",
-      cliArgs.join(" ")
-    );
+      const result = await mcm.removeServer(actualName);
 
-    const process2 = spawn(
-      //@ts-ignore
-
-      process.env.GEMINI_PATH || "gemini",
-      cliArgs,
-      {
-        stdio: ["pipe", "pipe", "pipe"],
-      }
-    );
-
-    let stdout = "";
-    let stderr = "";
-
-    process2.stdout.on("data", (data) => {
-      stdout += data.toString();
-    });
-
-    process2.stderr.on("data", (data) => {
-      stderr += data.toString();
-    });
-
-    process2.on("close", (code) => {
-      if (code === 0) {
+      if (result.success) {
         res.json({
           success: true,
-          output: stdout,
-          message: `MCP server "${name}" removed successfully`,
+
+          message: `MCP server "${actualName}" removed successfully via JSON`,
         });
       } else {
-        console.error("gemini cli error:", stderr);
-        res
-          .status(400)
-          .json({ error: "gemini cli command failed", details: stderr });
+        res.status(404).json({
+          success: false,
+          message:
+            `MCP server "${actualName}" not found` +
+            "\n" +
+            "error:" +
+            result.error,
+        });
       }
-    });
-
-    process2.on("error", (error) => {
-      console.error("Error running gemini cli:", error);
-      res
-        .status(500)
-        .json({ error: "Failed to run gemini cli", details: error.message });
-    });
+    }
   } catch (error: any) {
     console.error("Error removing MCP server via CLI:", error);
     res

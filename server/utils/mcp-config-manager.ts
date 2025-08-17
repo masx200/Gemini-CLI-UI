@@ -62,6 +62,7 @@ export class MCPConfigManager {
       const content = await fs.readFile(this.configPath, "utf-8");
       const config = JSON.parse(content);
       return {
+        ...config,
         mcpServers: config.mcpServers || {},
       };
     } catch (error) {

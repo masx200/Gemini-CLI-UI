@@ -451,7 +451,9 @@ function ModelProvidersManagement({
                       >
                         <Key className="w-4 h-4 text-gray-400" />
                         <Typography variant="body2" color="text.secondary">
-                          {provider.api_key ? "••••••••" : "No API key"}
+                          {provider.api_key
+                            ? "•".repeat(provider.api_key.length)
+                            : "No API key"}
                         </Typography>
                       </Box>
                       {provider.base_url && (
