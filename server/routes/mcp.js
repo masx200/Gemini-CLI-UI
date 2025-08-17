@@ -372,6 +372,7 @@ router.get("/config/read", async (req, res) => {
                     config.type == "http" ||
                     config.transport == "http") {
                     server.type = config.transport || "http";
+                    server.config.httpUrl = config.httpUrl;
                     server.config.url = config.url;
                     server.config.headers = config.headers || {};
                 }

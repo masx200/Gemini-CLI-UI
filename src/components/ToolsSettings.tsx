@@ -70,7 +70,7 @@ function ToolsSettings({
       return;
     }
     if (data && data?.[0]?.id) {
-      console.log(data?.[0]?.id)
+      // console.log(data?.[0]?.id)
       setSelectedModel(data?.[0]?.id);
     }
   }, [error, data]);

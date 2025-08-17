@@ -25,6 +25,7 @@ export interface MCPServerData {
     scope: string;
     projectPath: string;
     config: {
+        httpUrl: string;
         command: string;
         args: never[];
         env: {};

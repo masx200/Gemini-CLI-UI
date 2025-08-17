@@ -491,6 +491,7 @@ export interface MCPServerResponse {
   type: string;
   scope: "user" | "local";
   config: {
+    httpUrl?: string;
     command?: string;
     args?: string[];
     env?: Record<string, string>;
@@ -587,6 +588,7 @@ router.get(
             config.transport == "http"
           ) {
             server.type = config.transport || "http";
+            server.config.httpUrl = config.httpUrl;
             server.config.url = config.url;
             server.config.headers = config.headers || {};
           } else if (

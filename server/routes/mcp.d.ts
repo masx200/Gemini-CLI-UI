@@ -22,6 +22,7 @@ export interface MCPServerResponse {
     type: string;
     scope: "user" | "local";
     config: {
+        httpUrl?: string;
         command?: string;
         args?: string[];
         env?: Record<string, string>;

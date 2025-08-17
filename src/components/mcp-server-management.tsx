@@ -46,7 +46,9 @@ export interface MCPServerData {
   type: string;
   scope: string;
   projectPath: string;
+
   config: {
+    httpUrl: string;
     command: string;
     args: never[];
     env: {};
@@ -77,7 +79,7 @@ export default function McpServerManagement({
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        },
+        }
       );
 
       if (response.ok) {
@@ -167,7 +169,7 @@ export default function McpServerManagement({
               },
               created: new Date().toISOString(),
               updated: new Date().toISOString(),
-            }),
+            })
           );
           setMcpServers(servers);
           return;
@@ -206,7 +208,7 @@ export default function McpServerManagement({
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        },
+        }
       );
 
       if (response.ok) {
@@ -216,7 +218,7 @@ export default function McpServerManagement({
           return true;
         } else {
           throw new Error(
-            result.error || "Failed to delete server via gemini cli",
+            result.error || "Failed to delete server via gemini cli"
           );
         }
       } else {
@@ -273,7 +275,7 @@ export default function McpServerManagement({
           return true;
         } else {
           throw new Error(
-            result.error || "Failed to save server via gemini cli",
+            result.error || "Failed to save server via gemini cli"
           );
         }
       } else {
@@ -312,7 +314,7 @@ export default function McpServerManagement({
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        },
+        }
       );
 
       if (response.ok) {
@@ -430,6 +432,7 @@ export default function McpServerManagement({
       scope: "user", // Default to user scope
       projectPath: "",
       config: {
+        httpUrl: "",
         command: "",
         args: [],
         env: {},
@@ -451,6 +454,7 @@ export default function McpServerManagement({
     scope: "user",
     projectPath: "", // For local scope
     config: {
+      httpUrl: "",
       command: "",
       args: [],
       env: {},
@@ -461,11 +465,13 @@ export default function McpServerManagement({
     jsonInput: "", // For JSON import
     importMode: "form", // 'form' or 'json'
   });
+
+
+  console.log(mcpFormData)
   const [showMcpForm, setShowMcpForm] = useState(false);
 
-  const [editingMcpServer, setEditingMcpServer] = useState<
-    MCPServerData | null
-  >(null);
+  const [editingMcpServer, setEditingMcpServer] =
+    useState<MCPServerData | null>(null);
   const openMcpForm = (server: MCPServerData | null = null) => {
     if (server) {
       setEditingMcpServer(server);
@@ -557,13 +563,13 @@ export default function McpServerManagement({
                     )}
                     {(server.type === "sse" || server.type === "http") &&
                       server.config.url && (
-                      <div>
-                        URL:
-                        <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs">
-                          {server.config.url}
-                        </code>
-                      </div>
-                    )}
+                        <div>
+                          URL:
+                          <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs">
+                            {server.config.url}
+                          </code>
+                        </div>
+                      )}
                     {server.config.args && server.config.args.length > 0 && (
                       <div>
                         Args:
@@ -574,15 +580,15 @@ export default function McpServerManagement({
                     )}
                     {server.config.env &&
                       Object.keys(server.config.env).length > 0 && (
-                      <div>
-                        Environment:
-                        <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs">
-                          {Object.entries(server.config.env)
-                            .map(([k, v]) => `${k}=${v}`)
-                            .join(", ")}
-                        </code>
-                      </div>
-                    )}
+                        <div>
+                          Environment:
+                          <code className="bg-gray-100 dark:bg-gray-800 px-1 rounded text-xs">
+                            {Object.entries(server.config.env)
+                              .map(([k, v]) => `${k}=${v}`)
+                              .join(", ")}
+                          </code>
+                        </div>
+                      )}
                     {server.raw && (
                       <details className="mt-2">
                         <summary className="cursor-pointer text-xs text-muted-foreground hover:text-foreground">
@@ -609,26 +615,28 @@ export default function McpServerManagement({
                       </div>
                       {mcpTestResults[server.id].details &&
                         mcpTestResults[server.id].details.length > 0 && (
-                        <ul className="mt-1 space-y-0.5">
-                          {mcpTestResults[server.id].details.map(
-                            (
-                              detail:
-                                | string
-                                | number
-                                | boolean
-                                | ReactElement<
-                                  any,
-                                  string | JSXElementConstructor<any>
-                                >
-                                | Iterable<ReactNode>
-                                | ReactPortal
-                                | null
-                                | undefined,
-                              i: Key | null | undefined,
-                            ) => <li key={i}>• {detail}</li>,
-                          )}
-                        </ul>
-                      )}
+                          <ul className="mt-1 space-y-0.5">
+                            {mcpTestResults[server.id].details.map(
+                              (
+                                detail:
+                                  | string
+                                  | number
+                                  | boolean
+                                  | ReactElement<
+                                      any,
+                                      string | JSXElementConstructor<any>
+                                    >
+                                  | Iterable<ReactNode>
+                                  | ReactPortal
+                                  | null
+                                  | undefined,
+                                i: Key | null | undefined
+                              ) => (
+                                <li key={i}>• {detail}</li>
+                              )
+                            )}
+                          </ul>
+                        )}
                     </div>
                   )}
 
@@ -641,202 +649,198 @@ export default function McpServerManagement({
 
                       {mcpServerTools[server.id].tools &&
                         mcpServerTools[server.id].tools.length > 0 && (
-                        <div className="mb-2">
-                          <div className="font-medium text-xs mb-1">
-                            Tools ({mcpServerTools[server.id].tools.length}):
+                          <div className="mb-2">
+                            <div className="font-medium text-xs mb-1">
+                              Tools ({mcpServerTools[server.id].tools.length}):
+                            </div>
+                            <ul className="space-y-0.5">
+                              {mcpServerTools[server.id].tools.map(
+                                (
+                                  tool: {
+                                    name:
+                                      | string
+                                      | number
+                                      | boolean
+                                      | ReactElement<
+                                          any,
+                                          string | JSXElementConstructor<any>
+                                        >
+                                      | Iterable<ReactNode>
+                                      | ReactPortal
+                                      | null
+                                      | undefined;
+                                    description:
+                                      | string
+                                      | number
+                                      | boolean
+                                      | ReactElement<
+                                          any,
+                                          string | JSXElementConstructor<any>
+                                        >
+                                      | Iterable<ReactNode>
+                                      | null
+                                      | undefined;
+                                  },
+                                  i: Key | null | undefined
+                                ) => (
+                                  <li
+                                    key={i}
+                                    className="flex items-start gap-1"
+                                  >
+                                    <span className="text-blue-400 mt-0.5">
+                                      •
+                                    </span>
+                                    <div>
+                                      <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded">
+                                        {tool.name}
+                                      </code>
+                                      {tool.description &&
+                                        tool.description !==
+                                          "No description provided" && (
+                                          <span className="ml-1 text-xs opacity-75">
+                                            - {tool.description}
+                                          </span>
+                                        )}
+                                    </div>
+                                  </li>
+                                )
+                              )}
+                            </ul>
                           </div>
-                          <ul className="space-y-0.5">
-                            {mcpServerTools[server.id].tools.map(
-                              (
-                                tool: {
-                                  name:
-                                    | string
-                                    | number
-                                    | boolean
-                                    | ReactElement<
-                                      any,
-                                      string | JSXElementConstructor<any>
-                                    >
-                                    | Iterable<ReactNode>
-                                    | ReactPortal
-                                    | null
-                                    | undefined;
-                                  description:
-                                    | string
-                                    | number
-                                    | boolean
-                                    | ReactElement<
-                                      any,
-                                      string | JSXElementConstructor<any>
-                                    >
-                                    | Iterable<ReactNode>
-                                    | null
-                                    | undefined;
-                                },
-                                i: Key | null | undefined,
-                              ) => (
-                                <li
-                                  key={i}
-                                  className="flex items-start gap-1"
-                                >
-                                  <span className="text-blue-400 mt-0.5">
-                                    •
-                                  </span>
-                                  <div>
-                                    <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded">
-                                      {tool.name}
-                                    </code>
-                                    {tool.description &&
-                                      tool.description !==
-                                        "No description provided" &&
-                                      (
-                                        <span className="ml-1 text-xs opacity-75">
-                                          - {tool.description}
-                                        </span>
-                                      )}
-                                  </div>
-                                </li>
-                              ),
-                            )}
-                          </ul>
-                        </div>
-                      )}
+                        )}
 
                       {mcpServerTools[server.id].resources &&
                         mcpServerTools[server.id].resources.length > 0 && (
-                        <div className="mb-2">
-                          <div className="font-medium text-xs mb-1">
-                            Resources (
-                            {mcpServerTools[server.id].resources.length}):
+                          <div className="mb-2">
+                            <div className="font-medium text-xs mb-1">
+                              Resources (
+                              {mcpServerTools[server.id].resources.length}):
+                            </div>
+                            <ul className="space-y-0.5">
+                              {mcpServerTools[server.id].resources.map(
+                                (
+                                  resource: {
+                                    name:
+                                      | string
+                                      | number
+                                      | boolean
+                                      | ReactElement<
+                                          any,
+                                          string | JSXElementConstructor<any>
+                                        >
+                                      | Iterable<ReactNode>
+                                      | ReactPortal
+                                      | null
+                                      | undefined;
+                                    description:
+                                      | string
+                                      | number
+                                      | boolean
+                                      | ReactElement<
+                                          any,
+                                          string | JSXElementConstructor<any>
+                                        >
+                                      | Iterable<ReactNode>
+                                      | null
+                                      | undefined;
+                                  },
+                                  i: Key | null | undefined
+                                ) => (
+                                  <li
+                                    key={i}
+                                    className="flex items-start gap-1"
+                                  >
+                                    <span className="text-blue-400 mt-0.5">
+                                      •
+                                    </span>
+                                    <div>
+                                      <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded">
+                                        {resource.name}
+                                      </code>
+                                      {resource.description &&
+                                        resource.description !==
+                                          "No description provided" && (
+                                          <span className="ml-1 text-xs opacity-75">
+                                            - {resource.description}
+                                          </span>
+                                        )}
+                                    </div>
+                                  </li>
+                                )
+                              )}
+                            </ul>
                           </div>
-                          <ul className="space-y-0.5">
-                            {mcpServerTools[server.id].resources.map(
-                              (
-                                resource: {
-                                  name:
-                                    | string
-                                    | number
-                                    | boolean
-                                    | ReactElement<
-                                      any,
-                                      string | JSXElementConstructor<any>
-                                    >
-                                    | Iterable<ReactNode>
-                                    | ReactPortal
-                                    | null
-                                    | undefined;
-                                  description:
-                                    | string
-                                    | number
-                                    | boolean
-                                    | ReactElement<
-                                      any,
-                                      string | JSXElementConstructor<any>
-                                    >
-                                    | Iterable<ReactNode>
-                                    | null
-                                    | undefined;
-                                },
-                                i: Key | null | undefined,
-                              ) => (
-                                <li
-                                  key={i}
-                                  className="flex items-start gap-1"
-                                >
-                                  <span className="text-blue-400 mt-0.5">
-                                    •
-                                  </span>
-                                  <div>
-                                    <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded">
-                                      {resource.name}
-                                    </code>
-                                    {resource.description &&
-                                      resource.description !==
-                                        "No description provided" &&
-                                      (
-                                        <span className="ml-1 text-xs opacity-75">
-                                          - {resource.description}
-                                        </span>
-                                      )}
-                                  </div>
-                                </li>
-                              ),
-                            )}
-                          </ul>
-                        </div>
-                      )}
+                        )}
 
                       {mcpServerTools[server.id].prompts &&
                         mcpServerTools[server.id].prompts.length > 0 && (
-                        <div>
-                          <div className="font-medium text-xs mb-1">
-                            Prompts (
-                            {mcpServerTools[server.id].prompts.length}):
+                          <div>
+                            <div className="font-medium text-xs mb-1">
+                              Prompts (
+                              {mcpServerTools[server.id].prompts.length}):
+                            </div>
+                            <ul className="space-y-0.5">
+                              {mcpServerTools[server.id].prompts.map(
+                                (
+                                  prompt: {
+                                    name:
+                                      | string
+                                      | number
+                                      | boolean
+                                      | ReactElement<
+                                          any,
+                                          string | JSXElementConstructor<any>
+                                        >
+                                      | Iterable<ReactNode>
+                                      | ReactPortal
+                                      | null
+                                      | undefined;
+                                    description:
+                                      | string
+                                      | number
+                                      | boolean
+                                      | ReactElement<
+                                          any,
+                                          string | JSXElementConstructor<any>
+                                        >
+                                      | Iterable<ReactNode>
+                                      | null
+                                      | undefined;
+                                  },
+                                  i: Key | null | undefined
+                                ) => (
+                                  <li
+                                    key={i}
+                                    className="flex items-start gap-1"
+                                  >
+                                    <span className="text-blue-400 mt-0.5">
+                                      •
+                                    </span>
+                                    <div>
+                                      <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded">
+                                        {prompt.name}
+                                      </code>
+                                      {prompt.description &&
+                                        prompt.description !==
+                                          "No description provided" && (
+                                          <span className="ml-1 text-xs opacity-75">
+                                            - {prompt.description}
+                                          </span>
+                                        )}
+                                    </div>
+                                  </li>
+                                )
+                              )}
+                            </ul>
                           </div>
-                          <ul className="space-y-0.5">
-                            {mcpServerTools[server.id].prompts.map(
-                              (
-                                prompt: {
-                                  name:
-                                    | string
-                                    | number
-                                    | boolean
-                                    | ReactElement<
-                                      any,
-                                      string | JSXElementConstructor<any>
-                                    >
-                                    | Iterable<ReactNode>
-                                    | ReactPortal
-                                    | null
-                                    | undefined;
-                                  description:
-                                    | string
-                                    | number
-                                    | boolean
-                                    | ReactElement<
-                                      any,
-                                      string | JSXElementConstructor<any>
-                                    >
-                                    | Iterable<ReactNode>
-                                    | null
-                                    | undefined;
-                                },
-                                i: Key | null | undefined,
-                              ) => (
-                                <li
-                                  key={i}
-                                  className="flex items-start gap-1"
-                                >
-                                  <span className="text-blue-400 mt-0.5">
-                                    •
-                                  </span>
-                                  <div>
-                                    <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded">
-                                      {prompt.name}
-                                    </code>
-                                    {prompt.description &&
-                                      prompt.description !==
-                                        "No description provided" &&
-                                      (
-                                        <span className="ml-1 text-xs opacity-75">
-                                          - {prompt.description}
-                                        </span>
-                                      )}
-                                  </div>
-                                </li>
-                              ),
-                            )}
-                          </ul>
-                        </div>
-                      )}
+                        )}
 
                       {(!mcpServerTools[server.id].tools ||
                         mcpServerTools[server.id].tools.length === 0) &&
                         (!mcpServerTools[server.id].resources ||
                           mcpServerTools[server.id].resources.length === 0) &&
                         (!mcpServerTools[server.id].prompts ||
-                          mcpServerTools[server.id].prompts.length === 0) &&
-                        (
+                          mcpServerTools[server.id].prompts.length === 0) && (
                           <div className="text-xs opacity-75">
                             No tools, resources, or prompts discovered
                           </div>
@@ -897,7 +901,8 @@ export default function McpServerManagement({
                       setMcpFormData((prev) => ({
                         ...prev,
                         importMode: "form",
-                      }))}
+                      }))
+                    }
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       mcpFormData.importMode === "form"
                         ? "bg-blue-600 text-white"
@@ -912,7 +917,8 @@ export default function McpServerManagement({
                       setMcpFormData((prev) => ({
                         ...prev,
                         importMode: "json",
-                      }))}
+                      }))
+                    }
                     className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                       mcpFormData.importMode === "json"
                         ? "bg-blue-600 text-white"
@@ -931,9 +937,11 @@ export default function McpServerManagement({
                     Scope
                   </label>
                   <div className="flex items-center gap-2">
-                    {mcpFormData.scope === "user"
-                      ? <Globe className="w-4 h-4" />
-                      : <FolderOpen className="w-4 h-4" />}
+                    {mcpFormData.scope === "user" ? (
+                      <Globe className="w-4 h-4" />
+                    ) : (
+                      <FolderOpen className="w-4 h-4" />
+                    )}
                     <span className="text-sm">
                       {mcpFormData.scope === "user"
                         ? "User (Global)"
@@ -941,10 +949,10 @@ export default function McpServerManagement({
                     </span>
                     {mcpFormData.scope === "local" &&
                       mcpFormData.projectPath && (
-                      <span className="text-xs text-muted-foreground">
-                        - {mcpFormData.projectPath}
-                      </span>
-                    )}
+                        <span className="text-xs text-muted-foreground">
+                          - {mcpFormData.projectPath}
+                        </span>
+                      )}
                   </div>
                   <p className="text-xs text-muted-foreground mt-2">
                     Scope cannot be changed when editing an existing server
@@ -967,7 +975,8 @@ export default function McpServerManagement({
                             ...prev,
                             scope: "user",
                             projectPath: "",
-                          }))}
+                          }))
+                        }
                         className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${
                           mcpFormData.scope === "user"
                             ? "bg-blue-600 text-white"
@@ -985,7 +994,8 @@ export default function McpServerManagement({
                           setMcpFormData((prev) => ({
                             ...prev,
                             scope: "local",
-                          }))}
+                          }))
+                        }
                         className={`flex-1 px-4 py-2 rounded-lg font-medium transition-colors ${
                           mcpFormData.scope === "local"
                             ? "bg-blue-600 text-white"
@@ -1017,7 +1027,8 @@ export default function McpServerManagement({
                           setMcpFormData((prev) => ({
                             ...prev,
                             projectPath: e.target.value,
-                          }))}
+                          }))
+                        }
                         className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                         required={mcpFormData.scope === "local"}
                       >
@@ -1044,9 +1055,9 @@ export default function McpServerManagement({
               {/* Basic Info */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div
-                  className={mcpFormData.importMode === "json"
-                    ? "md:col-span-2"
-                    : ""}
+                  className={
+                    mcpFormData.importMode === "json" ? "md:col-span-2" : ""
+                  }
                 >
                   <label className="block text-sm font-medium text-foreground mb-2">
                     Server Name *
@@ -1091,19 +1102,19 @@ export default function McpServerManagement({
               {editingMcpServer &&
                 mcpFormData.raw &&
                 mcpFormData.importMode === "form" && (
-                <div className="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-                  <h4 className="text-sm font-medium text-foreground mb-2">
-                    Configuration Details (from
-                    {editingMcpServer.scope === "global"
-                      ? "~/.gemini/settings.json"
-                      : "project config"}
-                    )
-                  </h4>
-                  <pre className="text-xs bg-gray-100 dark:bg-gray-800 p-3 rounded overflow-x-auto">
+                  <div className="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                    <h4 className="text-sm font-medium text-foreground mb-2">
+                      Configuration Details (from
+                      {editingMcpServer.scope === "global"
+                        ? "~/.gemini/settings.json"
+                        : "project config"}
+                      )
+                    </h4>
+                    <pre className="text-xs bg-gray-100 dark:bg-gray-800 p-3 rounded overflow-x-auto">
                       {JSON.stringify(mcpFormData.raw, null, 2)}
-                  </pre>
-                </div>
-              )}
+                    </pre>
+                  </div>
+                )}
 
               {/* JSON Import Mode */}
               {mcpFormData.importMode === "json" && (
@@ -1126,14 +1137,14 @@ export default function McpServerManagement({
                             // Basic validation
                             if (!parsed.type) {
                               setJsonValidationError(
-                                "Missing required field: type",
+                                "Missing required field: type"
                               );
                             } else if (
                               parsed.type === "stdio" &&
                               !parsed.command
                             ) {
                               setJsonValidationError(
-                                "stdio type requires a command field",
+                                "stdio type requires a command field"
                               );
                             } else if (
                               (parsed.type === "http" ||
@@ -1141,7 +1152,7 @@ export default function McpServerManagement({
                               !parsed.url
                             ) {
                               setJsonValidationError(
-                                `${parsed.type} type requires a url field`,
+                                `${parsed.type} type requires a url field`
                               );
                             } else {
                               setJsonValidationError("");
@@ -1161,7 +1172,9 @@ export default function McpServerManagement({
                           : "border-gray-300 dark:border-gray-600"
                       } bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500 font-mono text-sm`}
                       rows={8}
-                      placeholder={'{\n  "type": "stdio",\n  "command": "/path/to/server",\n  "args": ["--api-key", "abc123"],\n  "env": {\n    "CACHE_DIR": "/tmp"\n  }\n}'}
+                      placeholder={
+                        '{\n  "type": "stdio",\n  "command": "/path/to/server",\n  "args": ["--api-key", "abc123"],\n  "env": {\n    "CACHE_DIR": "/tmp"\n  }\n}'
+                      }
                       required
                     />
                     {jsonValidationError && (
@@ -1184,59 +1197,64 @@ export default function McpServerManagement({
               {/* Transport-specific Config - Only show in form mode */}
               {mcpFormData.importMode === "form" &&
                 mcpFormData.type === "stdio" && (
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Command *
-                    </label>
-                    <Input
-                      value={mcpFormData.config.command}
-                      onChange={(e: { target: { value: any } }) =>
-                        updateMcpConfig("command", e.target.value)}
-                      placeholder="/path/to/mcp-server"
-                      required
-                    />
-                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-foreground mb-2">
+                        Command *
+                      </label>
+                      <Input
+                        value={mcpFormData.config.command}
+                        onChange={(e: { target: { value: any } }) =>
+                          updateMcpConfig("command", e.target.value)
+                        }
+                        placeholder="/path/to/mcp-server"
+                        required
+                      />
+                    </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Arguments (one per line)
-                    </label>
-                    <textarea
-                      value={Array.isArray(mcpFormData.config.args)
-                        ? mcpFormData.config.args.join("\n")
-                        : ""}
-                      onChange={(e) =>
-                        updateMcpConfig(
-                          "args",
-                          e.target.value
-                            .split("\n")
-                            .filter((arg) => arg.trim()),
-                        )}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                      rows={3}
-                      placeholder="--api-key&#10;abc123"
-                    />
+                    <div>
+                      <label className="block text-sm font-medium text-foreground mb-2">
+                        Arguments (one per line)
+                      </label>
+                      <textarea
+                        value={
+                          Array.isArray(mcpFormData.config.args)
+                            ? mcpFormData.config.args.join("\n")
+                            : ""
+                        }
+                        onChange={(e) =>
+                          updateMcpConfig(
+                            "args",
+                            e.target.value
+                              .split("\n")
+                              .filter((arg) => arg.trim())
+                          )
+                        }
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                        rows={3}
+                        placeholder="--api-key&#10;abc123"
+                      />
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
               {mcpFormData.importMode === "form" &&
                 (mcpFormData.type === "sse" || mcpFormData.type === "http") && (
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
-                    URL *
-                  </label>
-                  <Input
-                    value={mcpFormData.config.url}
-                    onChange={(e: { target: { value: any } }) =>
-                      updateMcpConfig("url", e.target.value)}
-                    placeholder="https://api.example.com/mcp"
-                    type="url"
-                    required
-                  />
-                </div>
-              )}
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      URL *
+                    </label>
+                    <Input
+                      value={mcpFormData.config.httpUrl||mcpFormData.config.url}
+                      onChange={(e: { target: { value: any } }) =>
+                        updateMcpConfig("url", e.target.value)
+                      }
+                      placeholder="https://api.example.com/mcp"
+                      type="url"
+                      required
+                    />
+                  </div>
+                )}
 
               {/* Environment Variables - Only show in form mode */}
               {mcpFormData.importMode === "form" && (
@@ -1267,30 +1285,30 @@ export default function McpServerManagement({
 
               {mcpFormData.importMode === "form" &&
                 (mcpFormData.type === "sse" || mcpFormData.type === "http") && (
-                <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
-                    Headers (KEY=value, one per line)
-                  </label>
-                  <textarea
-                    value={Object.entries(mcpFormData.config.headers || {})
-                      .map(([k, v]) => `${k}=${v}`)
-                      .join("\n")}
-                    onChange={(e) => {
-                      const headers: Record<string, any> = {};
-                      e.target.value.split("\n").forEach((line) => {
-                        const [key, ...valueParts] = line.split("=");
-                        if (key && key.trim()) {
-                          headers[key.trim()] = valueParts.join("=").trim();
-                        }
-                      });
-                      updateMcpConfig("headers", headers);
-                    }}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                    rows={3}
-                    placeholder="Authorization=Bearer token&#10;X-API-Key=your-key"
-                  />
-                </div>
-              )}
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      Headers (KEY=value, one per line)
+                    </label>
+                    <textarea
+                      value={Object.entries(mcpFormData.config.headers || {})
+                        .map(([k, v]) => `${k}=${v}`)
+                        .join("\n")}
+                      onChange={(e) => {
+                        const headers: Record<string, any> = {};
+                        e.target.value.split("\n").forEach((line) => {
+                          const [key, ...valueParts] = line.split("=");
+                          if (key && key.trim()) {
+                            headers[key.trim()] = valueParts.join("=").trim();
+                          }
+                        });
+                        updateMcpConfig("headers", headers);
+                      }}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                      rows={3}
+                      placeholder="Authorization=Bearer token&#10;X-API-Key=your-key"
+                    />
+                  </div>
+                )}
 
               <div className="flex justify-end gap-2 pt-4">
                 <Button type="button" variant="outline" onClick={resetMcpForm}>
