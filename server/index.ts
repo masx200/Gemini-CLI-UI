@@ -31,7 +31,7 @@ import { promises as fsPromises } from "fs";
 import http from "http";
 import mime from "mime-types";
 import fetch from "node-fetch";
-import pty, {type IPty } from "node-pty-prebuilt-multiarch";
+import pty, { type IPty } from "node-pty-prebuilt-multiarch";
 import WebSocket, { WebSocketServer } from "ws";
 
 import os from "os";
@@ -64,15 +64,15 @@ import modelProvidersRoutes from "./routes/model-providers.js";
 import sessionManager from "./sessionManager.js";
 import { FSWatcher } from "chokidar";
 // File system watcher for projects folder
-let projectsWatcher :FSWatcher|null= null;
+let projectsWatcher: FSWatcher | null = null;
 const connectedClients = new Set();
 
 function run(cmd: string, args: readonly string[] | undefined, opts = {}) {
   return new Promise((resolve, reject) => {
     const child = spawn(cmd, args, { stdio: "pipe", ...opts });
-     //@ts-ignore
+    //@ts-ignore
     const out = [],
-     //@ts-ignore
+      //@ts-ignore
       err = [];
     //@ts-ignore
     child.stdout?.on("data", (b) => out.push(b));
@@ -80,10 +80,10 @@ function run(cmd: string, args: readonly string[] | undefined, opts = {}) {
     child.stderr?.on("data", (b) => err.push(b));
     child.on("close", (code) =>
       code === 0
-     //@ts-ignore
-        ? resolve(Buffer.concat(out).toString())
-         //@ts-ignore
-        : reject(new Error(Buffer.concat(err).toString()))
+        ? //@ts-ignore
+          resolve(Buffer.concat(out).toString())
+        : //@ts-ignore
+          reject(new Error(Buffer.concat(err).toString()))
     );
   });
 }
@@ -91,7 +91,7 @@ function run(cmd: string, args: readonly string[] | undefined, opts = {}) {
 async function setupProjectsWatcher() {
   const chokidar = (await import("chokidar")).default;
   const geminiProjectsPath = path.join(
-     //@ts-ignore
+    //@ts-ignore
     process.env.HOME || os.homedir(),
     ".gemini",
     "projects"
@@ -250,7 +250,8 @@ app.get("/api/projects", authenticateToken, async (req, res) => {
     const projects = await getProjects();
     res.json(projects);
   } catch (error) {
-     //@ts-ignore
+    console.error(error);
+    //@ts-ignore
     res.status(500).json({ error: error.message });
   }
 });
@@ -280,7 +281,7 @@ app.get(
         total: sessions.length,
       });
     } catch (error) {
-       //@ts-ignore
+      //@ts-ignore
       res.status(500).json({ error: error.message });
     }
   }
@@ -292,11 +293,11 @@ app.get(
   authenticateToken,
   async (req, res) => {
     try {
-      const {/*  projectName,  */sessionId } = req.params;
+      const { /*  projectName,  */ sessionId } = req.params;
       const messages = sessionManager.getSessionMessages(sessionId);
       res.json({ messages });
     } catch (error) {
-       //@ts-ignore
+      //@ts-ignore
       res.status(500).json({ error: error.message });
     }
   }
@@ -312,7 +313,7 @@ app.put(
       await renameProject(req.params.projectName, displayName);
       res.json({ success: true });
     } catch (error) {
-       //@ts-ignore
+      //@ts-ignore
       res.status(500).json({ error: error.message });
     }
   }
@@ -324,10 +325,10 @@ app.delete(
   authenticateToken,
   async (req, res) => {
     try {
-      const {/*  projectName, */ sessionId } = req.params;
+      const { /*  projectName, */ sessionId } = req.params;
       await sessionManager.deleteSession(sessionId);
       res.json({ success: true });
-    } catch (error) { 
+    } catch (error) {
       //@ts-ignore
       res.status(500).json({ error: error.message });
     }
@@ -344,7 +345,7 @@ app.delete(
       await deleteProject(projectName);
       res.json({ success: true });
     } catch (error) {
-       //@ts-ignore
+      //@ts-ignore
       res.status(500).json({ error: error.message });
     }
   }
@@ -363,7 +364,7 @@ app.post("/api/projects/create", authenticateToken, async (req, res) => {
     res.json({ success: true, project });
   } catch (error) {
     // console.error('Error creating project:', error);
-     //@ts-ignore
+    //@ts-ignore
     res.status(500).json({ error: error.message });
   }
 });
@@ -389,9 +390,9 @@ app.get(
       //@ts-ignore
       const content = await fsPromises.readFile(filePath, "utf8");
       res.json({ content, path: filePath });
-    } catch (error:any) {
+    } catch (error: any) {
       // console.error('Error reading file:', error);
-       //@ts-ignore
+      //@ts-ignore
       if (error.code === "ENOENT") {
         res.status(404).json({ error: "File not found" });
       } else if (error.code === "EACCES") {
@@ -447,7 +448,7 @@ app.get(
           res.status(500).json({ error: "Error reading file" });
         }
       });
-    } catch (error:any) {
+    } catch (error: any) {
       // console.error('Error serving binary file:', error);
       if (!res.headersSent) {
         res.status(500).json({ error: error.message });
@@ -620,7 +621,7 @@ function handleChatConnection(ws: WebSocket) {
 // Handle shell WebSocket connections
 function handleShellConnection(ws: WebSocket) {
   // console.log('🐚 Shell client connected');
-  let shellProcess :null|IPty= null;
+  let shellProcess: null | IPty = null;
 
   ws.on("message", async (message: string) => {
     try {
@@ -652,15 +653,15 @@ function handleShellConnection(ws: WebSocket) {
           const cmd =
             process.platform === "win32"
               ? "cmd"
-              //@ts-ignore
-              : process.env.GEMINI_PATH || `which ${geminiPath}`;
+              : //@ts-ignore
+                process.env.GEMINI_PATH || `which ${geminiPath}`;
           // First check if gemini CLI is available
           try {
             const cmd =
               process.platform === "win32"
                 ? "cmd"
-                //@ts-ignore
-                : process.env.GEMINI_PATH || `which ${geminiPath}`;
+                : //@ts-ignore
+                  process.env.GEMINI_PATH || `which ${geminiPath}`;
             const args = [] as string[];
             if (process.platform === "win32") {
               args.push("/c");
@@ -723,10 +724,10 @@ function handleShellConnection(ws: WebSocket) {
             ? ["/c", shellCommand]
             : ["-c", shellCommand];
           const homeDir = isWindows
-          //@ts-ignore
-            ? process.env.USERPROFILE
-            //@ts-ignore
-            : process.env.HOME || "/";
+            ? //@ts-ignore
+              process.env.USERPROFILE
+            : //@ts-ignore
+              process.env.HOME || "/";
 
           // Start shell using PTY for proper terminal emulation
           shellProcess = pty.spawn(shell, shellArgs, {

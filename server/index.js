@@ -65,10 +65,10 @@ function run(cmd, args, opts = {}) {
         //@ts-ignore
         child.stderr?.on("data", (b) => err.push(b));
         child.on("close", (code) => code === 0
-            //@ts-ignore
-            ? resolve(Buffer.concat(out).toString())
-            //@ts-ignore
-            : reject(new Error(Buffer.concat(err).toString())));
+            ? //@ts-ignore
+                resolve(Buffer.concat(out).toString())
+            : //@ts-ignore
+                reject(new Error(Buffer.concat(err).toString())));
     });
 }
 // Setup file system watcher for Gemini projects folder using chokidar
@@ -207,6 +207,7 @@ app.get("/api/projects", authenticateToken, async (req, res) => {
         res.json(projects);
     }
     catch (error) {
+        console.error(error);
         //@ts-ignore
         res.status(500).json({ error: error.message });
     }
@@ -540,14 +541,14 @@ function handleShellConnection(ws) {
                     const geminiPath = process.env.GEMINI_PATH || "gemini";
                     const cmd = process.platform === "win32"
                         ? "cmd"
-                        //@ts-ignore
-                        : process.env.GEMINI_PATH || `which ${geminiPath}`;
+                        : //@ts-ignore
+                            process.env.GEMINI_PATH || `which ${geminiPath}`;
                     // First check if gemini CLI is available
                     try {
                         const cmd = process.platform === "win32"
                             ? "cmd"
-                            //@ts-ignore
-                            : process.env.GEMINI_PATH || `which ${geminiPath}`;
+                            : //@ts-ignore
+                                process.env.GEMINI_PATH || `which ${geminiPath}`;
                         const args = [];
                         if (process.platform === "win32") {
                             args.push("/c");
@@ -605,10 +606,10 @@ function handleShellConnection(ws) {
                         ? ["/c", shellCommand]
                         : ["-c", shellCommand];
                     const homeDir = isWindows
-                        //@ts-ignore
-                        ? process.env.USERPROFILE
-                        //@ts-ignore
-                        : process.env.HOME || "/";
+                        ? //@ts-ignore
+                            process.env.USERPROFILE
+                        : //@ts-ignore
+                            process.env.HOME || "/";
                     // Start shell using PTY for proper terminal emulation
                     shellProcess = pty.spawn(shell, shellArgs, {
                         name: "xterm-256color",
