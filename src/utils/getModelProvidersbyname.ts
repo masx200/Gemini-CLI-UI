@@ -3,8 +3,8 @@ import { authenticatedFetch } from "./api.ts";
 import { fetchOpenAIModels } from "./fetchOpenAIModels.ts";
 
 export async function getModelProvidersbyname(name: string) {
-  const url = `/api/modelproviders/name/${name}`;
-  const res = await authenticatedFetch(`/api/modelproviders/name/${name}`);
+  const url = `/api/model-providers/name/${name}`;
+  const res = await authenticatedFetch(url);
   if (!res.ok) {
     throw new Error("Failed to fetch model providers,url=" + url);
   }

@@ -1,5 +1,12 @@
 import BoltIcon from "@mui/icons-material/Bolt";
 import {
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+  CircularProgress,
+} from "@mui/material";
+import {
   AlertTriangle,
   Moon,
   Plus,
@@ -56,6 +63,17 @@ function ToolsSettings({
     },
     { manual: true }
   );
+
+  useEffect(() => {
+    if (error) {
+      console.error(error);
+      return;
+    }
+    if (data && data?.[0]?.id) {
+      console.log(data?.[0]?.id)
+      setSelectedModel(data?.[0]?.id);
+    }
+  }, [error, data]);
   useEffect(() => {
     if (!selectedProvider) {
       return;
@@ -359,22 +377,32 @@ function ToolsSettings({
                         Select Model
                       </label>
                       {error ? (
-                        <p>
+                        <p style={{ color: "red" }}>
                           <span>Error:{String(error)}</span>
                         </p>
                       ) : null}
-                      <select
-                        loading={loading}
-                        value={selectedModel}
-                        onChange={(e) => setSelectedModel(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:ring-cyan-500 focus:border-cyan-500"
-                      >
-                        {availableModels.map((model) => (
-                          <option key={model.value} value={model.value}>
-                            {model.label}
-                          </option>
-                        ))}
-                      </select>
+                      <FormControl fullWidth>
+                        <InputLabel id="model-select-label">
+                          Select Model
+                        </InputLabel>
+                        <Select
+                          labelId="model-select-label"
+                          id="model-select"
+                          value={selectedModel}
+                          onChange={(e) => setSelectedModel(e.target.value)}
+                          label="Select Model"
+                          disabled={loading}
+                          endAdornment={
+                            loading ? <CircularProgress size={20} /> : null
+                          }
+                        >
+                          {availableModels.map((model) => (
+                            <MenuItem key={model.value} value={model.value}>
+                              {model.label}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
                       <div className="text-sm text-gray-600 dark:text-gray-400">
                         {
                           availableModels.find((m) => m.value === selectedModel)
