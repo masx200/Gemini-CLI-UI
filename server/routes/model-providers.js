@@ -1,9 +1,6 @@
 import { Router } from "express";
 const router = Router();
-//@ts-ignore
 import { db } from "../../server/database/db.js";
-// Get all model providers
-//@ts-ignore
 router.get("/list", async (req, res) => {
     try {
         const providers = db
@@ -28,7 +25,6 @@ router.get("/list", async (req, res) => {
         res.status(500).json({ error: "Failed to fetch providers" });
     }
 });
-// Get a single model provider
 router.get("/:id", async (req, res) => {
     try {
         const { id } = req.params;
@@ -46,7 +42,6 @@ router.get("/:id", async (req, res) => {
         res.status(500).json({ error: "Failed to fetch provider" });
     }
 });
-// Create a new model provider
 router.post("/create", async (req, res) => {
     try {
         const { provider_name, provider_type, api_key, base_url, description, is_active, } = req.body;
@@ -71,7 +66,6 @@ router.post("/create", async (req, res) => {
             .json({ error: "Failed to create provider" + "\n" + String(error) });
     }
 });
-// Update a model provider
 router.put("/:id", async (req, res) => {
     try {
         const { id } = req.params;
@@ -101,7 +95,6 @@ router.put("/:id", async (req, res) => {
         return;
     }
 });
-// Delete a model provider
 router.delete("/:id", async (req, res) => {
     try {
         const { id } = req.params;
@@ -119,7 +112,6 @@ router.delete("/:id", async (req, res) => {
         return;
     }
 });
-// Test a model provider connection
 router.post("/:id/test", async (req, res) => {
     try {
         const { id } = req.params;
@@ -129,8 +121,6 @@ router.post("/:id/test", async (req, res) => {
         if (!provider) {
             return res.status(404).json({ error: "Active provider not found" });
         }
-        // Here you would implement actual connection testing
-        // For now, we'll just return a success response
         res.json({
             success: true,
             message: "Provider configuration looks valid",

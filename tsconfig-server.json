@@ -5,7 +5,7 @@
     // File Layout
     "rootDir": "./server",
     "outDir": "./server",
-
+    "removeComments": true,
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
     "module": "nodenext",

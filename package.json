@@ -7,7 +7,7 @@
   "scripts": {
     "watch": "tsc --watch",
     "watch:server": "tsc --watch -p tsconfig-server.json",
-    "dev": "concurrently --kill-others \"yarn run server\" \"yarn run client\" \"yarn run watch\" \"yarn run watch:server\"",
+    "dev": "concurrently --kill-others \"nodemon server/index.js\" \"yarn run client\" \"yarn run watch\" \"yarn run watch:server\"",
     "server": "node server/index.js",
     "client": "vite --host",
     "build": "  tsc -p tsconfig-server.json && vite build && tsc",
@@ -60,6 +60,7 @@
     "multer": "^2.0.2",
     "node-fetch": "^2.7.0",
     "node-pty-prebuilt-multiarch": "0.10.1-pre.5",
+    "nodemon": "^3.1.10",
     "openai": "^5.12.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
