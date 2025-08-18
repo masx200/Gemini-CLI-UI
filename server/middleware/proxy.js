@@ -8,7 +8,7 @@ export function createQwenProxy(target, username, password) {
     };
     const qwenProxyOptions = {
         ...defaultProxyOptions,
-        target: target ?? "http://localhost:12345",
+        target: target,
         pathFilter: "/api/qwen",
         pathRewrite: {
             "^/api/qwen": "",

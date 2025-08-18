@@ -33,7 +33,7 @@ export function createQwenProxy(
    */
   const qwenProxyOptions: Options = {
     ...defaultProxyOptions,
-    target: target ?? "http://localhost:12345",
+    target: target,
     pathFilter: "/api/qwen", // 只匹配 /api/qwen 开头的路径
     pathRewrite: {
       "^/api/qwen": "", // 移除 /api/qwen 前缀
