@@ -1,6 +1,6 @@
 import fs from "fs/promises";
-import path from "path";
 import os from "os";
+import path from "path";
 import {
   type MCPOperationResult,
   type MCPServerConfig,
@@ -9,7 +9,7 @@ import {
 
 /**
  * MCP配置管理器
- * 用于管理gemini-cli的MCP服务器配置
+ * 用于管理qwen-cli的MCP服务器配置
  */
 export class MCPConfigManager {
   private configPath: string;
@@ -18,8 +18,8 @@ export class MCPConfigManager {
     if (configPath) {
       this.configPath = configPath;
     } else {
-      // 默认使用用户主目录下的.gemini/settings.json
-      this.configPath = path.join(os.homedir(), ".gemini", "settings.json");
+      // 默认使用用户主目录下的.qwen/settings.json
+      this.configPath = path.join(os.homedir(), ".qwen", "settings.json");
     }
   }
 
@@ -48,7 +48,7 @@ export class MCPConfigManager {
       const defaultConfig: MCPSettings = { mcpServers: {} };
       await fs.writeFile(
         this.configPath,
-        JSON.stringify(defaultConfig, null, 2),
+        JSON.stringify(defaultConfig, null, 2)
       );
     }
   }
@@ -89,7 +89,7 @@ export class MCPConfigManager {
    */
   async addServer(
     name: string,
-    config: MCPServerConfig,
+    config: MCPServerConfig
   ): Promise<MCPOperationResult> {
     try {
       const settings = await this.readConfig();
@@ -159,12 +159,12 @@ export class MCPConfigManager {
   async listServers(): Promise<MCPOperationResult> {
     try {
       const settings = await this.readConfig();
-      const servers = Object.entries(settings.mcpServers).map((
-        [name, config],
-      ) => ({
-        name,
-        config,
-      }));
+      const servers = Object.entries(settings.mcpServers).map(
+        ([name, config]) => ({
+          name,
+          config,
+        })
+      );
 
       return {
         success: true,
@@ -218,7 +218,7 @@ export class MCPConfigManager {
    */
   async updateServer(
     name: string,
-    config: MCPServerConfig,
+    config: MCPServerConfig
   ): Promise<MCPOperationResult> {
     try {
       const settings = await this.readConfig();
@@ -287,7 +287,7 @@ export function createMCPConfigManager(configPath?: string): MCPConfigManager {
 export async function addMCPServer(
   name: string,
   config: MCPServerConfig,
-  configPath?: string,
+  configPath?: string
 ): Promise<MCPOperationResult> {
   const manager = createMCPConfigManager(configPath);
   return manager.addServer(name, config);
@@ -298,7 +298,7 @@ export async function addMCPServer(
  */
 export async function removeMCPServer(
   name: string,
-  configPath?: string,
+  configPath?: string
 ): Promise<MCPOperationResult> {
   const manager = createMCPConfigManager(configPath);
   return manager.removeServer(name);
@@ -308,7 +308,7 @@ export async function removeMCPServer(
  * 便捷函数：列出服务器
  */
 export async function listMCPServers(
-  configPath?: string,
+  configPath?: string
 ): Promise<MCPOperationResult> {
   const manager = createMCPConfigManager(configPath);
   return manager.listServers();
@@ -319,7 +319,7 @@ export async function listMCPServers(
  */
 export async function getMCPServer(
   name: string,
-  configPath?: string,
+  configPath?: string
 ): Promise<MCPOperationResult> {
   const manager = createMCPConfigManager(configPath);
   return manager.getServer(name);

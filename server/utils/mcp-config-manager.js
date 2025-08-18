@@ -1,6 +1,6 @@
 import fs from "fs/promises";
-import path from "path";
 import os from "os";
+import path from "path";
 import {} from "../types/mcp-config.js";
 export class MCPConfigManager {
     configPath;
@@ -9,7 +9,7 @@ export class MCPConfigManager {
             this.configPath = configPath;
         }
         else {
-            this.configPath = path.join(os.homedir(), ".gemini", "settings.json");
+            this.configPath = path.join(os.homedir(), ".qwen", "settings.json");
         }
     }
     getConfigPath() {

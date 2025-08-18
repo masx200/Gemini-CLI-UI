@@ -1,19 +1,18 @@
-import fs from "fs";
-import path, { dirname } from "path";
-import { fileURLToPath } from "url";
-import { v4 as uuidv4 } from "uuid";
 import { spawn } from "child_process";
 import cors from "cors";
 import express from "express";
-import { promises as fsPromises } from "fs";
+import fs, { promises as fsPromises } from "fs";
 import http from "http";
 import mime from "mime-types";
 import fetch from "node-fetch";
 import pty, {} from "node-pty-prebuilt-multiarch";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
+import { v4 as uuidv4 } from "uuid";
 import WebSocket, { WebSocketServer } from "ws";
 import os from "os";
 import { initializeDatabase } from "./database/db.js";
-import { abortGeminiSession, spawnGemini } from "./gemini-cli.js";
+import { abortqwenSession, spawnqwen } from "./qwen-cli.js";
 import { authenticateToken, authenticateWebSocket, validateApiKey, } from "./middleware/auth.js";
 import { createQwenProxy } from "./middleware/proxy.js";
 import { addProjectManually, clearProjectDirectoryCache, deleteProject, extractProjectDirectory, getProjects, renameProject, } from "./projects.js";
@@ -60,12 +59,12 @@ function run(cmd, args, opts = {}) {
 }
 async function setupProjectsWatcher() {
     const chokidar = (await import("chokidar")).default;
-    const geminiProjectsPath = path.join(process.env.HOME || os.homedir(), ".gemini", "projects");
+    const qwenProjectsPath = path.join(process.env.HOME || os.homedir(), ".qwen", "projects");
     if (projectsWatcher) {
         projectsWatcher.close();
     }
     try {
-        projectsWatcher = chokidar.watch(geminiProjectsPath, {
+        projectsWatcher = chokidar.watch(qwenProjectsPath, {
             ignored: [
                 "**/node_modules/**",
                 "**/.git/**",
@@ -96,7 +95,7 @@ async function setupProjectsWatcher() {
                         projects: updatedProjects,
                         timestamp: new Date().toISOString(),
                         changeType: eventType,
-                        changedFile: path.relative(geminiProjectsPath, filePath),
+                        changedFile: path.relative(qwenProjectsPath, filePath),
                     });
                     connectedClients.forEach((client) => {
                         if (client.readyState === client.OPEN) {
@@ -379,11 +378,11 @@ function handleChatConnection(ws) {
     ws.on("message", async (message) => {
         try {
             const data = JSON.parse(message);
-            if (data.type === "gemini-command") {
-                await spawnGemini(data.command, data.options, ws);
+            if (data.type === "qwen-command") {
+                await spawnqwen(data.command, data.options, ws);
             }
             else if (data.type === "abort-session") {
-                const success = abortGeminiSession(data.sessionId);
+                const success = abortqwenSession(data.sessionId);
                 ws.send(JSON.stringify({
                     type: "session-aborted",
                     sessionId: data.sessionId,
@@ -412,27 +411,27 @@ function handleShellConnection(ws) {
                 const sessionId = data.sessionId;
                 const hasSession = data.hasSession;
                 const welcomeMsg = hasSession
-                    ? `\x1b[36mResuming Gemini session ${sessionId} in: ${projectPath}\x1b[0m\r\n`
-                    : `\x1b[36mStarting new Gemini session in: ${projectPath}\x1b[0m\r\n`;
+                    ? `\x1b[36mResuming qwen session ${sessionId} in: ${projectPath}\x1b[0m\r\n`
+                    : `\x1b[36mStarting new qwen session in: ${projectPath}\x1b[0m\r\n`;
                 ws.send(JSON.stringify({
                     type: "output",
                     data: welcomeMsg,
                 }));
                 try {
-                    const geminiPath = process.env.GEMINI_PATH || "gemini";
+                    const qwenPath = process.env.qwen_PATH || "qwen";
                     const cmd = process.platform === "win32"
                         ? "cmd"
                         :
-                            process.env.GEMINI_PATH || `which ${geminiPath}`;
+                            process.env.qwen_PATH || `which ${qwenPath}`;
                     try {
                         const cmd = process.platform === "win32"
                             ? "cmd"
                             :
-                                process.env.GEMINI_PATH || `which ${geminiPath}`;
+                                process.env.qwen_PATH || `which ${qwenPath}`;
                         const args = [];
                         if (process.platform === "win32") {
                             args.push("/c");
-                            args.push(process.env.GEMINI_PATH || `which ${geminiPath}`);
+                            args.push(process.env.qwen_PATH || `which ${qwenPath}`);
                         }
                         args.push("--version");
                         const version = await run(cmd, args, {
@@ -442,14 +441,14 @@ function handleShellConnection(ws) {
                             env: process.env,
                             args: args,
                         });
-                        console.log("Gemini version:", version);
+                        console.log("qwen version:", version);
                     }
                     catch (error) {
                         console.error(error);
                         const args = [];
                         if (process.platform === "win32") {
                             args.push("/c");
-                            args.push(process.env.GEMINI_PATH || `which ${geminiPath}`);
+                            args.push(process.env.qwen_PATH || `which ${qwenPath}`);
                         }
                         args.push("--version");
                         console.log({
@@ -460,19 +459,19 @@ function handleShellConnection(ws) {
                             env: process.env,
                             args: args,
                         });
-                        console.error("❌ Gemini CLI not found in PATH or GEMINI_PATH");
-                        console.error("GEMINI_PATH:", process.env.GEMINI_PATH || "gemini");
+                        console.error("❌ qwen CLI not found in PATH or qwen_PATH");
+                        console.error("qwen_PATH:", process.env.qwen_PATH || "qwen");
                         ws.send(JSON.stringify({
                             type: "output",
-                            data: `\r\n\x1b[31mError: Gemini CLI not found. Please check:\x1b[0m\r\n\x1b[33m1. Install gemini globally: npm install -g @google/gemini-cli\x1b[0m\r\n\x1b[33m2. Or set GEMINI_PATH in .env file\x1b[0m\r\n`,
+                            data: `\r\n\x1b[31mError: qwen CLI not found. Please check:\x1b[0m\r\n\x1b[33m1. Install qwen globally: npm install -g @google/qwen-cli\x1b[0m\r\n\x1b[33m2. Or set qwen_PATH in .env file\x1b[0m\r\n`,
                         }));
                         return;
                     }
-                    let geminiCommand = geminiPath;
+                    let qwenCommand = qwenPath;
                     if (hasSession && sessionId) {
-                        geminiCommand = `${geminiPath} --resume ${sessionId} || ${geminiPath}`;
+                        qwenCommand = `${qwenPath} --resume ${sessionId} || ${qwenPath}`;
                     }
-                    const shellCommand = `cd "${projectPath}" && ${geminiCommand}`;
+                    const shellCommand = `cd "${projectPath}" && ${qwenCommand}`;
                     const isWindows = process.platform === "win32";
                     const shell = isWindows ? "cmd.exe" : "bash";
                     const shellArgs = isWindows
@@ -710,7 +709,7 @@ app.post("/api/projects/:projectName/upload-images", authenticateToken, async (r
         const os = (await import("os")).default;
         const storage = multer.diskStorage({
             destination: async (req, file, cb) => {
-                const uploadDir = path.join(os.tmpdir(), "gemini-ui-uploads", String(req.user.id));
+                const uploadDir = path.join(os.tmpdir(), "qwen-ui-uploads", String(req.user.id));
                 await fs.mkdir(uploadDir, { recursive: true });
                 cb(null, uploadDir);
             },
@@ -854,7 +853,7 @@ async function startServer() {
             }
         });
         server.listen(PORT, "0.0.0.0", async () => {
-            console.log(`easy-llm-cli-ui server running on http://127.0.0.1:${PORT}`);
+            console.log(`qwen-code-cli-UI server running on http://127.0.0.1:${PORT}`);
             await setupProjectsWatcher();
         });
     }

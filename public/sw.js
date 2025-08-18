@@ -1,5 +1,5 @@
-// Service Worker for easy-llm-cli-ui PWA
-const CACHE_NAME = "gemini-ui-v1";
+// Service Worker for qwen-code-cli-UI PWA
+const CACHE_NAME = "qwen-ui-v1";
 const urlsToCache = ["/", "/index.html", "/manifest.json"];
 
 // Install event
@@ -7,7 +7,7 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return cache.addAll(urlsToCache);
-    }),
+    })
   );
   self.skipWaiting();
 });
@@ -22,7 +22,7 @@ self.addEventListener("fetch", (event) => {
       }
       // Otherwise fetch from network
       return fetch(event.request);
-    }),
+    })
   );
 });
 
@@ -35,8 +35,8 @@ self.addEventListener("activate", (event) => {
           if (cacheName !== CACHE_NAME) {
             return caches.delete(cacheName);
           }
-        }),
+        })
       );
-    }),
+    })
   );
 });

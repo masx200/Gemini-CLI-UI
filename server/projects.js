@@ -9,7 +9,7 @@ function clearProjectDirectoryCache() {
     cacheTimestamp = Date.now();
 }
 async function loadProjectConfig() {
-    const configPath = path.join(process.env.HOME || os.homedir(), ".gemini", "project-config.json");
+    const configPath = path.join(process.env.HOME || os.homedir(), ".qwen", "project-config.json");
     try {
         const configData = await fs.readFile(configPath, "utf8");
         return JSON.parse(configData);
@@ -19,7 +19,7 @@ async function loadProjectConfig() {
     }
 }
 async function saveProjectConfig(config) {
-    const configPath = path.join(process.env.HOME || os.homedir(), ".gemini", "project-config.json");
+    const configPath = path.join(process.env.HOME || os.homedir(), ".qwen", "project-config.json");
     await fs.writeFile(configPath, JSON.stringify(config, null, 2), "utf8");
 }
 async function generateDisplayName(projectName, actualProjectDir = null) {
@@ -49,7 +49,7 @@ async function extractProjectDirectory(projectName) {
     if (projectDirectoryCache.has(projectName)) {
         return projectDirectoryCache.get(projectName);
     }
-    const projectDir = path.join(process.env.HOME || os.homedir(), ".gemini", "projects", projectName);
+    const projectDir = path.join(process.env.HOME || os.homedir(), ".qwen", "projects", projectName);
     const cwdCounts = new Map();
     let latestTimestamp = 0;
     let latestCwd = null;
@@ -118,8 +118,9 @@ async function extractProjectDirectory(projectName) {
                 }
                 if (!extractedPath) {
                     try {
-                        extractedPath = latestCwd ||
-                            Buffer.from(projectName.replace(/_/g, "+").replace(/-/g, "/"), "base64").toString("utf8");
+                        extractedPath =
+                            latestCwd ||
+                                Buffer.from(projectName.replace(/_/g, "+").replace(/-/g, "/"), "base64").toString("utf8");
                     }
                     catch (e) {
                         extractedPath = latestCwd || projectName.replace(/-/g, "/");
@@ -148,12 +149,12 @@ async function extractProjectDirectory(projectName) {
     }
 }
 async function getProjects() {
-    const geminiDir = path.join(process.env.HOME || os.homedir(), ".gemini", "projects");
+    const qwenDir = path.join(process.env.HOME || os.homedir(), ".qwen", "projects");
     const config = await loadProjectConfig();
     const projects = [];
     const existingProjects = new Set();
     try {
-        const entries = await fs.readdir(geminiDir, { withFileTypes: true });
+        const entries = await fs.readdir(qwenDir, { withFileTypes: true });
         for (const entry of entries) {
             if (entry.isDirectory()) {
                 existingProjects.add(entry.name);
@@ -214,7 +215,7 @@ async function getProjects() {
     return projects;
 }
 async function getSessions(projectName, limit = 5, offset = 0) {
-    const projectDir = path.join(process.env.HOME || os.homedir(), ".gemini", "projects", projectName);
+    const projectDir = path.join(process.env.HOME || os.homedir(), ".qwen", "projects", projectName);
     try {
         const files = await fs.readdir(projectDir);
         const jsonlFiles = files.filter((file) => file.endsWith(".jsonl"));
@@ -293,9 +294,10 @@ async function parseJsonlSessions(filePath) {
                             const content = entry.message.content;
                             if (typeof content === "string" && content.length > 0) {
                                 if (!content.startsWith("<command-name>")) {
-                                    session.summary = content.length > 50
-                                        ? content.substring(0, 50) + "..."
-                                        : content;
+                                    session.summary =
+                                        content.length > 50
+                                            ? content.substring(0, 50) + "..."
+                                            : content;
                                 }
                             }
                         }
@@ -315,7 +317,7 @@ async function parseJsonlSessions(filePath) {
     return Array.from(sessions.values()).sort((a, b) => new Date(b.lastActivity) - new Date(a.lastActivity));
 }
 async function getSessionMessages(projectName, sessionId) {
-    const projectDir = path.join(process.env.HOME || os.homedir(), ".gemini", "projects", projectName);
+    const projectDir = path.join(process.env.HOME || os.homedir(), ".qwen", "projects", projectName);
     try {
         const files = await fs.readdir(projectDir);
         const jsonlFiles = files.filter((file) => file.endsWith(".jsonl"));
@@ -363,7 +365,7 @@ async function renameProject(projectName, newDisplayName) {
     return true;
 }
 async function deleteSession(projectName, sessionId) {
-    const projectDir = path.join(process.env.HOME || os.homedir(), ".gemini", "projects", projectName);
+    const projectDir = path.join(process.env.HOME || os.homedir(), ".qwen", "projects", projectName);
     try {
         const files = await fs.readdir(projectDir);
         const jsonlFiles = files.filter((file) => file.endsWith(".jsonl"));
@@ -413,7 +415,7 @@ async function isProjectEmpty(projectName) {
     }
 }
 async function deleteProject(projectName) {
-    const projectDir = path.join(process.env.HOME || os.homedir(), ".gemini", "projects", projectName);
+    const projectDir = path.join(process.env.HOME || os.homedir(), ".qwen", "projects", projectName);
     try {
         const isEmpty = await isProjectEmpty(projectName);
         if (!isEmpty) {
@@ -442,7 +444,7 @@ async function addProjectManually(projectPath, displayName = null) {
         .toString("base64")
         .replace(/[/+=]/g, "_");
     const config = await loadProjectConfig();
-    const projectDir = path.join(process.env.HOME || os.homedir(), ".gemini", "projects", projectName);
+    const projectDir = path.join(process.env.HOME || os.homedir(), ".qwen", "projects", projectName);
     try {
         await fs.access(projectDir);
         throw new Error(`Project already exists for path: ${absolutePath}`);

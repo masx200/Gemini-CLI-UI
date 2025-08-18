@@ -1,7 +1,7 @@
 export type ModelProviderType =
   | "openai"
   | "anthropic"
-  | "gemini"
+  | "qwen"
   | "bedrock"
   | "baidu"
   | "dashscope"

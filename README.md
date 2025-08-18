@@ -1,15 +1,15 @@
-# easy-llm-cli-ui
+# qwen-code-cli-UI
 
 <div align="center">
-  <img src="public/logo.svg" alt="easy-llm-cli-ui" width="64" height="64">
-  <h1>easy-llm-cli-ui</h1>
+  <img src="public/logo.svg" alt="qwen-code-cli-UI" width="64" height="64">
+  <h1>qwen-code-cli-UI</h1>
 </div>
 
 A desktop and mobile UI for
-[Gemini CLI](https://github.com/google-gemini/gemini-cli), Google's official CLI
+[qwen CLI](https://github.com/QwenLM/qwen-code), Google's official CLI
 for AI-assisted coding. You can use it locally or remotely to view your active
-projects and sessions in Gemini CLI and make changes to them the same way you
-would do it in Gemini CLI. This gives you a proper interface that works
+projects and sessions in qwen CLI and make changes to them the same way you
+would do it in qwen CLI. This gives you a proper interface that works
 everywhere.
 
 ## Screenshots
@@ -35,9 +35,9 @@ everywhere.
 <tr>
 <td align="center">
 <h3>Chat View</h3>
-<img src="public/screenshots/easy-llm-cli-ui-diagram-en.png" alt="Desktop Interface" width="800">
+<img src="public/screenshots/qwen-code-cli-UI-diagram-en.png" alt="Desktop Interface" width="800">
 <br>
-<em>easy-llm-cli-ui Diagram</em>
+<em>qwen-code-cli-UI Diagram</em>
 </td>
 </table>
 </div align="center">
@@ -45,10 +45,10 @@ everywhere.
 ## Features
 
 - **Responsive Design** - Works seamlessly across desktop, tablet, and mobile so
-  you can also use Gemini CLI from mobile
+  you can also use qwen CLI from mobile
 - **Interactive Chat Interface** - Built-in chat interface for seamless
-  communication with Gemini CLI
-- **Integrated Shell Terminal** - Direct access to Gemini CLI through built-in
+  communication with qwen CLI
+- **Integrated Shell Terminal** - Direct access to qwen CLI through built-in
   shell functionality
 - **File Explorer** - Interactive file tree with syntax highlighting and live
   editing
@@ -56,7 +56,7 @@ everywhere.
   branches
 - **Session Management** - Resume conversations, manage multiple sessions, and
   track history
-- **Model Selection** - Choose from multiple Gemini models including Gemini 2.5
+- **Model Selection** - Choose from multiple qwen models including qwen 2.5
   Pro
 - **YOLO Mode** - Skip confirmation prompts for faster operations (use with
   caution)
@@ -66,7 +66,7 @@ everywhere.
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) v20 or higher
-- [Gemini CLI](https://github.com/google-gemini/gemini-cli) installed and
+- [qwen CLI](https://github.com/QwenLM/qwen-code) installed and
   configured
 
 ### Installation
@@ -74,8 +74,8 @@ everywhere.
 1. **Clone the repository:**
 
 ```bash
-git clone https://github.com/masx200/easy-llm-cli-ui.git
-cd easy-llm-cli-ui
+git clone https://github.com/masx200/qwen-code-cli-UI.git
+cd qwen-code-cli-UI
 ```
 
 2. **Install dependencies:**
@@ -108,12 +108,12 @@ The application will start at the port you specified in your .env
 
 ## Security & Tools Configuration
 
-**🔒 Important Notice**: All Gemini CLI tools are **disabled by default**. This
+**🔒 Important Notice**: All qwen CLI tools are **disabled by default**. This
 prevents potentially harmful operations from running automatically.
 
 ### Enabling Tools
 
-To use Gemini CLI's full functionality, you'll need to manually enable tools:
+To use qwen CLI's full functionality, you'll need to manually enable tools:
 
 1. **Open Tools Settings** - Click the gear icon in the sidebar
 2. **Enable Selectively** - Turn on only the tools you need
@@ -121,7 +121,7 @@ To use Gemini CLI's full functionality, you'll need to manually enable tools:
 
 ### About YOLO Mode
 
-YOLO mode ("You Only Live Once") is equivalent to Gemini CLI's `--yolo` flag,
+YOLO mode ("You Only Live Once") is equivalent to qwen CLI's `--yolo` flag,
 skipping all confirmation prompts. This mode speeds up your work but should be
 used with caution.
 
@@ -134,7 +134,7 @@ You can always adjust these settings later.
 
 #### Project Management
 
-The UI automatically discovers Gemini CLI projects from `~/.gemini/projects/`
+The UI automatically discovers qwen CLI projects from `~/.qwen/projects/`
 and provides:
 
 - **Visual Project Browser** - All available projects with metadata and session
@@ -144,9 +144,9 @@ and provides:
 
 #### Chat Interface
 
-- **Use responsive chat or Gemini CLI** - You can either use the adapted chat
-  interface or use the shell button to connect to Gemini CLI
-- **Real-time Communication** - Stream responses from Gemini with WebSocket
+- **Use responsive chat or qwen CLI** - You can either use the adapted chat
+  interface or use the shell button to connect to qwen CLI
+- **Real-time Communication** - Stream responses from qwen with WebSocket
   connection
 - **Session Management** - Resume previous conversations or start fresh sessions
 - **Message History** - Complete conversation history with timestamps and
@@ -190,7 +190,7 @@ and provides:
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Frontend      │    │   Backend       │    │  Gemini CLI     │
+│   Frontend      │    │   Backend       │    │  qwen CLI     │
 │   (React/Vite)  │◄──►│ (Express/WS)    │◄──►│  Integration    │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
@@ -199,11 +199,11 @@ and provides:
 
 - **Express Server** - RESTful API with static file serving (Port: 4008)
 - **WebSocket Server** - Communication for chats and project refresh
-- **Gemini CLI Integration** - Process spawning and management
+- **qwen CLI Integration** - Process spawning and management
 - **Session Management** - JSONL parsing and conversation persistence
 - **File System API** - Exposing file browser for projects
 - **Authentication System** - Secure login and session management (SQLite
-  database: geminicliui_auth.db)
+  database: qwencliui_auth.db)
 
 ### Frontend (React + Vite)
 
@@ -224,32 +224,32 @@ and provides:
 
 项目支持以下环境变量配置，请在 `.env` 文件中设置：
 
-| 变量名                  | 默认值                                  | 描述                               |
-| ----------------------- | --------------------------------------- | ---------------------------------- |
-| `GEMINI_PATH`           | `gemini`                                | Gemini CLI 的安装路径              |
-| `HOME`                  | 系统用户主目录                          | 用户主目录路径                     |
-| `PORT`                  | `4008`                                  | API 服务器端口                     |
-| `OPENAI_API_KEY`        | -                                       | OpenAI API 密钥（可选）            |
-| `OPENAI_BASE_URL`       | -                                       | OpenAI API 基础 URL（可选）        |
-| `DB_PATH`               | `./server/database/geminicliui_auth.db` | 数据库文件路径                     |
-| `JWT_SECRET`            | 随机生成                                | JWT 令牌加密密钥                   |
-| `API_KEY`               | -                                       | 外部 API 密钥（可选）              |
-| `NODE_ENV`              | `development`                           | 运行环境（development/production） |
-| `OPENAI_MODEL`          | -                                       | OpenAI 模型名称（可选）            |
-| `CUSTOM_LLM_MODEL_NAME` | -                                       | OpenAI 模型名称（可选）            |
-| `CUSTOM_LLM_API_KEY`    | -                                       | OpenAI API 密钥（可选）            |
-| `CUSTOM_LLM_ENDPOINT`   | -                                       | OpenAI API 基础 URL（可选）        |
-| `USE_CUSTOM_LLM`        | -                                       | 启用自定义 LLM 支持（可选）        |
+| 变量名                  | 默认值                                | 描述                               |
+| ----------------------- | ------------------------------------- | ---------------------------------- |
+| `qwen_PATH`             | `qwen`                                | qwen CLI 的安装路径                |
+| `HOME`                  | 系统用户主目录                        | 用户主目录路径                     |
+| `PORT`                  | `4008`                                | API 服务器端口                     |
+| `OPENAI_API_KEY`        | -                                     | OpenAI API 密钥（可选）            |
+| `OPENAI_BASE_URL`       | -                                     | OpenAI API 基础 URL（可选）        |
+| `DB_PATH`               | `./server/database/qwencliui_auth.db` | 数据库文件路径                     |
+| `JWT_SECRET`            | 随机生成                              | JWT 令牌加密密钥                   |
+| `API_KEY`               | -                                     | 外部 API 密钥（可选）              |
+| `NODE_ENV`              | `development`                         | 运行环境（development/production） |
+| `OPENAI_MODEL`          | -                                     | OpenAI 模型名称（可选）            |
+| `CUSTOM_LLM_MODEL_NAME` | -                                     | OpenAI 模型名称（可选）            |
+| `CUSTOM_LLM_API_KEY`    | -                                     | OpenAI API 密钥（可选）            |
+| `CUSTOM_LLM_ENDPOINT`   | -                                     | OpenAI API 基础 URL（可选）        |
+| `USE_CUSTOM_LLM`        | -                                     | 启用自定义 LLM 支持（可选）        |
 
 **示例配置**：
 
 ```bash
 # .env 文件示例
-GEMINI_PATH=/Users/username/gemini
+qwen_PATH=/Users/username/qwen
 HOME=/Users/username
 PORT=4008
 OPENAI_API_KEY=sk-your-openai-key-here
-DB_PATH=./server/database/geminicliui_auth.db
+DB_PATH=./server/database/qwencliui_auth.db
 JWT_SECRET=your-secret-key-here
 API_KEY=your-api-key-here
 NODE_ENV=development
@@ -259,13 +259,13 @@ NODE_ENV=development
 
 #### Initial Setup and Table Structure
 
-- **Database File**: `server/database/geminicliui_auth.db`
+- **Database File**: `server/database/qwencliui_auth.db`
 - **Database Type**: SQLite 3
 - **Initialization**: Automatically created and initialized on server startup
 
 #### User Table Details
 
-**Table Name**: `geminicliui_users`
+**Table Name**: `qwencliui_users`
 
 | Column          | Data Type | Constraints               | Description                        |
 | --------------- | --------- | ------------------------- | ---------------------------------- |
@@ -278,8 +278,8 @@ NODE_ENV=development
 
 **Indexes**:
 
-- `idx_geminicliui_users_username`: For fast username lookups
-- `idx_geminicliui_users_active`: For filtering active users
+- `idx_qwencliui_users_username`: For fast username lookups
+- `idx_qwencliui_users_active`: For filtering active users
 
 #### First Run Setup
 
@@ -300,13 +300,13 @@ NODE_ENV=development
 
 ### Common Issues & Solutions
 
-#### "No Gemini projects found"
+#### "No qwen projects found"
 
 **Problem**: The UI shows no projects or empty project list **Solutions**:
 
-- Ensure Gemini CLI is properly installed
-- Run `gemini` command in at least one project directory to initialize
-- Verify `~/.gemini/projects/` directory exists and has proper permissions
+- Ensure qwen CLI is properly installed
+- Run `qwen` command in at least one project directory to initialize
+- Verify `~/.qwen/projects/` directory exists and has proper permissions
 
 #### File Explorer Issues
 
@@ -336,31 +336,31 @@ GPL v3 license.
 ### Original Project
 
 This project is based on
-[gemini Code UI](https://github.com/siteboon/geminicodeui) (GPL v3.0) with
+[qwen Code UI](https://github.com/siteboon/qwencodeui) (GPL v3.0) with
 customizations.
 
 **Major Changes:**
 
-- Adapted from gemini cli to Gemini CLI
+- Adapted from qwen cli to qwen CLI
 - Added authentication system (SQLite-based)
-- Gemini-specific model selection feature
+- qwen-specific model selection feature
 - Enhanced Japanese language support
-- UI adjustments and Gemini branding
+- UI adjustments and qwen branding
 
-Thanks to the original gemini Code UI project.
+Thanks to the original qwen Code UI project.
 
 ## Acknowledgments
 
 ### Built With
 
-- **[Gemini CLI](https://github.com/google-gemini/gemini-cli)** - Google's
+- **[qwen CLI](https://github.com/QwenLM/qwen-code)** - Google's
   official CLI
 - **[React](https://react.dev/)** - User interface library
 - **[Vite](https://vitejs.dev/)** - Fast build tool and dev server
 - **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework
 - **[CodeMirror](https://codemirror.net/)** - Advanced code editor
 
-https://github.com/ConardLi/easy-llm-cli
+https://github.com/QwenLM/qwen-code
 
 ## Support & Community
 

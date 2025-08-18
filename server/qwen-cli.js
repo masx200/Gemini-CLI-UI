@@ -4,9 +4,9 @@ import os from "os";
 import path from "path";
 import sessionManager from "./sessionManager.js";
 
-let activeGeminiProcesses = new Map(); // Track active processes by session ID
+let activeqwenProcesses = new Map(); // Track active processes by session ID
 
-async function spawnGemini(command, options = {}, ws) {
+async function spawnqwen(command, options = {}, ws) {
   return new Promise(async (resolve, reject) => {
     const {
       sessionId,
@@ -32,7 +32,7 @@ async function spawnGemini(command, options = {}, ws) {
 
     // Use tools settings
 
-    // Build Gemini CLI command - start with print/resume flags first
+    // Build qwen CLI command - start with print/resume flags first
     const args = [];
 
     // Add prompt flag with command if we have a command
@@ -52,7 +52,7 @@ async function spawnGemini(command, options = {}, ws) {
       }
     }
 
-    // Use cwd (actual project directory) instead of projectPath (Gemini's metadata directory)
+    // Use cwd (actual project directory) instead of projectPath (qwen's metadata directory)
     // Debug - cwd and projectPath
     // Clean the path by removing any non-printable characters
     const cleanPath = (cwd || process.cwd())
@@ -61,17 +61,17 @@ async function spawnGemini(command, options = {}, ws) {
     const workingDir = cleanPath;
     // Debug - workingDir
 
-    // Handle images by saving them to temporary files and passing paths to Gemini
+    // Handle images by saving them to temporary files and passing paths to qwen
     const tempImagePaths = [];
     let tempDir = null;
     if (images && images.length > 0) {
       try {
-        // Create temp directory in the project directory so Gemini can access it
+        // Create temp directory in the project directory so qwen can access it
         tempDir = path.join(
           workingDir,
           ".tmp",
           "images",
-          Date.now().toString(),
+          Date.now().toString()
         );
         await fs.mkdir(tempDir, { recursive: true });
 
@@ -94,15 +94,14 @@ async function spawnGemini(command, options = {}, ws) {
           tempImagePaths.push(filepath);
         }
 
-        // Include the full image paths in the prompt for Gemini to reference
-        // Gemini CLI can read images from file paths in the prompt
+        // Include the full image paths in the prompt for qwen to reference
+        // qwen CLI can read images from file paths in the prompt
         if (tempImagePaths.length > 0 && command && command.trim()) {
-          const imageNote =
-            `\n\n[画像を添付しました: ${tempImagePaths.length}枚の画像があります。以下のパスに保存されています:]\n${
-              tempImagePaths
-                .map((p, i) => `${i + 1}. ${p}`)
-                .join("\n")
-            }`;
+          const imageNote = `\n\n[画像を添付しました: ${
+            tempImagePaths.length
+          }枚の画像があります。以下のパスに保存されています:]\n${tempImagePaths
+            .map((p, i) => `${i + 1}. ${p}`)
+            .join("\n")}`;
           const modifiedCommand = command + imageNote;
 
           // Update the command in args
@@ -115,14 +114,14 @@ async function spawnGemini(command, options = {}, ws) {
           }
         }
       } catch (error) {
-        // console.error('Error processing images for Gemini:', error);
+        // console.error('Error processing images for qwen:', error);
       }
     }
 
-    // Gemini doesn't support resume functionality
+    // qwen doesn't support resume functionality
     // Skip resume handling
 
-    // Add basic flags for Gemini
+    // Add basic flags for qwen
     // Only add debug flag if explicitly requested
     if (options.debug) {
       args.push("--debug");
@@ -133,31 +132,30 @@ async function spawnGemini(command, options = {}, ws) {
       // Use already imported modules (fs.promises is imported as fs, path, os)
       const fsSync = await import("fs"); // Import synchronous fs methods
 
-      // Check for MCP config in ~/.gemini/settings.json
-      const geminiConfigPath = path.join(os.homedir(), ".gemini/settings.json");
+      // Check for MCP config in ~/.qwen/settings.json
+      const qwenConfigPath = path.join(os.homedir(), ".qwen/settings.json");
 
       let hasMcpServers = false;
 
-      // Check Gemini config for MCP servers
-      if (fsSync.existsSync(geminiConfigPath)) {
+      // Check qwen config for MCP servers
+      if (fsSync.existsSync(qwenConfigPath)) {
         try {
-          const geminiConfig = JSON.parse(
-            fsSync.readFileSync(geminiConfigPath, "utf8"),
+          const qwenConfig = JSON.parse(
+            fsSync.readFileSync(qwenConfigPath, "utf8")
           );
 
           // Check global MCP servers
           if (
-            geminiConfig.mcpServers &&
-            Object.keys(geminiConfig.mcpServers).length > 0
+            qwenConfig.mcpServers &&
+            Object.keys(qwenConfig.mcpServers).length > 0
           ) {
             hasMcpServers = true;
           }
 
           // Check project-specific MCP servers
-          if (!hasMcpServers && geminiConfig.geminiProjects) {
+          if (!hasMcpServers && qwenConfig.qwenProjects) {
             const currentProjectPath = process.cwd();
-            const projectConfig =
-              geminiConfig.geminiProjects[currentProjectPath];
+            const projectConfig = qwenConfig.qwenProjects[currentProjectPath];
             if (
               projectConfig &&
               projectConfig.mcpServers &&
@@ -170,27 +168,30 @@ async function spawnGemini(command, options = {}, ws) {
       }
 
       if (hasMcpServers) {
-        // Use Gemini config file if it has MCP servers
+        // Use qwen config file if it has MCP servers
         let configPath = null;
 
-        if (fsSync.existsSync(geminiConfigPath)) {
+        if (fsSync.existsSync(qwenConfigPath)) {
           try {
-            const geminiConfig = JSON.parse(
-              fsSync.readFileSync(geminiConfigPath, "utf8"),
+            const qwenConfig = JSON.parse(
+              fsSync.readFileSync(qwenConfigPath, "utf8")
             );
 
             // Check if we have any MCP servers (global or project-specific)
-            const hasGlobalServers = geminiConfig.mcpServers &&
-              Object.keys(geminiConfig.mcpServers).length > 0;
+            const hasGlobalServers =
+              qwenConfig.mcpServers &&
+              Object.keys(qwenConfig.mcpServers).length > 0;
             const currentProjectPath = process.cwd();
-            const projectConfig = geminiConfig.geminiProjects &&
-              geminiConfig.geminiProjects[currentProjectPath];
-            const hasProjectServers = projectConfig &&
+            const projectConfig =
+              qwenConfig.qwenProjects &&
+              qwenConfig.qwenProjects[currentProjectPath];
+            const hasProjectServers =
+              projectConfig &&
               projectConfig.mcpServers &&
               Object.keys(projectConfig.mcpServers).length > 0;
 
             if (hasGlobalServers || hasProjectServers) {
-              configPath = geminiConfigPath;
+              configPath = qwenConfigPath;
             }
           } catch (e) {
             // No valid config found
@@ -209,7 +210,7 @@ async function spawnGemini(command, options = {}, ws) {
 
     // Add model for all sessions (both new and resumed)
     // Debug - Model from options and resume session
-    const modelToUse = options.model || "gemini-2.5-flash";
+    const modelToUse = options.model || "qwen-2.5-flash";
     // Debug - Using model
     args.push("--model", modelToUse);
 
@@ -219,50 +220,50 @@ async function spawnGemini(command, options = {}, ws) {
     } else {
     }
 
-    // Gemini doesn't support these tool permission flags
+    // qwen doesn't support these tool permission flags
     // Skip all tool settings
 
-    // console.log('Spawning Gemini CLI with args:', args);
+    // console.log('Spawning qwen CLI with args:', args);
     // console.log('Working directory:', workingDir);
 
-    // Try to find gemini in PATH first, then fall back to environment variable
-    const geminiPath = process.env.GEMINI_PATH || "gemini";
-    // console.log('Full command:', geminiPath, args.join(' '));
+    // Try to find qwen in PATH first, then fall back to environment variable
+    const qwenPath = process.env.qwen_PATH || "qwen";
+    // console.log('Full command:', qwenPath, args.join(' '));
 
-    const geminiProcess = spawn(geminiPath, args, {
+    const qwenProcess = spawn(qwenPath, args, {
       cwd: workingDir,
       stdio: ["pipe", "pipe", "pipe"],
       env: { ...process.env }, // Inherit all environment variables
     });
 
     // Attach temp file info to process for cleanup later
-    geminiProcess.tempImagePaths = tempImagePaths;
-    geminiProcess.tempDir = tempDir;
+    qwenProcess.tempImagePaths = tempImagePaths;
+    qwenProcess.tempDir = tempDir;
 
     // Store process reference for potential abort
     const processKey = capturedSessionId || sessionId || Date.now().toString();
-    activeGeminiProcesses.set(processKey, geminiProcess);
-    // Debug - Stored Gemini process with key
+    activeqwenProcesses.set(processKey, qwenProcess);
+    // Debug - Stored qwen process with key
 
     // Store sessionId on the process object for debugging
-    geminiProcess.sessionId = processKey;
+    qwenProcess.sessionId = processKey;
 
     // Close stdin to signal we're done sending input
-    geminiProcess.stdin.end();
+    qwenProcess.stdin.end();
 
     // Add timeout handler
     let hasReceivedOutput = false;
     const timeoutMs = 30000; // 30 seconds
     const timeout = setTimeout(() => {
       if (!hasReceivedOutput) {
-        // console.error('⏰ Gemini CLI timeout - no output received after', timeoutMs, 'ms');
+        // console.error('⏰ qwen CLI timeout - no output received after', timeoutMs, 'ms');
         ws.send(
           JSON.stringify({
-            type: "gemini-error",
-            error: "Gemini CLI timeout - no response received",
-          }),
+            type: "qwen-error",
+            error: "qwen CLI timeout - no response received",
+          })
         );
-        geminiProcess.kill("SIGTERM");
+        qwenProcess.kill("SIGTERM");
       }
     }, timeoutMs);
 
@@ -271,13 +272,13 @@ async function spawnGemini(command, options = {}, ws) {
       sessionManager.addMessage(capturedSessionId, "user", command);
     }
 
-    // Handle stdout (Gemini outputs plain text)
+    // Handle stdout (qwen outputs plain text)
     let outputBuffer = "";
 
-    geminiProcess.stdout.on("data", (data) => {
+    qwenProcess.stdout.on("data", (data) => {
       const rawOutput = data.toString();
       outputBuffer += rawOutput;
-      // Debug - Raw Gemini stdout
+      // Debug - Raw qwen stdout
       hasReceivedOutput = true;
       clearTimeout(timeout);
 
@@ -300,7 +301,7 @@ async function spawnGemini(command, options = {}, ws) {
       const filteredOutput = filteredLines.join("\n").trim();
 
       if (filteredOutput) {
-        // Debug - Gemini response
+        // Debug - qwen response
 
         // Accumulate the full response
         fullResponse += (fullResponse ? "\n" : "") + filteredOutput;
@@ -308,18 +309,18 @@ async function spawnGemini(command, options = {}, ws) {
         // Send the filtered output as a message
         ws.send(
           JSON.stringify({
-            type: "gemini-response",
+            type: "qwen-response",
             data: {
               type: "message",
               content: filteredOutput,
             },
-          }),
+          })
         );
       }
 
       // For new sessions, create a session ID
       if (!sessionId && !sessionCreatedSent && !capturedSessionId) {
-        capturedSessionId = `gemini_${Date.now()}`;
+        capturedSessionId = `qwen_${Date.now()}`;
         sessionCreatedSent = true;
 
         // Create session in session manager
@@ -332,23 +333,23 @@ async function spawnGemini(command, options = {}, ws) {
 
         // Update process key with captured session ID
         if (processKey !== capturedSessionId) {
-          activeGeminiProcesses.delete(processKey);
-          activeGeminiProcesses.set(capturedSessionId, geminiProcess);
+          activeqwenProcesses.delete(processKey);
+          activeqwenProcesses.set(capturedSessionId, qwenProcess);
         }
 
         ws.send(
           JSON.stringify({
             type: "session-created",
             sessionId: capturedSessionId,
-          }),
+          })
         );
       }
     });
 
     // Handle stderr
-    geminiProcess.stderr.on("data", (data) => {
+    qwenProcess.stderr.on("data", (data) => {
       const errorMsg = data.toString();
-      // Debug - Raw Gemini stderr
+      // Debug - Raw qwen stderr
 
       // Filter out deprecation warnings
       if (
@@ -357,27 +358,27 @@ async function spawnGemini(command, options = {}, ws) {
         errorMsg.includes("--trace-deprecation")
       ) {
         // Log but don't send to client
-        // Debug - Gemini CLI warning (suppressed)
+        // Debug - qwen CLI warning (suppressed)
         return;
       }
 
-      // console.error('Gemini CLI stderr:', errorMsg);
+      // console.error('qwen CLI stderr:', errorMsg);
       ws.send(
         JSON.stringify({
-          type: "gemini-error",
+          type: "qwen-error",
           error: errorMsg,
-        }),
+        })
       );
     });
 
     // Handle process completion
-    geminiProcess.on("close", async (code) => {
-      // console.log(`Gemini CLI process exited with code ${code}`);
+    qwenProcess.on("close", async (code) => {
+      // console.log(`qwen CLI process exited with code ${code}`);
       clearTimeout(timeout);
 
       // Clean up process reference
       const finalSessionId = capturedSessionId || sessionId || processKey;
-      activeGeminiProcesses.delete(finalSessionId);
+      activeqwenProcesses.delete(finalSessionId);
 
       // Save assistant response to session if we have one
       if (finalSessionId && fullResponse) {
@@ -386,27 +387,24 @@ async function spawnGemini(command, options = {}, ws) {
 
       ws.send(
         JSON.stringify({
-          type: "gemini-complete",
+          type: "qwen-complete",
           exitCode: code,
           isNewSession: !sessionId && !!command, // Flag to indicate this was a new session
-        }),
+        })
       );
 
       // Clean up temporary image files if any
-      if (
-        geminiProcess.tempImagePaths &&
-        geminiProcess.tempImagePaths.length > 0
-      ) {
-        for (const imagePath of geminiProcess.tempImagePaths) {
+      if (qwenProcess.tempImagePaths && qwenProcess.tempImagePaths.length > 0) {
+        for (const imagePath of qwenProcess.tempImagePaths) {
           await fs.unlink(imagePath).catch((err) => {
             // console.error(`Failed to delete temp image ${imagePath}:`, err)
           });
         }
-        if (geminiProcess.tempDir) {
+        if (qwenProcess.tempDir) {
           await fs
-            .rm(geminiProcess.tempDir, { recursive: true, force: true })
+            .rm(qwenProcess.tempDir, { recursive: true, force: true })
             .catch((err) => {
-              // console.error(`Failed to delete temp directory ${geminiProcess.tempDir}:`, err)
+              // console.error(`Failed to delete temp directory ${qwenProcess.tempDir}:`, err)
             });
         }
       }
@@ -414,33 +412,33 @@ async function spawnGemini(command, options = {}, ws) {
       if (code === 0) {
         resolve();
       } else {
-        reject(new Error(`Gemini CLI exited with code ${code}`));
+        reject(new Error(`qwen CLI exited with code ${code}`));
       }
     });
 
     // Handle process errors
-    geminiProcess.on("error", (error) => {
-      // console.error('Gemini CLI process error:', error);
+    qwenProcess.on("error", (error) => {
+      // console.error('qwen CLI process error:', error);
 
       // Clean up process reference on error
       const finalSessionId = capturedSessionId || sessionId || processKey;
-      activeGeminiProcesses.delete(finalSessionId);
+      activeqwenProcesses.delete(finalSessionId);
 
       ws.send(
         JSON.stringify({
-          type: "gemini-error",
+          type: "qwen-error",
           error: error.message,
-        }),
+        })
       );
 
       reject(error);
     });
 
     // Handle stdin for interactive mode
-    // Gemini with --prompt flag doesn't need stdin
+    // qwen with --prompt flag doesn't need stdin
     if (command && command.trim()) {
       // We're using --prompt flag, so just close stdin
-      geminiProcess.stdin.end();
+      qwenProcess.stdin.end();
     } else {
       // Interactive mode without initial prompt
       // Keep stdin open for interactive use
@@ -448,17 +446,17 @@ async function spawnGemini(command, options = {}, ws) {
   });
 }
 
-function abortGeminiSession(sessionId) {
-  // Debug - Attempting to abort Gemini session
+function abortqwenSession(sessionId) {
+  // Debug - Attempting to abort qwen session
   // Debug - Active processes
 
   // Try to find the process by session ID or any key that contains the session ID
-  let process = activeGeminiProcesses.get(sessionId);
+  let process = activeqwenProcesses.get(sessionId);
   let processKey = sessionId;
 
   if (!process) {
     // Search for process with matching session ID in keys
-    for (const [key, proc] of activeGeminiProcesses.entries()) {
+    for (const [key, proc] of activeqwenProcesses.entries()) {
       if (key.includes(sessionId) || sessionId.includes(key)) {
         process = proc;
         processKey = key;
@@ -475,7 +473,7 @@ function abortGeminiSession(sessionId) {
 
       // Set a timeout to force kill if process doesn't exit
       setTimeout(() => {
-        if (activeGeminiProcesses.has(processKey)) {
+        if (activeqwenProcesses.has(processKey)) {
           // Debug - Process didn't terminate, forcing kill
           try {
             process.kill("SIGKILL");
@@ -485,11 +483,11 @@ function abortGeminiSession(sessionId) {
         }
       }, 2000); // Wait 2 seconds before force kill
 
-      activeGeminiProcesses.delete(processKey);
+      activeqwenProcesses.delete(processKey);
       return true;
     } catch (error) {
       // console.error('Error killing process:', error);
-      activeGeminiProcesses.delete(processKey);
+      activeqwenProcesses.delete(processKey);
       return false;
     }
   }
@@ -498,4 +496,4 @@ function abortGeminiSession(sessionId) {
   return false;
 }
 
-export { abortGeminiSession, spawnGemini };
+export { abortqwenSession, spawnqwen };

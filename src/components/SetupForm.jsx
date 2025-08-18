@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import GeminiLogo from "./GeminiLogo";
 
 const SetupForm = () => {
   const [username, setUsername] = useState("");
@@ -48,10 +47,10 @@ const SetupForm = () => {
           {/* Logo and Title */}
           <div className="text-center">
             <div className="flex justify-center mb-4">
-              <GeminiLogo size={64} />
+              <qwenLogo size={64} />
             </div>
             <h1 className="text-2xl font-bold text-foreground">
-              Welcome to easy-llm-cli-ui
+              Welcome to qwen-code-cli-UI
             </h1>
             <p className="text-muted-foreground mt-2">
               Set up your account to get started

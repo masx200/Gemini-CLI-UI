@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "../lib/utils";
 
-function GeminiStatus({ status, onAbort, isLoading }) {
+function qwenStatus({ status, onAbort, isLoading }) {
   const [elapsedTime, setElapsedTime] = useState(0);
   const [animationPhase, setAnimationPhase] = useState(0);
 
@@ -64,7 +64,7 @@ function GeminiStatus({ status, onAbort, isLoading }) {
                 "text-xl transition-all duration-500",
                 animationPhase % 2 === 0
                   ? "text-cyan-400 scale-110"
-                  : "text-cyan-300",
+                  : "text-cyan-300"
               )}
             >
               {currentSpinner}
@@ -107,4 +107,4 @@ function GeminiStatus({ status, onAbort, isLoading }) {
   );
 }
 
-export default GeminiStatus;
+export default qwenStatus;

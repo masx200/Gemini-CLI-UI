@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
-import { fileURLToPath } from "url";
 import sharp from "sharp";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -9,13 +9,13 @@ const __dirname = path.dirname(__filename);
 // Icon sizes needed
 const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
 
-// SVG template function for Gemini logo
+// SVG template function for qwen logo
 function createIconSVG(size) {
   const cornerRadius = Math.round(size * 0.1875); // 18.75% corner radius for modern look
 
   return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="geminiGrad${size}" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="qwenGrad${size}" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
       <stop offset="50%" style="stop-color:#0891b2;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#0e7490;stop-opacity:1" />
@@ -30,9 +30,9 @@ function createIconSVG(size) {
   </defs>
   
   <!-- Background with gradient -->
-  <rect x="0" y="0" width="${size}" height="${size}" rx="${cornerRadius}" fill="url(#geminiGrad${size})"/>
+  <rect x="0" y="0" width="${size}" height="${size}" rx="${cornerRadius}" fill="url(#qwenGrad${size})"/>
   
-  <!-- Gemini constellation symbol -->
+  <!-- qwen constellation symbol -->
   <g transform="translate(${size / 2},${size / 2})" filter="url(#glow${size})">
     <!-- Top star shape -->
     <path d="M0,${-size * 0.3125} L${size * 0.078125},0 L${
@@ -71,9 +71,7 @@ async function generateIcons() {
 
     // Convert SVG to PNG using sharp
     try {
-      await sharp(Buffer.from(svgContent))
-        .png()
-        .toFile(pngFilepath);
+      await sharp(Buffer.from(svgContent)).png().toFile(pngFilepath);
       console.log(`Created ${pngFilename}`);
     } catch (error) {
       console.error(`Error creating ${pngFilename}:`, error.message);
@@ -84,7 +82,7 @@ async function generateIcons() {
   try {
     const faviconSvg = fs.readFileSync(
       path.join(__dirname, "favicon.svg"),
-      "utf8",
+      "utf8"
     );
     await sharp(Buffer.from(faviconSvg))
       .resize(64, 64)
@@ -96,8 +94,10 @@ async function generateIcons() {
   }
 }
 
-generateIcons().then(() => {
-  console.log("\nAll icons generated successfully!");
-}).catch((error) => {
-  console.error("Error generating icons:", error);
-});
+generateIcons()
+  .then(() => {
+    console.log("\nAll icons generated successfully!");
+  })
+  .catch((error) => {
+    console.error("Error generating icons:", error);
+  });

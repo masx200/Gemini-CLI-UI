@@ -98,8 +98,8 @@ temp/
 # Local Netlify folder
 .netlify
 
-# gemini specific
-.gemini/
+# qwen specific
+.qwen/
 
 # Database files
 *.db

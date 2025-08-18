@@ -23,5 +23,5 @@ declare const generateToken: (user: {
     username: any;
 }) => string;
 declare const authenticateWebSocket: (token: string) => string | jwt.JwtPayload | null;
-export { authenticateToken, authenticateWebSocket, generateToken, JWT_SECRET, validateApiKey, };
+export { JWT_SECRET, authenticateToken, authenticateWebSocket, generateToken, validateApiKey, };
 //# sourceMappingURL=auth.d.ts.map

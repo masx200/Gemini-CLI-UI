@@ -1,12 +1,12 @@
 import { promises as fs } from "fs";
-import path from "path";
 import os from "os";
+import path from "path";
 
 class SessionManager {
   constructor() {
     // Store sessions in memory with conversation history
     this.sessions = new Map();
-    this.sessionsDir = path.join(os.homedir(), ".gemini", "sessions");
+    this.sessionsDir = path.join(os.homedir(), ".qwen", "sessions");
     this.initSessionsDir();
   }
 
@@ -77,8 +77,8 @@ class SessionManager {
       }
     }
 
-    return sessions.sort((a, b) =>
-      new Date(b.lastActivity) - new Date(a.lastActivity)
+    return sessions.sort(
+      (a, b) => new Date(b.lastActivity) - new Date(a.lastActivity)
     );
   }
 
@@ -98,7 +98,7 @@ class SessionManager {
     return "New Session";
   }
 
-  // Build conversation context for Gemini
+  // Build conversation context for qwen
   buildConversationContext(sessionId, maxMessages = 10) {
     const session = this.sessions.get(sessionId);
 

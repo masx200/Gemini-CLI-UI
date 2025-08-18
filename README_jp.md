@@ -1,13 +1,13 @@
-# easy-llm-cli-ui
+# qwen-code-cli-UI
 
 <div align="center">
-  <img src="public/logo.svg" alt="easy-llm-cli-ui" width="64" height="64">
-  <h1>easy-llm-cli-ui</h1>
+  <img src="public/logo.svg" alt="qwen-code-cli-UI" width="64" height="64">
+  <h1>qwen-code-cli-UI</h1>
 </div>
 
-[Gemini CLI](https://github.com/google-gemini/gemini-cli) Google の AI
+[qwen CLI](https://github.com/QwenLM/qwen-code) Google の AI
 支援コーディング用公式 CLI のデスクトップ・モバイル対応 UI
-です。ローカルまたはリモートで使用でき、Gemini CLI
+です。ローカルまたはリモートで使用でき、qwen CLI
 のアクティブなプロジェクトとセッションを表示し、CLI
 と同じように変更を加えることができます。どこでも動作する適切なインターフェースを提供します。
 
@@ -34,9 +34,9 @@
 <tr>
 <td align="center">
 <h3>Chat View</h3>
-<img src="public/screenshots/easy-llm-cli-ui-diagram.png" alt="Desktop Interface" width="800">
+<img src="public/screenshots/qwen-code-cli-UI-diagram.png" alt="Desktop Interface" width="800">
 <br>
-<em>easy-llm-cli-ui Diagram</em>
+<em>qwen-code-cli-UI Diagram</em>
 </td>
 </table>
 </div align="center">
@@ -44,18 +44,18 @@
 ## 機能
 
 - **レスポンシブデザイン** -
-  デスクトップ、タブレット、モバイルでシームレスに動作し、モバイルからも Gemini
+  デスクトップ、タブレット、モバイルでシームレスに動作し、モバイルからも qwen
   CLI を使用可能
-- **インタラクティブなチャットインターフェース** - Gemini CLI
+- **インタラクティブなチャットインターフェース** - qwen CLI
   とのシームレスな通信のための組み込みチャットインターフェース
-- **統合シェルターミナル** - 組み込みシェル機能による Gemini CLI
+- **統合シェルターミナル** - 組み込みシェル機能による qwen CLI
   への直接アクセス
 - **ファイルエクスプローラー** -
   シンタックスハイライトとライブ編集機能を備えたインタラクティブなファイルツリー
 - **Git エクスプローラー** -
   変更の表示、ステージング、コミット。ブランチの切り替えも可能
 - **セッション管理** - 会話の再開、複数セッションの管理、履歴の追跡
-- **モデル選択** - Gemini 2.5 Pro を含む複数の Gemini モデルから選択可能
+- **モデル選択** - qwen 2.5 Pro を含む複数の qwen モデルから選択可能
 - **YOLO モード** - 確認プロンプトをスキップして高速操作（注意して使用）
 
 ## クイックスタート
@@ -63,15 +63,15 @@
 ### 前提条件
 
 - [Node.js](https://nodejs.org/) v20 以上
-- [Gemini CLI](https://github.com/google-gemini/gemini-cli)がインストールされ、設定済みであること
+- [qwen CLI](https://github.com/QwenLM/qwen-code)がインストールされ、設定済みであること
 
 ### インストール
 
 1. **リポジトリをクローン：**
 
 ```bash
-git clone https://github.com/masx200/easy-llm-cli-ui.git
-cd geminicliui
+git clone https://github.com/masx200/qwen-code-cli-UI.git
+cd qwencliui
 ```
 
 2. **依存関係をインストール：**
@@ -104,12 +104,12 @@ npm run dev
 
 ## セキュリティとツール設定
 
-**🔒 重要なお知らせ**: すべての Gemini CLI
+**🔒 重要なお知らせ**: すべての qwen CLI
 ツールは**デフォルトで無効**になっています。これにより、潜在的に有害な操作が自動的に実行されることを防ぎます。
 
 ### ツールの有効化
 
-Gemini CLI の全機能を使用するには、手動でツールを有効にする必要があります：
+qwen CLI の全機能を使用するには、手動でツールを有効にする必要があります：
 
 1. **ツール設定を開く** - サイドバーの歯車アイコンをクリック
 2. **必要に応じて有効化** - 必要なツールのみをオンにする
@@ -117,7 +117,7 @@ Gemini CLI の全機能を使用するには、手動でツールを有効にす
 
 ### YOLO モードについて
 
-YOLO モード（「You Only Live Once」）は、Gemini CLI の `--yolo`
+YOLO モード（「You Only Live Once」）は、qwen CLI の `--yolo`
 フラグに相当し、すべての確認プロンプトをスキップします。このモードは作業を高速化しますが、注意して使用してください。
 
 **推奨アプローチ**:
@@ -129,7 +129,7 @@ YOLO モード（「You Only Live Once」）は、Gemini CLI の `--yolo`
 
 #### プロジェクト管理
 
-UI は `~/.gemini/projects/` から Gemini CLI
+UI は `~/.qwen/projects/` から qwen CLI
 プロジェクトを自動的に検出し、以下を提供します：
 
 - **ビジュアルプロジェクトブラウザー** -
@@ -140,10 +140,10 @@ UI は `~/.gemini/projects/` から Gemini CLI
 
 #### チャットインターフェース
 
-- **レスポンシブチャットまたは Gemini CLI を使用** -
-  適応されたチャットインターフェースを使用するか、シェルボタンを使用して Gemini
+- **レスポンシブチャットまたは qwen CLI を使用** -
+  適応されたチャットインターフェースを使用するか、シェルボタンを使用して qwen
   CLI に接続できます
-- **リアルタイム通信** - WebSocket 接続による Gemini からのストリームレスポンス
+- **リアルタイム通信** - WebSocket 接続による qwen からのストリームレスポンス
 - **セッション管理** - 以前の会話を再開するか、新しいセッションを開始
 - **メッセージ履歴** - タイムスタンプとメタデータを含む完全な会話履歴
 - **マルチフォーマットサポート** - テキスト、コードブロック、ファイル参照
@@ -188,7 +188,7 @@ UI は `~/.gemini/projects/` から Gemini CLI
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   フロントエンド   │    │   バックエンド    │    │  Gemini CLI     │
+│   フロントエンド   │    │   バックエンド    │    │  qwen CLI     │
 │   (React/Vite)  │◄──►│ (Express/WS)    │◄──►│  統合           │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
@@ -198,11 +198,11 @@ UI は `~/.gemini/projects/` から Gemini CLI
 - **Express サーバー** - 静的ファイルサービングを備えた RESTful API（ポート:
   4008）
 - **WebSocket サーバー** - チャットとプロジェクト更新のための通信
-- **Gemini CLI 統合** - プロセスの生成と管理
+- **qwen CLI 統合** - プロセスの生成と管理
 - **セッション管理** - JSONL パースと会話の永続化
 - **ファイルシステム API** - プロジェクト用のファイルブラウザーを公開
 - **認証システム** - セキュアなログインとセッション管理（SQLite データベース:
-  geminicliui_auth.db）
+  qwencliui_auth.db）
 
 ### フロントエンド（React + Vite）
 
@@ -223,13 +223,13 @@ UI は `~/.gemini/projects/` から Gemini CLI
 
 #### 初期設定とテーブル構造
 
-- **データベースファイル**: `server/database/geminicliui_auth.db`
+- **データベースファイル**: `server/database/qwencliui_auth.db`
 - **データベースタイプ**: SQLite 3
 - **初期化**: サーバー起動時に自動的に作成・初期化されます
 
 #### ユーザーテーブル詳細
 
-**テーブル名**: `geminicliui_users`
+**テーブル名**: `qwencliui_users`
 
 | カラム名        | データ型 | 制約                      | 説明                                     |
 | --------------- | -------- | ------------------------- | ---------------------------------------- |
@@ -242,8 +242,8 @@ UI は `~/.gemini/projects/` から Gemini CLI
 
 **インデックス**:
 
-- `idx_geminicliui_users_username`: ユーザー名での高速検索用
-- `idx_geminicliui_users_active`: アクティブユーザーのフィルタリング用
+- `idx_qwencliui_users_username`: ユーザー名での高速検索用
+- `idx_qwencliui_users_active`: アクティブユーザーのフィルタリング用
 
 #### 初回起動時の設定
 
@@ -263,14 +263,14 @@ UI は `~/.gemini/projects/` から Gemini CLI
 
 ### よくある問題と解決策
 
-#### "Gemini プロジェクトが見つかりません"
+#### "qwen プロジェクトが見つかりません"
 
 **問題**: UI にプロジェクトが表示されない、またはプロジェクトリストが空
 **解決策**:
 
-- Gemini CLI が適切にインストールされていることを確認
-- 少なくとも 1 つのプロジェクトディレクトリで`gemini`コマンドを実行して初期化
-- `~/.gemini/projects/`ディレクトリが存在し、適切な権限があることを確認
+- qwen CLI が適切にインストールされていることを確認
+- 少なくとも 1 つのプロジェクトディレクトリで`qwen`コマンドを実行して初期化
+- `~/.qwen/projects/`ディレクトリが存在し、適切な権限があることを確認
 
 #### ファイルエクスプローラーの問題
 
@@ -299,24 +299,24 @@ GNU General Public License v3.0 -
 
 ### オリジナルプロジェクト
 
-このプロジェクトは[gemini Code UI](https://github.com/siteboon/geminicodeui)
+このプロジェクトは[qwen Code UI](https://github.com/siteboon/qwencodeui)
 (GPL v3.0)をベースにカスタマイズしています。
 
 **主な変更点:**
 
-- gemini cli から Gemini CLI への対応変更
+- qwen cli から qwen CLI への対応変更
 - 認証システムの追加（SQLite ベース）
-- Gemini 専用のモデル選択機能
+- qwen 専用のモデル選択機能
 - 日本語対応の強化
-- UI の調整と Gemini ブランディング
+- UI の調整と qwen ブランディング
 
-オリジナルの gemini Code UI プロジェクトに感謝します。
+オリジナルの qwen Code UI プロジェクトに感謝します。
 
 ## 謝辞
 
 ### 使用技術
 
-- **[Gemini CLI](https://github.com/google-gemini/gemini-cli)** - Google の公式
+- **[qwen CLI](https://github.com/QwenLM/qwen-code)** - Google の公式
   CLI
 - **[React](https://react.dev/)** - ユーザーインターフェースライブラリ
 - **[Vite](https://vitejs.dev/)** - 高速ビルドツールと開発サーバー

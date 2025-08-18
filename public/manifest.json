@@ -1,7 +1,7 @@
 {
-  "name": "easy-llm-cli-ui",
-  "short_name": "Gemini UI",
-  "description": "easy-llm-cli-ui - A stylish web interface for Gemini",
+  "name": "qwen-code-cli-UI",
+  "short_name": "qwen UI",
+  "description": "qwen-code-cli-UI - A stylish web interface for qwen",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

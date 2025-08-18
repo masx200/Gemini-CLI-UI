@@ -33,6 +33,7 @@ import { useRequest } from "ahooks";
 import { getModelsbyProvidername } from "../utils/getModelProvidersbyname.ts";
 //@ts-ignore
 import { Input } from "./ui/input.jsx";
+import AboutView from "./AboutView.tsx";
 export interface ToolsSettingsLocal {
   allowedTools: string[];
   disallowedTools: string[];
@@ -82,9 +83,9 @@ function ToolsSettings({
   }, [selectedProvider]);
   useEffect(() => {
     try {
-      if (localStorage.getItem("gemini-tools-settings")) {
+      if (localStorage.getItem("qwen-tools-settings")) {
         setSelectedProvider(
-          JSON.parse(localStorage.getItem("gemini-tools-settings") || "")[
+          JSON.parse(localStorage.getItem("qwen-tools-settings") || "")[
             "selectedProvider"
           ]
         );
@@ -108,7 +109,7 @@ function ToolsSettings({
   const [projectSortOrder, setProjectSortOrder] = useState("name");
 
   const [activeTab, setActiveTab] = useState("tools");
-  const [selectedModel, setSelectedModel] = useState("gemini-2.5-flash");
+  const [selectedModel, setSelectedModel] = useState("qwen-2.5-flash");
   const [enableNotificationSound, setEnableNotificationSound] = useState(false);
 
   // Common tool patterns
@@ -129,7 +130,7 @@ function ToolsSettings({
     "WebSearch",
   ];
 
-  // Available Gemini models (tested and verified)
+  // Available qwen models (tested and verified)
   const availableModels = useMemo(() => {
     if (data) {
       return data.map((item) => ({
@@ -140,13 +141,13 @@ function ToolsSettings({
     }
     return [
       {
-        value: "gemini-2.5-flash",
-        label: "Gemini 2.5 Flash",
+        value: "qwen-2.5-flash",
+        label: "qwen 2.5 Flash",
         description: "Fast and efficient latest model (Recommended)",
       },
       {
-        value: "gemini-2.5-pro",
-        label: "Gemini 2.5 Pro",
+        value: "qwen-2.5-pro",
+        label: "qwen 2.5 Pro",
         description: "Most advanced model (Note: May have quota limits)",
       },
     ];
@@ -161,7 +162,7 @@ function ToolsSettings({
   const loadSettings = async () => {
     try {
       // Load from localStorage
-      const savedSettings = localStorage.getItem("gemini-tools-settings");
+      const savedSettings = localStorage.getItem("qwen-tools-settings");
 
       if (savedSettings) {
         const settings = JSON.parse(savedSettings) as ToolsSettingsLocal;
@@ -169,7 +170,7 @@ function ToolsSettings({
         setDisallowedTools(settings.disallowedTools || []);
         setSkipPermissions(settings.skipPermissions || false);
         setProjectSortOrder(settings.projectSortOrder || "name");
-        setSelectedModel(settings.selectedModel || "gemini-2.5-flash");
+        setSelectedModel(settings.selectedModel || "qwen-2.5-flash");
         setEnableNotificationSound(settings.enableNotificationSound || false);
       } else {
         // Set defaults
@@ -208,14 +209,14 @@ function ToolsSettings({
       } satisfies ToolsSettingsLocal;
 
       // Save to localStorage
-      localStorage.setItem("gemini-tools-settings", JSON.stringify(settings));
+      localStorage.setItem("qwen-tools-settings", JSON.stringify(settings));
 
       // Trigger storage event for current window
       window.dispatchEvent(
         new StorageEvent("storage", {
-          key: "gemini-tools-settings",
+          key: "qwen-tools-settings",
           newValue: JSON.stringify(settings),
-          oldValue: localStorage.getItem("gemini-tools-settings"),
+          oldValue: localStorage.getItem("qwen-tools-settings"),
           storageArea: localStorage,
           url: window.location.href,
         })
@@ -343,6 +344,17 @@ function ToolsSettings({
               >
                 MCP
               </button>
+              
+              <button
+                onClick={() => setActiveTab("about")}
+                className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
+                  activeTab === "about"
+                    ? "border-blue-600 text-blue-600 dark:text-blue-400"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                ABOUT
+              </button>
             </div>
           </div>
 
@@ -370,7 +382,7 @@ function ToolsSettings({
                   <div className="flex items-center gap-3">
                     <Zap className="w-5 h-5 text-cyan-500" />
                     <h3 className="text-lg font-medium text-foreground">
-                      Gemini Model
+                      qwen Model
                     </h3>
                   </div>
                   <div className="bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800 rounded-lg p-4">
@@ -544,7 +556,7 @@ function ToolsSettings({
                             Enable notification sound
                           </div>
                           <div className="text-sm text-blue-700 dark:text-blue-300">
-                            Play a sound when Gemini responds
+                            Play a sound when qwen responds
                           </div>
                         </div>
                       </label>
@@ -557,11 +569,11 @@ function ToolsSettings({
                             );
                             // Temporarily enable sound for testing
                             const currentSettings = JSON.parse(
-                              localStorage.getItem("gemini-tools-settings") ||
+                              localStorage.getItem("qwen-tools-settings") ||
                                 "{}"
                             );
                             localStorage.setItem(
-                              "gemini-tools-settings",
+                              "qwen-tools-settings",
                               JSON.stringify({
                                 ...currentSettings,
                                 enableNotificationSound: true,
@@ -570,7 +582,7 @@ function ToolsSettings({
                             playNotificationSound();
                             // Restore original settings
                             localStorage.setItem(
-                              "gemini-tools-settings",
+                              "qwen-tools-settings",
                               JSON.stringify(currentSettings)
                             );
                           }}
@@ -780,6 +792,12 @@ function ToolsSettings({
                 setSaveStatus={setSaveStatus}
                 projects={projects}
               />
+            )}
+
+
+
+            {activeTab === "about" && (
+              <AboutView />
             )}
           </div>
         </div>

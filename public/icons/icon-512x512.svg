@@ -1,6 +1,6 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="geminiGrad512" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="qwenGrad512" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" style="stop-color:#06b6d4;stop-opacity:1" />
       <stop offset="50%" style="stop-color:#0891b2;stop-opacity:1" />
       <stop offset="100%" style="stop-color:#0e7490;stop-opacity:1" />
@@ -15,9 +15,9 @@
   </defs>
   
   <!-- Background with gradient -->
-  <rect x="0" y="0" width="512" height="512" rx="96" fill="url(#geminiGrad512)"/>
+  <rect x="0" y="0" width="512" height="512" rx="96" fill="url(#qwenGrad512)"/>
   
-  <!-- Gemini constellation symbol -->
+  <!-- qwen constellation symbol -->
   <g transform="translate(256,256)" filter="url(#glow512)">
     <!-- Top star shape -->
     <path d="M0,-160 L40,0 L-40,0 Z" fill="white" opacity="0.95"/>

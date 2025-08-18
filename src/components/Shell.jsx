@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Terminal } from "xterm";
-import { FitAddon } from "xterm-addon-fit";
 import { ClipboardAddon } from "@xterm/addon-clipboard";
 import { WebglAddon } from "@xterm/addon-webgl";
+import { useEffect, useRef, useState } from "react";
+import { Terminal } from "xterm";
+import { FitAddon } from "xterm-addon-fit";
 import "xterm/css/xterm.css";
 
 // CSS to remove xterm focus outline
@@ -50,7 +50,7 @@ function Shell({ selectedProject, selectedSession, isActive }) {
       console.error("No auth token found");
       if (terminal.current) {
         terminal.current.write(
-          "\x1b[1;31mAuthentication required. Please log in first.\x1b[0m\r\n",
+          "\x1b[1;31mAuthentication required. Please log in first.\x1b[0m\r\n"
         );
       }
       return;
@@ -128,7 +128,8 @@ function Shell({ selectedProject, selectedSession, isActive }) {
 
     // Disconnect when session changes (user will need to manually reconnect)
     if (
-      lastSessionId !== null && lastSessionId !== currentSessionId &&
+      lastSessionId !== null &&
+      lastSessionId !== currentSessionId &&
       isInitialized
     ) {
       // Disconnect from current shell
@@ -168,7 +169,7 @@ function Shell({ selectedProject, selectedSession, isActive }) {
         // Reattach to DOM - dispose existing element first if needed
         if (terminal.current.element && terminal.current.element.parentNode) {
           terminal.current.element.parentNode.removeChild(
-            terminal.current.element,
+            terminal.current.element
           );
         }
 
@@ -179,11 +180,13 @@ function Shell({ selectedProject, selectedSession, isActive }) {
             fitAddon.current.fit();
             // Send terminal size to backend after reattaching
             if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-              ws.current.send(JSON.stringify({
-                type: "resize",
-                cols: terminal.current.cols,
-                rows: terminal.current.rows,
-              }));
+              ws.current.send(
+                JSON.stringify({
+                  type: "resize",
+                  cols: terminal.current.cols,
+                  rows: terminal.current.rows,
+                })
+              );
             }
           }
         }, 100);
@@ -247,7 +250,7 @@ function Shell({ selectedProject, selectedSession, isActive }) {
         brightCyan: "#29b8db",
         brightWhite: "#ffffff",
 
-        // Extended colors for better Gemini output
+        // Extended colors for better qwen output
         extendedAnsi: [
           // 16-color palette extension for 256-color support
           "#000000",
@@ -279,8 +282,7 @@ function Shell({ selectedProject, selectedSession, isActive }) {
 
     try {
       terminal.current.loadAddon(webglAddon);
-    } catch (error) {
-    }
+    } catch (error) {}
 
     terminal.current.open(terminalRef.current);
 
@@ -295,7 +297,8 @@ function Shell({ selectedProject, selectedSession, isActive }) {
     terminal.current.attachCustomKeyEventHandler((event) => {
       // Ctrl+C or Cmd+C for copy (when text is selected)
       if (
-        (event.ctrlKey || event.metaKey) && event.key === "c" &&
+        (event.ctrlKey || event.metaKey) &&
+        event.key === "c" &&
         terminal.current.hasSelection()
       ) {
         document.execCommand("copy");
@@ -304,16 +307,21 @@ function Shell({ selectedProject, selectedSession, isActive }) {
 
       // Ctrl+V or Cmd+V for paste
       if ((event.ctrlKey || event.metaKey) && event.key === "v") {
-        navigator.clipboard.readText().then((text) => {
-          if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-            ws.current.send(JSON.stringify({
-              type: "input",
-              data: text,
-            }));
-          }
-        }).catch((err) => {
-          // Failed to read clipboard
-        });
+        navigator.clipboard
+          .readText()
+          .then((text) => {
+            if (ws.current && ws.current.readyState === WebSocket.OPEN) {
+              ws.current.send(
+                JSON.stringify({
+                  type: "input",
+                  data: text,
+                })
+              );
+            }
+          })
+          .catch((err) => {
+            // Failed to read clipboard
+          });
         return false;
       }
 
@@ -326,14 +334,17 @@ function Shell({ selectedProject, selectedSession, isActive }) {
         fitAddon.current.fit();
         // Send terminal size to backend after fitting
         if (
-          terminal.current && ws.current &&
+          terminal.current &&
+          ws.current &&
           ws.current.readyState === WebSocket.OPEN
         ) {
-          ws.current.send(JSON.stringify({
-            type: "resize",
-            cols: terminal.current.cols,
-            rows: terminal.current.rows,
-          }));
+          ws.current.send(
+            JSON.stringify({
+              type: "resize",
+              cols: terminal.current.cols,
+              rows: terminal.current.rows,
+            })
+          );
         }
       }
     }, 100);
@@ -343,10 +354,12 @@ function Shell({ selectedProject, selectedSession, isActive }) {
     // Handle terminal input
     terminal.current.onData((data) => {
       if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-        ws.current.send(JSON.stringify({
-          type: "input",
-          data: data,
-        }));
+        ws.current.send(
+          JSON.stringify({
+            type: "input",
+            data: data,
+          })
+        );
       }
     });
 
@@ -357,11 +370,13 @@ function Shell({ selectedProject, selectedSession, isActive }) {
           fitAddon.current.fit();
           // Send updated terminal size to backend after resize
           if (ws.current && ws.current.readyState === WebSocket.OPEN) {
-            ws.current.send(JSON.stringify({
-              type: "resize",
-              cols: terminal.current.cols,
-              rows: terminal.current.rows,
-            }));
+            ws.current.send(
+              JSON.stringify({
+                type: "resize",
+                cols: terminal.current.cols,
+                rows: terminal.current.rows,
+              })
+            );
           }
         }, 50);
       }
@@ -376,8 +391,8 @@ function Shell({ selectedProject, selectedSession, isActive }) {
 
       // Store session for reuse instead of disposing
       if (terminal.current && selectedProject) {
-        const sessionKey = selectedSession?.id ||
-          `project-${selectedProject.name}`;
+        const sessionKey =
+          selectedSession?.id || `project-${selectedProject.name}`;
 
         try {
           shellSessions.set(sessionKey, {
@@ -386,8 +401,7 @@ function Shell({ selectedProject, selectedSession, isActive }) {
             ws: ws.current,
             isConnected: isConnected,
           });
-        } catch (error) {
-        }
+        } catch (error) {}
       }
     };
   }, [terminalRef.current, selectedProject, selectedSession, isRestarting]);
@@ -402,14 +416,17 @@ function Shell({ selectedProject, selectedSession, isActive }) {
         fitAddon.current.fit();
         // Send terminal size to backend after tab activation
         if (
-          terminal.current && ws.current &&
+          terminal.current &&
+          ws.current &&
           ws.current.readyState === WebSocket.OPEN
         ) {
-          ws.current.send(JSON.stringify({
-            type: "resize",
-            cols: terminal.current.cols,
-            rows: terminal.current.rows,
-          }));
+          ws.current.send(
+            JSON.stringify({
+              type: "resize",
+              cols: terminal.current.cols,
+              rows: terminal.current.rows,
+            })
+          );
         }
       }
     }, 100);
@@ -424,7 +441,7 @@ function Shell({ selectedProject, selectedSession, isActive }) {
       const token = localStorage.getItem("auth-token");
       if (!token) {
         console.error(
-          "No authentication token found for Shell WebSocket connection",
+          "No authentication token found for Shell WebSocket connection"
         );
         return;
       }
@@ -434,7 +451,7 @@ function Shell({ selectedProject, selectedSession, isActive }) {
       try {
         const configResponse = await fetch("/api/config", {
           headers: {
-            "Authorization": `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
         const config = await configResponse.json();
@@ -445,21 +462,18 @@ function Shell({ selectedProject, selectedSession, isActive }) {
           wsBaseUrl.includes("localhost") &&
           !window.location.hostname.includes("localhost")
         ) {
-          const protocol = window.location.protocol === "https:"
-            ? "wss:"
-            : "ws:";
+          const protocol =
+            window.location.protocol === "https:" ? "wss:" : "ws:";
           // For development, API server is typically on port 4008 when Vite is on 4009
-          const apiPort = window.location.port === "4009"
-            ? "4008"
-            : window.location.port;
+          const apiPort =
+            window.location.port === "4009" ? "4008" : window.location.port;
           wsBaseUrl = `${protocol}//${window.location.hostname}:${apiPort}`;
         }
       } catch (error) {
         const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
         // For development, API server is typically on port 4008 when Vite is on 4009
-        const apiPort = window.location.port === "4009"
-          ? "4008"
-          : window.location.port;
+        const apiPort =
+          window.location.port === "4009" ? "4008" : window.location.port;
         wsBaseUrl = `${protocol}//${window.location.hostname}:${apiPort}`;
       }
 
@@ -467,7 +481,7 @@ function Shell({ selectedProject, selectedSession, isActive }) {
       const wsUrl = `${wsBaseUrl}/shell?token=${encodeURIComponent(token)}`;
       console.log(
         "Connecting to WebSocket:",
-        wsUrl.replace(/token=.*/, "token=[REDACTED]"),
+        wsUrl.replace(/token=.*/, "token=[REDACTED]")
       );
 
       ws.current = new WebSocket(wsUrl);
@@ -486,8 +500,8 @@ function Shell({ selectedProject, selectedSession, isActive }) {
             // Wait a bit more for fit to complete, then send dimensions
             setTimeout(() => {
               // Send correct session ID from selected session
-              const currentSessionId = selectedSession?.id ||
-                selectedSession?.sessionId;
+              const currentSessionId =
+                selectedSession?.id || selectedSession?.sessionId;
               // console.log('🔗 Shell: Initializing with session:', currentSessionId);
 
               const initPayload = {
@@ -504,14 +518,17 @@ function Shell({ selectedProject, selectedSession, isActive }) {
               // Also send resize message immediately after init
               setTimeout(() => {
                 if (
-                  terminal.current && ws.current &&
+                  terminal.current &&
+                  ws.current &&
                   ws.current.readyState === WebSocket.OPEN
                 ) {
-                  ws.current.send(JSON.stringify({
-                    type: "resize",
-                    cols: terminal.current.cols,
-                    rows: terminal.current.rows,
-                  }));
+                  ws.current.send(
+                    JSON.stringify({
+                      type: "resize",
+                      cols: terminal.current.cols,
+                      rows: terminal.current.rows,
+                    })
+                  );
                 }
               }, 100);
             }, 50);
@@ -532,7 +549,7 @@ function Shell({ selectedProject, selectedSession, isActive }) {
             let match;
             while (
               (match = urlRegex.exec(output.replace(/\x1b\[[0-9;]*m/g, ""))) !==
-                null
+              null
             ) {
               urls.push(match[1]);
             }
@@ -544,8 +561,7 @@ function Shell({ selectedProject, selectedSession, isActive }) {
             // Handle explicit URL opening requests from server
             window.open(data.url, "_blank");
           }
-        } catch (error) {
-        }
+        } catch (error) {}
       };
 
       ws.current.onclose = (event) => {
@@ -564,7 +580,7 @@ function Shell({ selectedProject, selectedSession, isActive }) {
             terminal.current.write(
               `\x1b[1;31mConnection closed: ${
                 event.reason || "Unknown error (code: " + event.code + ")"
-              }\x1b[0m\r\n`,
+              }\x1b[0m\r\n`
             );
           }
         }
@@ -578,7 +594,7 @@ function Shell({ selectedProject, selectedSession, isActive }) {
         setIsConnecting(false);
         if (terminal.current) {
           terminal.current.write(
-            "\r\n\x1b[1;31mConnection error. Please check console for details.\x1b[0m\r\n",
+            "\r\n\x1b[1;31mConnection error. Please check console for details.\x1b[0m\r\n"
           );
         }
       };
@@ -588,7 +604,7 @@ function Shell({ selectedProject, selectedSession, isActive }) {
       setIsConnecting(false);
       if (terminal.current) {
         terminal.current.write(
-          `\x1b[1;31mFailed to connect: ${error.message}\x1b[0m\r\n`,
+          `\x1b[1;31mFailed to connect: ${error.message}\x1b[0m\r\n`
         );
       }
     }
@@ -737,7 +753,7 @@ function Shell({ selectedProject, selectedSession, isActive }) {
               <p className="text-gray-400 text-sm mt-3 px-2">
                 {selectedSession
                   ? `Resume session: ${selectedSession.summary.slice(0, 50)}...`
-                  : "Start a new Gemini session"}
+                  : "Start a new qwen session"}
               </p>
             </div>
           </div>
@@ -748,14 +764,13 @@ function Shell({ selectedProject, selectedSession, isActive }) {
           <div className="absolute inset-0 flex items-center justify-center bg-gray-900 bg-opacity-90 p-4">
             <div className="text-center max-w-sm w-full">
               <div className="flex items-center justify-center space-x-3 text-yellow-400">
-                <div className="w-6 h-6 animate-spin rounded-full border-2 border-yellow-400 border-t-transparent">
-                </div>
+                <div className="w-6 h-6 animate-spin rounded-full border-2 border-yellow-400 border-t-transparent"></div>
                 <span className="text-base font-medium">
                   Connecting to shell...
                 </span>
               </div>
               <p className="text-gray-400 text-sm mt-3 px-2">
-                Starting Gemini CLI in {selectedProject.displayName}
+                Starting qwen CLI in {selectedProject.displayName}
               </p>
             </div>
           </div>

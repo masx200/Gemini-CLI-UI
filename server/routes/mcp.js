@@ -6,9 +6,9 @@ import { MCPConfigManager } from "../utils/mcp-config-manager.js";
 const router = express.Router();
 router.get("/cli/list", async (req, res) => {
     try {
-        console.log("📋 Listing MCP servers using gemini cli");
+        console.log("📋 Listing MCP servers using qwen cli");
         const { spawn } = await import("child_process");
-        const process2 = spawn(process.env.GEMINI_PATH || "gemini", ["mcp", "list"], {
+        const process2 = spawn(process.env.qwen_PATH || "qwen", ["mcp", "list"], {
             stdio: ["pipe", "pipe", "pipe"],
         });
         let stdout = "";
@@ -24,21 +24,21 @@ router.get("/cli/list", async (req, res) => {
                 res.json({
                     success: true,
                     output: stdout,
-                    servers: parsegeminiListOutput(stdout),
+                    servers: parseqwenListOutput(stdout),
                 });
             }
             else {
-                console.error("gemini cli error:", stderr);
+                console.error("qwen cli error:", stderr);
                 res
                     .status(500)
-                    .json({ error: "gemini cli command failed", details: stderr });
+                    .json({ error: "qwen cli command failed", details: stderr });
             }
         });
         process2.on("error", (error) => {
-            console.error("Error running gemini cli:", error);
+            console.error("Error running qwen cli:", error);
             res
                 .status(500)
-                .json({ error: "Failed to run gemini cli", details: error.message });
+                .json({ error: "Failed to run qwen cli", details: error.message });
         });
     }
     catch (error) {
@@ -51,13 +51,13 @@ router.get("/cli/list", async (req, res) => {
 router.post("/cli/add", async (req, res) => {
     try {
         const { name, type = "stdio", command, args = [], url, headers = {}, env = {}, scope = "user", projectPath, } = req.body;
-        console.log(`➕ Adding MCP server using gemini cli (${scope} scope):`, name);
+        console.log(`➕ Adding MCP server using qwen cli (${scope} scope):`, name);
         if (scope === "local" && projectPath) {
             console.log("📁 Running in project directory:", projectPath);
         }
         const configPath = scope == "user"
-            ? path.join(os.homedir(), ".gemini", "settings.json")
-            : path.join(projectPath, ".gemini", "settings.json");
+            ? path.join(os.homedir(), ".qwen", "settings.json")
+            : path.join(projectPath, ".qwen", "settings.json");
         const mcm = new MCPConfigManager(configPath);
         if (type === "http") {
             const result = await mcm.addServer(name, {
@@ -143,9 +143,8 @@ router.post("/cli/add-json", async (req, res) => {
         console.log("➕ Adding MCP server using JSON format:", name);
         let parsedConfig;
         try {
-            parsedConfig = typeof jsonConfig === "string"
-                ? JSON.parse(jsonConfig)
-                : jsonConfig;
+            parsedConfig =
+                typeof jsonConfig === "string" ? JSON.parse(jsonConfig) : jsonConfig;
         }
         catch (parseError) {
             return res.status(400).json({
@@ -176,7 +175,7 @@ router.post("/cli/add-json", async (req, res) => {
         const cliArgs = ["mcp", "add-json", "--scope", scope, name];
         const jsonString = JSON.stringify(parsedConfig);
         cliArgs.push(jsonString);
-        console.log("🔧 Running gemini cli command:", process.env.GEMINI_PATH || "gemini", cliArgs[0], cliArgs[1], cliArgs[2], cliArgs[3], cliArgs[4], jsonString);
+        console.log("🔧 Running qwen cli command:", process.env.qwen_PATH || "qwen", cliArgs[0], cliArgs[1], cliArgs[2], cliArgs[3], cliArgs[4], jsonString);
         const spawnOptions = {
             stdio: ["pipe", "pipe", "pipe"],
         };
@@ -184,7 +183,7 @@ router.post("/cli/add-json", async (req, res) => {
             spawnOptions.cwd = projectPath;
             console.log("📁 Running in project directory:", projectPath);
         }
-        const process2 = spawn(process.env.GEMINI_PATH || "gemini", cliArgs, spawnOptions);
+        const process2 = spawn(process.env.qwen_PATH || "qwen", cliArgs, spawnOptions);
         let stdout = "";
         let stderr = "";
         process2.stdout?.on("data", (data) => {
@@ -202,17 +201,17 @@ router.post("/cli/add-json", async (req, res) => {
                 });
             }
             else {
-                console.error("gemini cli error:", stderr);
+                console.error("qwen cli error:", stderr);
                 res
                     .status(400)
-                    .json({ error: "gemini cli command failed", details: stderr });
+                    .json({ error: "qwen cli command failed", details: stderr });
             }
         });
         process2.on("error", (error) => {
-            console.error("Error running gemini cli:", error);
+            console.error("Error running qwen cli:", error);
             res
                 .status(500)
-                .json({ error: "Failed to run gemini cli", details: error.message });
+                .json({ error: "Failed to run qwen cli", details: error.message });
         });
     }
     catch (error) {
@@ -233,14 +232,15 @@ router.delete("/cli/remove/:name", async (req, res) => {
             actualName = serverName;
             actualScope = actualScope || prefix;
         }
-        console.log("🗑️ Removing MCP server using gemini cli:", actualName, "scope:", actualScope);
+        console.log("🗑️ Removing MCP server using qwen cli:", actualName, "scope:", actualScope);
         if (actualScope === "local") {
             console.log("📁 Running in project directory:", projectPath);
         }
         if (actualName) {
             const configPath = actualScope == "user"
-                ? path.join(os.homedir(), ".gemini", "settings.json")
-                : path.join(projectPath, ".gemini", "settings.json");
+                ? path.join(os.homedir(), ".qwen", "settings.json")
+                :
+                    path.join(projectPath, ".qwen", "settings.json");
             const mcm = new MCPConfigManager(configPath);
             const result = await mcm.removeServer(actualName);
             if (result.success) {
@@ -270,9 +270,9 @@ router.delete("/cli/remove/:name", async (req, res) => {
 router.get("/cli/get/:name", async (req, res) => {
     try {
         const { name } = req.params;
-        console.log("📄 Getting MCP server details using gemini cli:", name);
+        console.log("📄 Getting MCP server details using qwen cli:", name);
         const { spawn } = await import("child_process");
-        const process2 = spawn(process.env.GEMINI_PATH || "gemini", ["mcp", "get", name], {
+        const process2 = spawn(process.env.qwen_PATH || "qwen", ["mcp", "get", name], {
             stdio: ["pipe", "pipe", "pipe"],
         });
         let stdout = "";
@@ -288,21 +288,21 @@ router.get("/cli/get/:name", async (req, res) => {
                 res.json({
                     success: true,
                     output: stdout,
-                    server: parsegeminiGetOutput(stdout),
+                    server: parseqwenGetOutput(stdout),
                 });
             }
             else {
-                console.error("gemini cli error:", stderr);
+                console.error("qwen cli error:", stderr);
                 res
                     .status(404)
-                    .json({ error: "gemini cli command failed", details: stderr });
+                    .json({ error: "qwen cli command failed", details: stderr });
             }
         });
         process2.on("error", (error) => {
-            console.error("Error running gemini cli:", error);
+            console.error("Error running qwen cli:", error);
             res
                 .status(500)
-                .json({ error: "Failed to run gemini cli", details: error.message });
+                .json({ error: "Failed to run qwen cli", details: error.message });
         });
     }
     catch (error) {
@@ -315,11 +315,11 @@ router.get("/cli/get/:name", async (req, res) => {
 });
 router.get("/config/read", async (req, res) => {
     try {
-        console.log("📖 Reading MCP servers from gemini config files");
+        console.log("📖 Reading MCP servers from qwen config files");
         const homeDir = os.homedir();
         const configPaths = [
-            path.join(homeDir, ".gemini/settings.json"),
-            path.join(homeDir, ".gemini", "settings.json"),
+            path.join(homeDir, ".qwen/settings.json"),
+            path.join(homeDir, ".qwen", "settings.json"),
         ];
         let configData = null;
         let configPath = null;
@@ -328,7 +328,7 @@ router.get("/config/read", async (req, res) => {
                 const fileContent = await fs.readFile(filepath, "utf8");
                 configData = JSON.parse(fileContent);
                 configPath = filepath;
-                console.log(`✅ Found gemini config at: ${filepath}`);
+                console.log(`✅ Found qwen config at: ${filepath}`);
                 break;
             }
             catch (error) {
@@ -338,7 +338,7 @@ router.get("/config/read", async (req, res) => {
         if (!configData) {
             return res.json({
                 success: false,
-                message: "No gemini configuration file found",
+                message: "No qwen configuration file found",
                 servers: [],
             });
         }
@@ -422,14 +422,14 @@ router.get("/config/read", async (req, res) => {
         });
     }
     catch (error) {
-        console.error("Error reading gemini config:", error);
+        console.error("Error reading qwen config:", error);
         res.status(500).json({
-            error: "Failed to read gemini configuration",
+            error: "Failed to read qwen configuration",
             details: error?.message,
         });
     }
 });
-function parsegeminiListOutput(output) {
+function parseqwenListOutput(output) {
     const servers = [];
     const lines = output.split("\n").filter((line) => line.trim());
     for (const line of lines) {
@@ -463,10 +463,10 @@ function parsegeminiListOutput(output) {
             });
         }
     }
-    console.log("🔍 Parsed gemini cli servers:", servers);
+    console.log("🔍 Parsed qwen cli servers:", servers);
     return servers;
 }
-function parsegeminiGetOutput(output) {
+function parseqwenGetOutput(output) {
     try {
         const jsonMatch = output.match(/\{[\s\S]*\}/);
         if (jsonMatch) {

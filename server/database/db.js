@@ -1,13 +1,12 @@
 import Database from "better-sqlite3";
-import path from "path";
 import fs from "fs";
+import path, { dirname } from "path";
 import { fileURLToPath } from "url";
-import { dirname } from "path";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const DB_PATH = path.join(__dirname, "geminicliui_auth.db");
+const DB_PATH = path.join(__dirname, "qwencliui_auth.db");
 const INIT_SQL_PATH = path.join(__dirname, "init.sql");
 
 // Create database connection
@@ -31,7 +30,8 @@ const userDb = {
   // Check if any users exist
   hasUsers: () => {
     try {
-      const row = db.prepare("SELECT COUNT(*) as count FROM geminicliui_users")
+      const row = db
+        .prepare("SELECT COUNT(*) as count FROM qwencliui_users")
         .get();
       return row.count > 0;
     } catch (err) {
@@ -43,7 +43,7 @@ const userDb = {
   createUser: (username, passwordHash) => {
     try {
       const stmt = db.prepare(
-        "INSERT INTO geminicliui_users (username, password_hash) VALUES (?, ?)",
+        "INSERT INTO qwencliui_users (username, password_hash) VALUES (?, ?)"
       );
       const result = stmt.run(username, passwordHash);
       return { id: result.lastInsertRowid, username };
@@ -55,9 +55,11 @@ const userDb = {
   // Get user by username
   getUserByUsername: (username) => {
     try {
-      const row = db.prepare(
-        "SELECT * FROM geminicliui_users WHERE username = ? AND is_active = 1",
-      ).get(username);
+      const row = db
+        .prepare(
+          "SELECT * FROM qwencliui_users WHERE username = ? AND is_active = 1"
+        )
+        .get(username);
       return row;
     } catch (err) {
       throw err;
@@ -68,7 +70,7 @@ const userDb = {
   updateLastLogin: (userId) => {
     try {
       db.prepare(
-        "UPDATE geminicliui_users SET last_login = CURRENT_TIMESTAMP WHERE id = ?",
+        "UPDATE qwencliui_users SET last_login = CURRENT_TIMESTAMP WHERE id = ?"
       ).run(userId);
     } catch (err) {
       throw err;
@@ -78,9 +80,11 @@ const userDb = {
   // Get user by ID
   getUserById: (userId) => {
     try {
-      const row = db.prepare(
-        "SELECT id, username, created_at, last_login FROM geminicliui_users WHERE id = ? AND is_active = 1",
-      ).get(userId);
+      const row = db
+        .prepare(
+          "SELECT id, username, created_at, last_login FROM qwencliui_users WHERE id = ? AND is_active = 1"
+        )
+        .get(userId);
       return row;
     } catch (err) {
       throw err;

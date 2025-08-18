@@ -31,7 +31,7 @@ export interface ProviderType {
 const PROVIDER_TYPES: ProviderType[] = [
   { value: "openai", label: "OpenAI", icon: "🤖" },
   { value: "anthropic", label: "Anthropic", icon: "🦾" },
-  { value: "gemini", label: "Gemini", icon: "🔍" },
+  { value: "qwen", label: "qwen", icon: "🔍" },
   { value: "bedrock", label: "Bedrock", icon: "☁️" },
   { value: "baidu", label: "Baidu", icon: "🔍" },
   { value: "dashscope", label: "DashScope", icon: "⚡" },
@@ -158,7 +158,7 @@ function ModelProvidersManagement({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ ...provider, is_active: !provider.is_active }),
-        },
+        }
       );
 
       if (response.ok) {
@@ -271,7 +271,8 @@ function ModelProvidersManagement({
                         setFormData({
                           ...formData,
                           provider_name: e.target.value,
-                        })}
+                        })
+                      }
                       placeholder="e.g., My OpenAI Provider"
                       required
                     />
@@ -290,7 +291,8 @@ function ModelProvidersManagement({
                           setFormData({
                             ...formData,
                             provider_type: e.target.value,
-                          })}
+                          })
+                        }
                         label="Provider Type *"
                       >
                         {PROVIDER_TYPES.map((type) => (
@@ -313,7 +315,8 @@ function ModelProvidersManagement({
                         setFormData({
                           ...formData,
                           api_key: e.target.value,
-                        })}
+                        })
+                      }
                       placeholder="Enter your API key"
                       required
                       InputProps={{
@@ -334,7 +337,8 @@ function ModelProvidersManagement({
                         setFormData({
                           ...formData,
                           base_url: e.target.value,
-                        })}
+                        })
+                      }
                       placeholder="https://api.openai.com/v1"
                       InputProps={{
                         startAdornment: (
@@ -354,7 +358,8 @@ function ModelProvidersManagement({
                     setFormData({
                       ...formData,
                       description: e.target.value,
-                    })}
+                    })
+                  }
                   placeholder="Optional description for this provider"
                   multiline
                   rows={3}
@@ -368,7 +373,8 @@ function ModelProvidersManagement({
                         setFormData({
                           ...formData,
                           is_active: e.target.checked,
-                        })}
+                        })
+                      }
                     />
                   }
                   label="Active"
@@ -397,51 +403,65 @@ function ModelProvidersManagement({
           </Card>
         )}
         {!showForm &&
-          (isLoading
-            ? (
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: 256,
-                }}
-              >
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600">
-                </div>
-              </Box>
-            )
-            : (
-              <Grid container spacing={2}>
-                {providers.map((provider) => (
-                  <Grid key={provider.id}>
-                    <Card
-                      sx={{
-                        height: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <CardHeader
-                        title={provider.provider_name}
-                        subheader={PROVIDER_TYPES.find(
-                          (t) => t.value === provider.provider_type,
-                        )?.label || provider.provider_type}
-                        action={
-                          <Switch
-                            checked={Boolean(provider.is_active)}
-                            onChange={() => handleToggleActive(provider)}
-                          />
-                        }
-                      />
-                      <CardContent sx={{ flexGrow: 1 }}>
+          (isLoading ? (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: 256,
+              }}
+            >
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            </Box>
+          ) : (
+            <Grid container spacing={2}>
+              {providers.map((provider) => (
+                <Grid key={provider.id}>
+                  <Card
+                    sx={{
+                      height: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <CardHeader
+                      title={provider.provider_name}
+                      subheader={
+                        PROVIDER_TYPES.find(
+                          (t) => t.value === provider.provider_type
+                        )?.label || provider.provider_type
+                      }
+                      action={
+                        <Switch
+                          checked={Boolean(provider.is_active)}
+                          onChange={() => handleToggleActive(provider)}
+                        />
+                      }
+                    />
+                    <CardContent sx={{ flexGrow: 1 }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 1,
+                        }}
+                      >
                         <Box
                           sx={{
                             display: "flex",
-                            flexDirection: "column",
+                            alignItems: "center",
                             gap: 1,
                           }}
                         >
+                          <Key className="w-4 h-4 text-gray-400" />
+                          <Typography variant="body2" color="text.secondary">
+                            {provider.api_key
+                              ? "•".repeat(provider.api_key.length)
+                              : "No API key"}
+                          </Typography>
+                        </Box>
+                        {provider.base_url && (
                           <Box
                             sx={{
                               display: "flex",
@@ -449,64 +469,49 @@ function ModelProvidersManagement({
                               gap: 1,
                             }}
                           >
-                            <Key className="w-4 h-4 text-gray-400" />
-                            <Typography variant="body2" color="text.secondary">
-                              {provider.api_key
-                                ? "•".repeat(provider.api_key.length)
-                                : "No API key"}
+                            <Globe className="w-4 h-4 text-gray-400" />
+                            <Typography
+                              variant="body2"
+                              color="text.secondary"
+                              noWrap
+                            >
+                              {provider.base_url}
                             </Typography>
                           </Box>
-                          {provider.base_url && (
-                            <Box
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 1,
-                              }}
-                            >
-                              <Globe className="w-4 h-4 text-gray-400" />
-                              <Typography
-                                variant="body2"
-                                color="text.secondary"
-                                noWrap
-                              >
-                                {provider.base_url}
-                              </Typography>
-                            </Box>
-                          )}
-                          {provider.description && (
-                            <Typography variant="body2" color="text.secondary">
-                              {provider.description}
-                            </Typography>
-                          )}
-                        </Box>
-                        <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
-                          <Button
-                            variant="outlined"
-                            size="small"
-                            onClick={() => startEdit(provider)}
-                            startIcon={<Edit className="w-4 h-4" />}
-                            sx={{ flex: 1 }}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            variant="contained"
-                            color="error"
-                            size="small"
-                            onClick={() => handleDelete(provider.id)}
-                            startIcon={<Trash2 className="w-4 h-4" />}
-                            sx={{ flex: 1 }}
-                          >
-                            Delete
-                          </Button>
-                        </Box>
-                      </CardContent>
-                    </Card>
-                  </Grid>
-                ))}
-              </Grid>
-            ))}
+                        )}
+                        {provider.description && (
+                          <Typography variant="body2" color="text.secondary">
+                            {provider.description}
+                          </Typography>
+                        )}
+                      </Box>
+                      <Box sx={{ display: "flex", gap: 1, mt: 2 }}>
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          onClick={() => startEdit(provider)}
+                          startIcon={<Edit className="w-4 h-4" />}
+                          sx={{ flex: 1 }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="error"
+                          size="small"
+                          onClick={() => handleDelete(provider.id)}
+                          startIcon={<Trash2 className="w-4 h-4" />}
+                          sx={{ flex: 1 }}
+                        >
+                          Delete
+                        </Button>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          ))}
 
         {!isLoading && providers.length === 0 && !showForm && (
           <Box sx={{ textAlign: "center", py: 6 }}>

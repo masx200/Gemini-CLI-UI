@@ -1,7 +1,7 @@
 {
-  "name": "@masx200/easy-llm-cli-ui",
+  "name": "@masx200/qwen-code-cli-ui",
   "version": "1.6.1",
-  "description": "A stylish web-based UI for Gemini CLI",
+  "description": "A stylish web-based UI for qwen CLI",
   "type": "module",
   "main": "server/index.js",
   "scripts": {
@@ -15,13 +15,13 @@
     "start": "yarn run build && yarn run server"
   },
   "keywords": [
-    "gemini",
+    "qwen",
     "ai",
     "code",
     "ui",
     "assistant"
   ],
-  "author": "easy-llm-cli-ui Contributors",
+  "author": "qwen-code-cli-UI Contributors",
   "license": "MIT",
   "dependencies": {
     "@codemirror/lang-css": "^6.3.1",
@@ -111,7 +111,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/masx200/easy-llm-cli-ui.git"
+    "url": "https://github.com/masx200/qwen-code-cli-UI.git"
   },
   "packageManager": "yarn@4.9.2+sha512.1fc009bc09d13cfd0e19efa44cbfc2b9cf6ca61482725eb35bbc5e257e093ebf4130db6dfe15d604ff4b79efd8e1e8e99b25fa7d0a6197c9f9826358d4d65c3c"
 }

@@ -1,5 +1,5 @@
 declare const router: import("express-serve-static-core").Router;
-export interface geminiServerConfig {
+export interface qwenServerConfig {
     type?: "stdio" | "http" | "sse";
     command?: string;
     args?: string[];
@@ -9,12 +9,12 @@ export interface geminiServerConfig {
     transport?: "stdio" | "http" | "sse";
     headers?: Record<string, string>;
 }
-export interface geminiProjectConfig {
-    mcpServers?: Record<string, geminiServerConfig>;
+export interface qwenProjectConfig {
+    mcpServers?: Record<string, qwenServerConfig>;
 }
-export interface geminiConfigData {
-    mcpServers?: Record<string, geminiServerConfig>;
-    projects?: Record<string, geminiProjectConfig>;
+export interface qwenConfigData {
+    mcpServers?: Record<string, qwenServerConfig>;
+    projects?: Record<string, qwenProjectConfig>;
 }
 export interface MCPServerResponse {
     id: string;
@@ -29,7 +29,7 @@ export interface MCPServerResponse {
         url?: string;
         headers?: Record<string, string>;
     };
-    raw: geminiServerConfig;
+    raw: qwenServerConfig;
     projectPath?: string;
 }
 export interface ConfigReadResponse {
@@ -40,13 +40,13 @@ export interface ConfigReadResponse {
     error?: string;
     details?: string;
 }
-export interface geminiListServer {
+export interface qwenListServer {
     name: string;
     type: string;
     status: string;
     description?: string;
 }
-export interface geminiGetOutput {
+export interface qwenGetOutput {
     name?: string;
     type?: string;
     command?: string | undefined;

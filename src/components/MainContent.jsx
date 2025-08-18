@@ -35,7 +35,7 @@ function MainContent({
   onSessionActive, // Mark session as active when user sends message
   onSessionInactive, // Mark session as inactive when conversation completes/aborts
   onReplaceTemporarySession, // Replace temporary session ID with real session ID from WebSocket
-  onNavigateToSession, // Navigate to a specific session (for Gemini CLI session duplication workaround)
+  onNavigateToSession, // Navigate to a specific session (for qwen CLI session duplication workaround)
   onShowSettings, // Show tools settings panel
   autoExpandTools, // Auto-expand tool accordions
   showRawParameters, // Show raw parameters in tool accordions
@@ -96,7 +96,7 @@ function MainContent({
               />
             </div>
             <h2 className="text-xl font-semibold mb-2">
-              Loading easy-llm-cli-ui
+              Loading qwen-code-cli-UI
             </h2>
             <p>Setting up your workspace...</p>
           </div>
@@ -152,12 +152,13 @@ function MainContent({
               Choose Your Project
             </h2>
             <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-              Select a project from the sidebar to start coding with Gemini.
-              Each project contains your chat sessions and file history.
+              Select a project from the sidebar to start coding with qwen. Each
+              project contains your chat sessions and file history.
             </p>
             <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
               <p className="text-sm text-blue-700 dark:text-blue-300">
-                💡 <strong>Tip:</strong> {isMobile
+                💡 <strong>Tip:</strong>{" "}
+                {isMobile
                   ? "Tap the menu button above to access projects"
                   : "Create a new project by clicking the folder icon in the sidebar"}
               </p>
@@ -199,45 +200,41 @@ function MainContent({
               </button>
             )}
             <div className="min-w-0">
-              {activeTab === "chat" && selectedSession
-                ? (
-                  <div>
-                    <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white truncate">
-                      {selectedSession.summary}
-                    </h2>
-                    <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                      {selectedProject.displayName}
-                      <span className="hidden sm:inline">
-                        • {selectedSession.id}
-                      </span>
-                    </div>
+              {activeTab === "chat" && selectedSession ? (
+                <div>
+                  <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white truncate">
+                    {selectedSession.summary}
+                  </h2>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    {selectedProject.displayName}
+                    <span className="hidden sm:inline">
+                      • {selectedSession.id}
+                    </span>
                   </div>
-                )
-                : activeTab === "chat" && !selectedSession
-                ? (
-                  <div>
-                    <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
-                      New Session
-                    </h2>
-                    <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                      {selectedProject.displayName}
-                    </div>
+                </div>
+              ) : activeTab === "chat" && !selectedSession ? (
+                <div>
+                  <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
+                    New Session
+                  </h2>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    {selectedProject.displayName}
                   </div>
-                )
-                : (
-                  <div>
-                    <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
-                      {activeTab === "files"
-                        ? "Project Files"
-                        : activeTab === "git"
-                        ? "Source Control"
-                        : "Project"}
-                    </h2>
-                    <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                      {selectedProject.displayName}
-                    </div>
+                </div>
+              ) : (
+                <div>
+                  <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
+                    {activeTab === "files"
+                      ? "Project Files"
+                      : activeTab === "git"
+                      ? "Source Control"
+                      : "Project"}
+                  </h2>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                    {selectedProject.displayName}
                   </div>
-                )}
+                </div>
+              )}
             </div>
           </div>
 
@@ -344,8 +341,7 @@ function MainContent({
                   <span className="hidden sm:inline">Source Control</span>
                 </span>
               </button>
-              {
-                /* <button
+              {/* <button
                 onClick={() => setActiveTab('preview')}
                 className={`relative px-2 sm:px-3 py-1.5 text-xs sm:text-sm font-medium rounded-md transition-all duration-200 ${
                   activeTab === 'preview'
@@ -359,8 +355,7 @@ function MainContent({
                   </svg>
                   <span className="hidden sm:inline">Preview</span>
                 </span>
-              </button> */
-              }
+              </button> */}
             </div>
           </div>
         </div>
@@ -417,8 +412,7 @@ function MainContent({
             activeTab === "preview" ? "block" : "hidden"
           }`}
         >
-          {
-            /* <LivePreviewPanel
+          {/* <LivePreviewPanel
             selectedProject={selectedProject}
             serverStatus={serverStatus}
             serverUrl={serverUrl}
@@ -441,8 +435,7 @@ function MainContent({
             isMobile={isMobile}
             serverLogs={serverLogs}
             onClearLogs={() => setServerLogs([])}
-          /> */
-          }
+          /> */}
         </div>
       </div>
 

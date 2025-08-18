@@ -1,14 +1,14 @@
 import jwt from "jsonwebtoken";
 //@ts-ignore
-import { userDb } from "../database/db.js";
 import express from "express";
+//@ts-ignore
+import { userDb } from "../database/db.js";
 
 // Get JWT secret from environment or use default (for development)
 //@ts-ignore
 const JWT_SECRET =
-
-//@ts-ignore
-  process.env.JWT_SECRET || "gemini-ui-dev-secret-change-in-production";
+  //@ts-ignore
+  process.env.JWT_SECRET || "qwen-ui-dev-secret-change-in-production";
 
 // Optional API key middleware
 const validateApiKey = (
@@ -59,7 +59,7 @@ async function authenticateToken(
     if (!user) {
       return res.status(401).json({ error: "Invalid token. User not found." });
     }
-//@ts-ignore
+    //@ts-ignore
     req.user = user;
     next();
   } catch (error) {
@@ -96,9 +96,9 @@ const authenticateWebSocket = (token: string) => {
 };
 
 export {
+  JWT_SECRET,
   authenticateToken,
   authenticateWebSocket,
   generateToken,
-  JWT_SECRET,
   validateApiKey,
 };

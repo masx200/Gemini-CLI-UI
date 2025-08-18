@@ -21,9 +21,10 @@
   }
 }
 
-/* Gemini pulse animation */
-@keyframes gemini-pulse {
-  0%, 100% {
+/* qwen pulse animation */
+@keyframes qwen-pulse {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -31,17 +32,14 @@
   }
 }
 
-/* Gemini glow animation */
-@keyframes gemini-glow {
-  0%, 100% {
-    box-shadow:
-      0 0 20px rgba(6, 182, 212, 0.5),
-      0 0 40px rgba(6, 182, 212, 0.3);
+/* qwen glow animation */
+@keyframes qwen-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.5), 0 0 40px rgba(6, 182, 212, 0.3);
   }
   50% {
-    box-shadow:
-      0 0 30px rgba(6, 182, 212, 0.8),
-      0 0 60px rgba(6, 182, 212, 0.4);
+    box-shadow: 0 0 30px rgba(6, 182, 212, 0.8), 0 0 60px rgba(6, 182, 212, 0.4);
   }
 }
 
@@ -126,14 +124,8 @@
 @layer base {
   body {
     @apply bg-background text-foreground;
-    font-family:
-      -apple-system,
-      BlinkMacSystemFont,
-      "Segoe UI",
-      Roboto,
-      "Helvetica Neue",
-      Arial,
-      sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+      "Helvetica Neue", Arial, sans-serif;
     margin: 0;
     padding: 0;
     /* Prevent layout shift during font loading */
@@ -143,7 +135,9 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  html, body, #root {
+  html,
+  body,
+  #root {
     height: 100%;
     margin: 0;
     padding: 0;
@@ -199,10 +193,8 @@
   fieldset,
   legend,
   label {
-    transition:
-      background-color 200ms ease-in-out,
-      border-color 200ms ease-in-out,
-      color 200ms ease-in-out;
+    transition: background-color 200ms ease-in-out,
+      border-color 200ms ease-in-out, color 200ms ease-in-out;
   }
 
   /* Transform transitions */
@@ -380,7 +372,9 @@
   }
 
   /* Ensure consistent line heights */
-  p, div, span {
+  p,
+  div,
+  span {
     line-height: 1.5;
   }
 
@@ -419,61 +413,59 @@
     transition: background-color 100ms ease-in-out !important;
   }
 
-  /* Gemini-specific styles */
-  .gemini-gradient {
+  /* qwen-specific styles */
+  .qwen-gradient {
     background: linear-gradient(135deg, #06b6d4 0%, #0891b2 50%, #0e7490 100%);
   }
 
-  .gemini-gradient-text {
+  .qwen-gradient-text {
     background: linear-gradient(135deg, #06b6d4 0%, #0891b2 50%, #0e7490 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  .gemini-shadow {
-    box-shadow:
-      0 4px 6px -1px rgba(6, 182, 212, 0.1),
+  .qwen-shadow {
+    box-shadow: 0 4px 6px -1px rgba(6, 182, 212, 0.1),
       0 2px 4px -1px rgba(6, 182, 212, 0.06);
   }
 
-  .gemini-shadow-lg {
-    box-shadow:
-      0 10px 15px -3px rgba(6, 182, 212, 0.1),
+  .qwen-shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(6, 182, 212, 0.1),
       0 4px 6px -2px rgba(6, 182, 212, 0.05);
   }
 
-  .gemini-border {
+  .qwen-border {
     border: 1px solid rgba(6, 182, 212, 0.2);
   }
 
-  .gemini-hover:hover {
+  .qwen-hover:hover {
     background-color: rgba(6, 182, 212, 0.05);
     border-color: rgba(6, 182, 212, 0.3);
   }
 
-  .dark .gemini-hover:hover {
+  .dark .qwen-hover:hover {
     background-color: rgba(6, 182, 212, 0.1);
     border-color: rgba(6, 182, 212, 0.4);
   }
 
   /* Enhanced button styles */
-  .gemini-button {
+  .qwen-button {
     @apply relative overflow-hidden;
     background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
     transition: all 0.3s ease;
   }
 
-  .gemini-button:hover {
+  .qwen-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(6, 182, 212, 0.3);
   }
 
-  .gemini-button:active {
+  .qwen-button:active {
     transform: translateY(0);
   }
 
-  .gemini-button::before {
+  .qwen-button::before {
     content: "";
     position: absolute;
     top: 50%;
@@ -486,48 +478,48 @@
     transition: width 0.6s, height 0.6s;
   }
 
-  .gemini-button:active::before {
+  .qwen-button:active::before {
     width: 300px;
     height: 300px;
   }
 
   /* Glass morphism effect */
-  .gemini-glass {
+  .qwen-glass {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  .dark .gemini-glass {
+  .dark .qwen-glass {
     background: rgba(0, 0, 0, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.05);
   }
 
   /* Animated background pattern */
-  .gemini-pattern {
-    background-image:
-      radial-gradient(
+  .qwen-pattern {
+    background-image: radial-gradient(
         circle at 20% 80%,
         rgba(6, 182, 212, 0.1) 0%,
         transparent 50%
       ),
       radial-gradient(
-      circle at 80% 20%,
-      rgba(14, 116, 144, 0.1) 0%,
-      transparent 50%
-    ),
+        circle at 80% 20%,
+        rgba(14, 116, 144, 0.1) 0%,
+        transparent 50%
+      ),
       radial-gradient(
-      circle at 40% 40%,
-      rgba(8, 145, 178, 0.1) 0%,
-      transparent 50%
-    );
+        circle at 40% 40%,
+        rgba(8, 145, 178, 0.1) 0%,
+        transparent 50%
+      );
     background-size: 100% 100%;
-    animation: gemini-float 20s ease-in-out infinite;
+    animation: qwen-float 20s ease-in-out infinite;
   }
 
-  @keyframes gemini-float {
-    0%, 100% {
+  @keyframes qwen-float {
+    0%,
+    100% {
       background-position: 0% 0%;
     }
     50% {
@@ -536,7 +528,7 @@
   }
 
   /* Loading animation */
-  .gemini-loader {
+  .qwen-loader {
     display: inline-block;
     width: 20px;
     height: 20px;
@@ -547,12 +539,12 @@
   }
 
   /* Enhanced focus styles */
-  .gemini-focus:focus {
+  .qwen-focus:focus {
     outline: none;
     box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
   }
 
-  .gemini-focus:focus-visible {
+  .qwen-focus:focus-visible {
     outline: none;
     box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.3);
   }

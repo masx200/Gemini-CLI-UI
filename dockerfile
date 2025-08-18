@@ -1,4 +1,4 @@
-# Multi-stage build for gemini Code UI Docker deployment
+# Multi-stage build for qwen Code UI Docker deployment
 FROM docker.cnb.cool/masx200/docker_mirror/node:22-alpine-linux-amd64 AS base
 
 
@@ -144,8 +144,8 @@ env PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.loc
 
 
 
-run pnpm i -g easy-llm-cli 
+run pnpm i -g @qwen-code/qwen-code 
 
 
-RUN cnpm install -g easy-llm-cli 
+RUN cnpm install -g @qwen-code/qwen-code 
 

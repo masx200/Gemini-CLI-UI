@@ -17,13 +17,13 @@ function createNotificationSound(context) {
 
     // First tone (higher pitch)
     if (t < 0.15) {
-      const envelope = Math.sin(Math.PI * t / 0.15);
+      const envelope = Math.sin((Math.PI * t) / 0.15);
       sample += envelope * 0.3 * Math.sin(2 * Math.PI * 880 * t); // A5
     }
 
     // Second tone (lower pitch)
     if (t >= 0.15 && t < 0.3) {
-      const envelope = Math.sin(Math.PI * (t - 0.15) / 0.15);
+      const envelope = Math.sin((Math.PI * (t - 0.15)) / 0.15);
       sample += envelope * 0.3 * Math.sin(2 * Math.PI * 659.25 * t); // E5
     }
 
@@ -38,7 +38,7 @@ export async function playNotificationSound() {
   try {
     // Check if sound is enabled
     const settings = JSON.parse(
-      localStorage.getItem("gemini-tools-settings") || "{}",
+      localStorage.getItem("qwen-tools-settings") || "{}"
     );
     // console.log('Notification settings:', settings);
     // console.log('Sound enabled:', settings.enableNotificationSound);

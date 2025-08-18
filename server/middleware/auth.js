@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
-import { userDb } from "../database/db.js";
 import express from "express";
-const JWT_SECRET = process.env.JWT_SECRET || "gemini-ui-dev-secret-change-in-production";
+import { userDb } from "../database/db.js";
+const JWT_SECRET = process.env.JWT_SECRET || "qwen-ui-dev-secret-change-in-production";
 const validateApiKey = (req, res, next) => {
     if (!process.env.API_KEY) {
         return next();
@@ -51,5 +51,5 @@ const authenticateWebSocket = (token) => {
         return null;
     }
 };
-export { authenticateToken, authenticateWebSocket, generateToken, JWT_SECRET, validateApiKey, };
+export { JWT_SECRET, authenticateToken, authenticateWebSocket, generateToken, validateApiKey, };
 //# sourceMappingURL=auth.js.map
