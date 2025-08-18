@@ -1,9 +1,5 @@
-import {
-  type Options,
-  createProxyMiddleware,
-  type RequestHandler,
-} from "http-proxy-middleware";
-
+import type { RequestHandler } from "express";
+import fetch from "node-fetch";
 /**
  * 创建 Qwen API 代理中间件
  * @returns {RequestHandler} Express 中间件函数
@@ -11,7 +7,9 @@ import {
 export function createQwenProxy(
   target: string,
   username: string,
-  password: string
+  password: string,
+  pathFilter: string,
+  pathPrefix: string
 ): RequestHandler {
   /**
    * 反向代理中间件配置
@@ -20,36 +18,49 @@ export function createQwenProxy(
    */
 
   // 默认的代理配置选项
-  const defaultProxyOptions: Options = {
-    changeOrigin: true,
-    secure: false,
-    logger: console,
-    auth: `${username}:${password}`,
-  };
+  return (async (req, res, next) => {
+    if (req.path.startsWith(pathFilter)) {
+      //@ts-ignore
+      const headers = new Headers(
+        //@ts-ignore
+        Object.assign(req.headers, {
+          ["Authorization"]: `Basic ${Buffer.from(
+            `${username}:${password}`
+          ).toString("base64")}`,
+          ["authorization"]: `Basic ${Buffer.from(
+            `${username}:${password}`
+          ).toString("base64")}`,
+        })
+      );
 
-  /**
-   * Qwen API 代理配置
-   * 将 /api/qwen/* 转发到 http://localhost:12345/
-   */
-  const qwenProxyOptions: Options = {
-    ...defaultProxyOptions,
-    target: target,
-    pathFilter: "/api/qwen", // 只匹配 /api/qwen 开头的路径
-    pathRewrite: {
-      "^/api/qwen": "", // 移除 /api/qwen 前缀
-    },
-    on: {
-      proxyReq: (proxyReq, req, res) => {
-        console.log(proxyReq, req, res);
-      },
-      proxyRes: (proxyRes, req, res) => {
-        console.log(`[Qwen Proxy] Response: ${proxyRes.statusCode}`);
-      },
-      error: (err, req, res, target) => {
-        console.error(`[Qwen Proxy] Error:`, err.message);
-      },
-    },
-  };
-  console.log(qwenProxyOptions);
-  return createProxyMiddleware(qwenProxyOptions);
+      const url = new URL(req.url.slice(pathPrefix.length), target);
+
+      console.log("url", url);
+      console.log("headers", headers);
+      console.log("body", req.body);
+
+      const response = await fetch(url.href, {
+        headers: Object.fromEntries(headers),
+        method: req.method,
+        body: JSON.stringify(req.body),
+      });
+      console.log(response);
+
+      if (response.ok) {
+        const data = await response.json();
+        for (const key of response.headers.keys()) {
+          res.status(response.status);
+          //@ts-ignore
+          res.header(key, response.headers.get(key));
+        }
+        res.json(data);
+      } else {
+        //@ts-ignore
+        res.header(key, response.headers.get(key));
+        res.status(response.status).end(await response.text());
+      }
+    } else {
+      next();
+    }
+  }) as RequestHandler;
 }

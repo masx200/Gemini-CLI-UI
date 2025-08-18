@@ -149,7 +149,16 @@ const authOptions = {
     port: Number(Math.round(Math.random() * 30000 + 20000)),
     host: "0.0.0.0",
 };
-app.use(createQwenProxy(`http://localhost:${authOptions.port}`, username, password));
+app.use((req, res, next) => {
+    if (req.path.startsWith("/api/qwen")) {
+        return authenticateToken(req, res, function () {
+            return createQwenProxy(`http://localhost:${authOptions.port}`, username, password, "/api/qwen", "/api/qwen")(req, res, next);
+        });
+    }
+    else {
+        return next();
+    }
+});
 app.use("/api/auth", authRoutes);
 app.use("/api/git", authenticateToken, gitRoutes);
 app.use("/api/mcp", authenticateToken, mcpRoutes);
