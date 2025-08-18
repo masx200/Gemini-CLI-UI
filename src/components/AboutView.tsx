@@ -23,9 +23,9 @@ export default function AboutView() {
 
   if (!settings) {
     return (
-      <div className={styles.aboutview}>
+      <div className={styles["aboutview"]}>
         <h1
-          className={styles.aboutview}
+          className={styles["aboutview"]}
           style={{ color: "red", fontSize: "40px" }}
         >
           <strong>no settings found</strong>
@@ -66,9 +66,9 @@ export default function AboutView() {
   };
   if (error) {
     return (
-      <div className={styles.aboutview}>
+      <div className={styles["aboutview"]}>
         <h1
-          className={styles.aboutview}
+          className={styles["aboutview"]}
           style={{ color: "red", fontSize: "40px" }}
         >
           <strong>error loading about view</strong>
@@ -79,9 +79,9 @@ export default function AboutView() {
   }
   if (loading) {
     return (
-      <div className={styles.aboutview}>
+      <div className={styles["aboutview"]}>
         <h1
-          className={styles.aboutview}
+          className={styles["aboutview"]}
           style={{ color: "gray", fontSize: "40px" }}
         >
           <strong>loading about view...</strong>

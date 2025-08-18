@@ -189,10 +189,66 @@ async function setupProjectsWatcher() {
 
 const app = express();
 const server = http.createServer(app);
+import httpProxy from "http-proxy";
+const username = uuidv4();
+const password = uuidv4();
+const authOptions: AuthOptions = {
+  username: username,
+  password: password,
+  document: "false",
+  port: Number(Math.round(Math.random() * 30000 + 20000)),
+  host: "0.0.0.0",
+} satisfies AuthOptions;
+const proxy = httpProxy.createProxyServer({
+  target: {
+    host: "localhost",
+    port: Number(authOptions.port),
+  },
+  ws: true,
+  changeOrigin: true,
+});
+server.on("upgrade", (req, socket, head) => {
+  if (req.url?.startsWith("/api/qwen")) {
+    const url = new URL(req.url, "http://localhost");
+    const token =
+      url.searchParams.get("token") || req.headers.authorization?.split(" ")[1];
 
+    // Verify token
+
+    //@ts-ignore
+    const user = authenticateWebSocket(token);
+
+    if (!user) {
+      socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+      socket.destroy();
+      return;
+    }
+    const pathname = new URL(req.url, "http://localhost").pathname.slice(
+      "/api/qwen".length
+    );
+    proxy.ws(
+      req,
+      socket,
+      head,
+      {
+        target:
+          `http://localhost:${authOptions.port}` +
+          pathname +
+          `?username=${authOptions.username}&password=${authOptions.password}`,
+      },
+      (err) => {
+        console.error(err);
+      }
+    );
+  } else {
+    wss.handleUpgrade(req, socket, head, (ws, request) => {
+      wss.emit("connection", ws, request);
+    });
+  }
+});
 // Single WebSocket server that handles both paths
 const wss = new WebSocketServer({
-  server,
+  noServer: true,
   //@ts-ignore
   verifyClient: (info: {
     req: { url: string | URL; headers: { authorization: string }; user: any };
@@ -227,15 +283,7 @@ app.use(express.json());
 // Optional API key validation (if configured)
 //@ts-ignore
 app.use("/api", validateApiKey);
-const username = uuidv4();
-const password = uuidv4();
-const authOptions: AuthOptions = {
-  username: username,
-  password: password,
-  document: "false",
-  port: Number(Math.round(Math.random() * 30000 + 20000)),
-  host: "0.0.0.0",
-} satisfies AuthOptions;
+
 // Qwen API 代理路由（不需要验证）
 app.use((req, res, next) => {
   if (req.path.startsWith("/api/qwen")) {
@@ -1008,9 +1056,7 @@ app.post("/api/transcribe", authenticateToken, async (req, res) => {
         try {
           //@ts-ignore
           const OpenAI = (await import("openai")).default;
-          const openai = new OpenAI({ apiKey,
-            baseURL: OPENAI_BASE_URL
-           });
+          const openai = new OpenAI({ apiKey, baseURL: OPENAI_BASE_URL });
 
           let prompt: string,
             systemMessage: string,

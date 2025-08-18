@@ -171,8 +171,51 @@ export async function getglobalSessionId() {
 export async function refreshMCPSERVERSTATUS() {
   const token = localStorage.getItem("auth-token");
 
+  const sessionId = await getglobalSessionId();
+  return new Promise<void>(async (resolve, reject) => {
+    const ws = new WebSocket(
+      location.origin + "/api/qwen" + `/command/mcp/refresh` + `?token=${token}`
+    );
 
-  const sessionid = await getglobalSessionId();
+    ws.onmessage = function (e) {
+      console.log(e);
+      const data = JSON.parse(e.data);
+      console.log(data);
 
-  return;
+      if (data.sessionId !== sessionId) {
+        reject(new Error("sessionId mismatch!" + sessionId));
+      }
+      // ws.close();
+      if (data?.type === "close") {
+        ws.close();
+        resolve();
+        return;
+      }
+
+      if (data?.type === "error") {
+        ws.close();
+        reject(data);
+        return;
+      }
+    };
+
+    ws.onerror = function (e) {
+      console.error(e);
+      reject(e);
+    };
+    ws.onclose = function (e) {
+      console.log(e);
+      resolve();
+    };
+    ws.onopen = function (e) {
+      console.log(e);
+      ws.send(
+        JSON.stringify({
+          sessionId: sessionId,
+
+          args: "",
+        })
+      );
+    };
+  });
 }
