@@ -234,7 +234,7 @@ const authOptions: AuthOptions = {
   username: username,
   password: password,
   document: "false",
-  port: Number(Math.round(Math.random() * 10000 + 30000)),
+  port: Number(Math.round(Math.random() * 30000 +20000)),
   host: "0.0.0.0",
 } satisfies AuthOptions;
 // Qwen API 代理路由（不需要验证）
