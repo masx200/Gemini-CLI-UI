@@ -1,23 +1,6 @@
 import fs from "fs";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-try {
-    const envPath = path.join(__dirname, "../.env");
-    const envFile = fs.readFileSync(envPath, "utf8");
-    envFile.split("\n").forEach((line) => {
-        const trimmedLine = line.trim();
-        if (trimmedLine && !trimmedLine.startsWith("#")) {
-            const [key, ...valueParts] = trimmedLine.split("=");
-            if (key && valueParts.length > 0 && !process.env[key]) {
-                process.env[key] = valueParts.join("=").trim();
-            }
-        }
-    });
-}
-catch (e) {
-}
 import { spawn } from "child_process";
 import cors from "cors";
 import express from "express";
@@ -36,10 +19,30 @@ import authRoutes from "./routes/auth.js";
 import gitRoutes from "./routes/git.js";
 import mcpRoutes from "./routes/mcp.js";
 import modelProvidersRoutes from "./routes/model-providers.js";
-import sessionManager from "./sessionManager.js";
 import { FSWatcher } from "chokidar";
+import sessionManager from "./sessionManager.js";
 let projectsWatcher = null;
 const connectedClients = new Set();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+try {
+    const envPath = path.join(__dirname, "../.env");
+    if (fs.existsSync(envPath)) {
+        const envFile = fs.readFileSync(envPath, "utf8");
+        envFile.split("\n").forEach((line) => {
+            const trimmedLine = line.trim();
+            if (trimmedLine && !trimmedLine.startsWith("#")) {
+                const [key, ...valueParts] = trimmedLine.split("=");
+                if (key && valueParts.length > 0 && !process.env[key]) {
+                    process.env[key] = valueParts.join("=").trim();
+                }
+            }
+        });
+    }
+}
+catch (e) {
+    console.log("Error loading .env file:", e);
+}
 function run(cmd, args, opts = {}) {
     return new Promise((resolve, reject) => {
         const child = spawn(cmd, args, { stdio: "pipe", ...opts });
@@ -830,14 +833,56 @@ async function startServer() {
             }
         });
         server.listen(PORT, "0.0.0.0", async () => {
-            console.log(`easy-llm-cli-ui server running on http://0.0.0.0:${PORT}`);
+            console.log(`easy-llm-cli-ui server running on http://127.0.0.1:${PORT}`);
             await setupProjectsWatcher();
         });
     }
     catch (error) {
         console.error("❌ Failed to start server:", error);
-        process.exit(1);
+        throw error;
     }
 }
-startServer();
+import { v4 as uuidv4 } from "uuid";
+const username = uuidv4();
+const password = uuidv4();
+const authOptions = {
+    username: username,
+    password: password,
+    document: "false",
+    port: Number(Math.round(Math.random() * 10000 + 30000)),
+    host: "0.0.0.0",
+};
+async function main(authOptions) {
+    const qwenCodeApiServer = spawn(process.execPath, [
+        path.join(__dirname, "../../qwen-code-api-server/index.js"),
+        "--username",
+        String(authOptions.username || ""),
+        "--password",
+        String(authOptions.password || ""),
+        "--document",
+        String(authOptions.document || ""),
+        "--port",
+        String(authOptions.port || ""),
+        "--host",
+        String(authOptions.host || ""),
+    ], {
+        stdio: "pipe",
+    });
+    qwenCodeApiServer.on("error", (error) => {
+        console.error(`qwen-code-api-server error: ${error}`);
+    });
+    qwenCodeApiServer.stdout?.on("data", (data) => {
+        console.log(`qwen-code-api-server stdout: ${data}`);
+    });
+    qwenCodeApiServer.stderr?.on("data", (data) => {
+        console.error(`qwen-code-api-server stderr: ${data}`);
+    });
+    qwenCodeApiServer.on("exit", (code, signal) => {
+        console.log(`qwen-code-api-server exit: code ${code}, signal ${signal}`);
+    });
+}
+await Promise.all([
+    startServer().then(console.log, console.error),
+    await main(authOptions).then(console.log, console.error),
+]);
 //# sourceMappingURL=index.js.map
