@@ -12,7 +12,7 @@ const setCachePromise = (cacheKey: CachedKey, promise: Promise<any>) => {
 
   // no use promise.finally for compatibility
   promise
-    .then(res => {
+    .then((res) => {
       cachePromise.delete(cacheKey);
       return res;
     })

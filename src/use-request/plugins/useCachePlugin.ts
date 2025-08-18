@@ -1,15 +1,21 @@
-import { useCreation, useUnmount } from 'ahooks';
-import { useRef } from 'react';
+import { useCreation, useUnmount } from "ahooks";
+import { useRef } from "react";
 
-import type { Plugin } from '../type.ts';
-import { getCache, setCache } from '../utils/cache.ts';
-import type { CachedData } from '../utils/cache.ts';
-import { getCachePromise, setCachePromise } from '../utils/cachePromise.ts';
-import { subscribe, trigger } from '../utils/cacheSubscribe.ts';
+import type { Plugin } from "../type.ts";
+import { getCache, setCache } from "../utils/cache.ts";
+import type { CachedData } from "../utils/cache.ts";
+import { getCachePromise, setCachePromise } from "../utils/cachePromise.ts";
+import { subscribe, trigger } from "../utils/cacheSubscribe.ts";
 
 const useCachePlugin: Plugin<any, any[]> = (
   fetchInstance,
-  { cacheKey, cacheTime = 5 * 60 * 1000, getCache: customGetCache, setCache: customSetCache, staleTime = 0 }
+  {
+    cacheKey,
+    cacheTime = 5 * 60 * 1000,
+    getCache: customGetCache,
+    setCache: customSetCache,
+    staleTime = 0,
+  },
 ) => {
   const unSubscribeRef = useRef<() => void>(null);
 
@@ -38,17 +44,19 @@ const useCachePlugin: Plugin<any, any[]> = (
 
     // get data from cache when init
     const cacheData = _getCache(cacheKey);
-    if (cacheData && Object.hasOwn(cacheData, 'data')) {
+    if (cacheData && Object.hasOwn(cacheData, "data")) {
       fetchInstance.state.data = cacheData.data;
       fetchInstance.state.params = cacheData.params;
-      if (staleTime === -1 || new Date().getTime() - cacheData.time <= staleTime) {
+      if (
+        staleTime === -1 || new Date().getTime() - cacheData.time <= staleTime
+      ) {
         fetchInstance.state.loading = false;
       }
     }
 
     // subscribe same cachekey update, trigger update
     //@ts-ignore
-    unSubscribeRef.current = subscribe(cacheKey, data => {
+    unSubscribeRef.current = subscribe(cacheKey, (data) => {
       fetchInstance.setState({ data });
     });
   }, []);
@@ -62,40 +70,42 @@ const useCachePlugin: Plugin<any, any[]> = (
   }
 
   return {
-    onBefore: params => {
+    onBefore: (params) => {
       const cacheData = _getCache(cacheKey, params);
 
-      if (!cacheData || !Object.hasOwn(cacheData, 'data')) {
+      if (!cacheData || !Object.hasOwn(cacheData, "data")) {
         return {};
       }
 
       // If the data is fresh, stop request
-      if (staleTime === -1 || new Date().getTime() - cacheData.time <= staleTime) {
+      if (
+        staleTime === -1 || new Date().getTime() - cacheData.time <= staleTime
+      ) {
         return {
           data: cacheData?.data,
           error: undefined,
           loading: false,
-          returnNow: true
+          returnNow: true,
         };
       }
       // If the data is stale, return data, and request continue
       return {
         data: cacheData?.data,
-        error: undefined
+        error: undefined,
       };
     },
-    onMutate: data => {
+    onMutate: (data) => {
       if (cacheKey) {
         // cancel subscribe, avoid trigger self
         unSubscribeRef.current?.();
         _setCache(cacheKey, {
           data,
           params: fetchInstance.state.params,
-          time: new Date().getTime()
+          time: new Date().getTime(),
         });
         // resubscribe
-         //@ts-ignore
-        unSubscribeRef.current = subscribe(cacheKey, d => {
+        //@ts-ignore
+        unSubscribeRef.current = subscribe(cacheKey, (d) => {
           fetchInstance.setState({ data: d });
         });
       }
@@ -109,7 +119,7 @@ const useCachePlugin: Plugin<any, any[]> = (
       }
 
       servicePromise = service(...args);
-       //@ts-ignore
+      //@ts-ignore
       currentPromiseRef.current = servicePromise;
       setCachePromise(cacheKey, servicePromise);
       return { servicePromise };
@@ -121,15 +131,15 @@ const useCachePlugin: Plugin<any, any[]> = (
         _setCache(cacheKey, {
           data,
           params,
-          time: new Date().getTime()
+          time: new Date().getTime(),
         });
         // resubscribe
-         //@ts-ignore
-        unSubscribeRef.current = subscribe(cacheKey, d => {
+        //@ts-ignore
+        unSubscribeRef.current = subscribe(cacheKey, (d) => {
           fetchInstance.setState({ data: d });
         });
       }
-    }
+    },
   };
 };
 

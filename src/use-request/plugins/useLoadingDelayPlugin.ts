@@ -1,8 +1,11 @@
-import { useRef } from 'react';
+import { useRef } from "react";
 
-import type { Plugin, Timeout } from '../type.ts';
+import type { Plugin, Timeout } from "../type.ts";
 
-const useLoadingDelayPlugin: Plugin<any, any[]> = (fetchInstance, { loadingDelay, ready }) => {
+const useLoadingDelayPlugin: Plugin<any, any[]> = (
+  fetchInstance,
+  { loadingDelay, ready },
+) => {
   const timerRef = useRef<Timeout>(null);
 
   if (!loadingDelay) {
@@ -26,13 +29,13 @@ const useLoadingDelayPlugin: Plugin<any, any[]> = (fetchInstance, { loadingDelay
         //@ts-ignore
         timerRef.current = setTimeout(() => {
           fetchInstance.setState({
-            loading: true
+            loading: true,
           });
         }, loadingDelay);
       }
 
       return {
-        loading: false
+        loading: false,
       };
     },
     onCancel: () => {
@@ -40,7 +43,7 @@ const useLoadingDelayPlugin: Plugin<any, any[]> = (fetchInstance, { loadingDelay
     },
     onFinally: () => {
       cancelTimeout();
-    }
+    },
   };
 };
 

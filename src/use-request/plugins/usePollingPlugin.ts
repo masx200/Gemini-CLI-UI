@@ -1,13 +1,13 @@
-import { useUpdateEffect } from 'ahooks';
-import { useRef } from 'react';
+import { useUpdateEffect } from "ahooks";
+import { useRef } from "react";
 
-import type { Plugin, Timeout } from '../type.ts';
-import isDocumentVisible from '../utils/isDocumentVisible.ts';
-import subscribeReVisible from '../utils/subscribeReVisible.ts';
+import type { Plugin, Timeout } from "../type.ts";
+import isDocumentVisible from "../utils/isDocumentVisible.ts";
+import subscribeReVisible from "../utils/subscribeReVisible.ts";
 
 const usePollingPlugin: Plugin<any, any[]> = (
   fetchInstance,
-  { pollingErrorRetryCount = -1, pollingInterval, pollingWhenHidden = true }
+  { pollingErrorRetryCount = -1, pollingInterval, pollingWhenHidden = true },
 ) => {
   const timerRef = useRef<Timeout>(null);
   const unsubscribeRef = useRef<() => void>(null);
@@ -45,7 +45,8 @@ const usePollingPlugin: Plugin<any, any[]> = (
       if (
         pollingErrorRetryCount === -1 ||
         // When an error occurs, the request is not repeated after pollingErrorRetryCount retries
-        (pollingErrorRetryCount !== -1 && countRef.current <= pollingErrorRetryCount)
+        (pollingErrorRetryCount !== -1 &&
+          countRef.current <= pollingErrorRetryCount)
       ) {
         //@ts-ignore
         timerRef.current = setTimeout(() => {
@@ -65,7 +66,7 @@ const usePollingPlugin: Plugin<any, any[]> = (
     },
     onSuccess: () => {
       countRef.current = 0;
-    }
+    },
   };
 };
 

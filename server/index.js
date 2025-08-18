@@ -50,10 +50,8 @@ function run(cmd, args, opts = {}) {
         child.stdout?.on("data", (b) => out.push(b));
         child.stderr?.on("data", (b) => err.push(b));
         child.on("close", (code) => code === 0
-            ?
-                resolve(Buffer.concat(out).toString())
-            :
-                reject(new Error(Buffer.concat(err).toString())));
+            ? resolve(Buffer.concat(out).toString())
+            : reject(new Error(Buffer.concat(err).toString())));
     });
 }
 async function setupProjectsWatcher() {
@@ -401,13 +399,11 @@ function handleShellConnection(ws) {
                     const geminiPath = process.env.GEMINI_PATH || "gemini";
                     const cmd = process.platform === "win32"
                         ? "cmd"
-                        :
-                            process.env.GEMINI_PATH || `which ${geminiPath}`;
+                        : process.env.GEMINI_PATH || `which ${geminiPath}`;
                     try {
                         const cmd = process.platform === "win32"
                             ? "cmd"
-                            :
-                                process.env.GEMINI_PATH || `which ${geminiPath}`;
+                            : process.env.GEMINI_PATH || `which ${geminiPath}`;
                         const args = [];
                         if (process.platform === "win32") {
                             args.push("/c");
@@ -449,7 +445,8 @@ function handleShellConnection(ws) {
                     }
                     let geminiCommand = geminiPath;
                     if (hasSession && sessionId) {
-                        geminiCommand = `${geminiPath} --resume ${sessionId} || ${geminiPath}`;
+                        geminiCommand =
+                            `${geminiPath} --resume ${sessionId} || ${geminiPath}`;
                     }
                     const shellCommand = `cd "${projectPath}" && ${geminiCommand}`;
                     const isWindows = process.platform === "win32";
@@ -458,10 +455,8 @@ function handleShellConnection(ws) {
                         ? ["/c", shellCommand]
                         : ["-c", shellCommand];
                     const homeDir = isWindows
-                        ?
-                            process.env.USERPROFILE
-                        :
-                            process.env.HOME || "/";
+                        ? process.env.USERPROFILE
+                        : process.env.HOME || "/";
                     shellProcess = pty.spawn(shell, shellArgs, {
                         name: "xterm-256color",
                         cols: 80,
@@ -615,7 +610,8 @@ app.post("/api/transcribe", authenticateToken, async (req, res) => {
                         case "prompt":
                             systemMessage =
                                 "You are an expert prompt engineer who creates clear, detailed, and effective prompts.";
-                            prompt = `You are an expert prompt engineer. Transform the following rough instruction into a clear, detailed, and context-aware AI prompt.
+                            prompt =
+                                `You are an expert prompt engineer. Transform the following rough instruction into a clear, detailed, and context-aware AI prompt.
 
 Your enhanced prompt should:
 1. Be specific and unambiguous
@@ -636,7 +632,8 @@ Enhanced prompt:`;
                             systemMessage =
                                 "You are a helpful assistant that formats ideas into clear, actionable instructions for AI agents.";
                             temperature = 0.5;
-                            prompt = `Transform the following idea into clear, well-structured instructions that an AI agent can easily understand and execute.
+                            prompt =
+                                `Transform the following idea into clear, well-structured instructions that an AI agent can easily understand and execute.
 
 IMPORTANT RULES:
 - Format as clear, step-by-step instructions
@@ -694,7 +691,8 @@ app.post("/api/projects/:projectName/upload-images", authenticateToken, async (r
                 cb(null, uploadDir);
             },
             filename: (req, file, cb) => {
-                const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+                const uniqueSuffix = Date.now() + "-" +
+                    Math.round(Math.random() * 1e9);
                 const sanitizedName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, "_");
                 cb(null, uniqueSuffix + "-" + sanitizedName);
             },
@@ -787,12 +785,11 @@ async function getFileTree(dirPath, maxDepth = 3, currentDepth = 0, showHidden =
                 const ownerPerm = (mode >> 6) & 7;
                 const groupPerm = (mode >> 3) & 7;
                 const otherPerm = mode & 7;
-                item.permissions =
-                    ((mode >> 6) & 7).toString() +
-                        ((mode >> 3) & 7).toString() +
-                        (mode & 7).toString();
-                item.permissionsRwx =
-                    permToRwx(ownerPerm) + permToRwx(groupPerm) + permToRwx(otherPerm);
+                item.permissions = ((mode >> 6) & 7).toString() +
+                    ((mode >> 3) & 7).toString() +
+                    (mode & 7).toString();
+                item.permissionsRwx = permToRwx(ownerPerm) + permToRwx(groupPerm) +
+                    permToRwx(otherPerm);
             }
             catch (statError) {
                 item.size = 0;

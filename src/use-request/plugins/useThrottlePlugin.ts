@@ -1,10 +1,13 @@
-import type { DebouncedFunc, ThrottleSettings } from 'lodash-es';
-import { throttle } from 'lodash-es';
-import { useEffect, useRef } from 'react';
+import type { DebouncedFunc, ThrottleSettings } from "lodash-es";
+import { throttle } from "lodash-es";
+import { useEffect, useRef } from "react";
 
-import type { Plugin } from '../type.ts';
+import type { Plugin } from "../type.ts";
 
-const useThrottlePlugin: Plugin<any, any[]> = (fetchInstance, { throttleLeading, throttleTrailing, throttleWait }) => {
+const useThrottlePlugin: Plugin<any, any[]> = (
+  fetchInstance,
+  { throttleLeading, throttleTrailing, throttleWait },
+) => {
   const throttledRef = useRef<DebouncedFunc<any>>(null);
 
   const options: ThrottleSettings = {};
@@ -20,11 +23,11 @@ const useThrottlePlugin: Plugin<any, any[]> = (fetchInstance, { throttleLeading,
       const _originRunAsync = fetchInstance.runAsync.bind(fetchInstance);
       //@ts-ignore
       throttledRef.current = throttle(
-        callback => {
+        (callback) => {
           callback();
         },
         throttleWait,
-        options
+        options,
       );
 
       // throttle runAsync should be promise
@@ -54,7 +57,7 @@ const useThrottlePlugin: Plugin<any, any[]> = (fetchInstance, { throttleLeading,
   return {
     onCancel: () => {
       throttledRef.current?.cancel();
-    }
+    },
   };
 };
 

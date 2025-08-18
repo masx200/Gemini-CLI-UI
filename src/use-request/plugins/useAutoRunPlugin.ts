@@ -1,11 +1,11 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import type { Plugin } from '../type.ts';
+import type { Plugin } from "../type.ts";
 
 // support refreshDeps & ready
 const useAutoRunPlugin: Plugin<any, any[]> = (
   fetchInstance,
-  { manual, params = {}, ready = true, refreshDepsAction }
+  { manual, params = {}, ready = true, refreshDepsAction },
 ) => {
   useEffect(() => {
     if (!manual && ready) {
@@ -21,17 +21,17 @@ const useAutoRunPlugin: Plugin<any, any[]> = (
     onBefore: () => {
       if (!ready) {
         return {
-          stopNow: true
+          stopNow: true,
         };
       }
       return null;
-    }
+    },
   };
 };
 
 useAutoRunPlugin.onInit = ({ manual, ready = true }) => {
   return {
-    loading: !manual && ready
+    loading: !manual && ready,
   };
 };
 
