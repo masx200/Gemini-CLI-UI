@@ -4,8 +4,12 @@ import react from "@vitejs/plugin-react";
 export default defineConfig(({ command, mode }) => {
   // Load env file based on `mode` in the current working directory.
   const env = loadEnv(mode, process.cwd(), "");
-
+  const isProduction = mode === "production";
   return {
+    esbuild: {
+      // 生产环境下删除所有 console.* 和 debugger
+      drop: isProduction ? ["console", "debugger"] : [],
+    },
     plugins: [react()],
     server: {
       port: parseInt(env.VITE_PORT) || 4009,

@@ -18,6 +18,8 @@ import {
 } from "react";
 
 //@ts-ignore
+import { MCPSERVERSTATUS } from "./MCPSERVERSTATUS.tsx";
+//@ts-ignore
 import { Button } from "./ui/button.jsx";
 export interface Project {
   name: string;
@@ -472,7 +474,7 @@ export default function McpServerManagement({
     importMode: "form", // 'form' or 'json'
   });
 
-  console.log(mcpFormData);
+  // console.log(mcpFormData);
   const [showMcpForm, setShowMcpForm] = useState(false);
 
   const [editingMcpServer, setEditingMcpServer] =
@@ -1343,6 +1345,8 @@ export default function McpServerManagement({
           </div>
         </div>
       )}
+
+      <MCPSERVERSTATUS></MCPSERVERSTATUS>
     </>
   );
 }

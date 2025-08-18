@@ -15,10 +15,11 @@ export function createQwenProxy(target, username, password, pathFilter, pathPref
                 method: req.method,
                 body: JSON.stringify(req.body),
             });
-            console.log(response);
+            console.log("response", response);
+            console.log("headers", response.headers);
             if (response.ok) {
                 const data = await response.json();
-                for (const key of response.headers.keys()) {
+                for (const key of Object.keys(Object.fromEntries(response.headers))) {
                     res.status(response.status);
                     res.header(key, response.headers.get(key));
                 }

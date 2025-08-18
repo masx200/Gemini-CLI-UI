@@ -5,6 +5,7 @@
   "type": "module",
   "main": "server/index.js",
   "scripts": {
+    "test":"vitest run",
     "watch": "tsc --watch",
     "watch:server": "tsc --watch -p tsconfig-server.json",
     "dev": "concurrently --kill-others \"nodemon server/index.js\" \"yarn run client\" \"yarn run watch\" \"yarn run watch:server\"",
@@ -83,6 +84,7 @@
     "tailwind-merge": "^3.3.1",
     "typescript": "^5.9.2",
     "uuid": "^11.1.0",
+    "vitest": "^3.2.4",
     "ws": "^8.18.3",
     "xterm": "^5.3.0",
     "xterm-addon-fit": "^0.8.0"

@@ -118,6 +118,7 @@ function AppContent() {
     let resizeTimeout: number | undefined;
     const debouncedCheckMobile = () => {
       clearTimeout(resizeTimeout);
+      //@ts-ignore
       resizeTimeout = setTimeout(checkMobile, 150);
     };
 
