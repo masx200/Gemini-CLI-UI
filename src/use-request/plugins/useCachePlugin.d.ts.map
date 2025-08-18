@@ -1,1 +1,1 @@
-{"version":3,"file":"useCachePlugin.d.ts","sourceRoot":"","sources":["useCachePlugin.ts"],"names":[],"mappings":"AAGA,OAAO,KAAK,EAAE,MAAM,EAAE,MAAM,YAAY,CAAC;AAMzC,QAAA,MAAM,cAAc,EAAE,MAAM,CAAC,GAAG,EAAE,GAAG,EAAE,CA4HtC,CAAC;AAEF,eAAe,cAAc,CAAC"}
+{"version":3,"file":"useCachePlugin.d.ts","sourceRoot":"","sources":["useCachePlugin.ts"],"names":[],"mappings":"AAGA,OAAO,KAAK,EAAE,MAAM,EAAE,MAAM,YAAY,CAAC;AAMzC,QAAA,MAAM,cAAc,EAAE,MAAM,CAAC,GAAG,EAAE,GAAG,EAAE,CAsItC,CAAC;AAEF,eAAe,cAAc,CAAC"}

@@ -1,1 +1,1 @@
-{"version":3,"file":"useThrottlePlugin.d.ts","sourceRoot":"","sources":["useThrottlePlugin.ts"],"names":[],"mappings":"AAIA,OAAO,KAAK,EAAE,MAAM,EAAE,MAAM,YAAY,CAAC;AAEzC,QAAA,MAAM,iBAAiB,EAAE,MAAM,CAAC,GAAG,EAAE,GAAG,EAAE,CAoDzC,CAAC;AAEF,eAAe,iBAAiB,CAAC"}
+{"version":3,"file":"useThrottlePlugin.d.ts","sourceRoot":"","sources":["useThrottlePlugin.ts"],"names":[],"mappings":"AAIA,OAAO,KAAK,EAAE,MAAM,EAAE,MAAM,YAAY,CAAC;AAEzC,QAAA,MAAM,iBAAiB,EAAE,MAAM,CAAC,GAAG,EAAE,GAAG,EAAE,CAuDzC,CAAC;AAEF,eAAe,iBAAiB,CAAC"}

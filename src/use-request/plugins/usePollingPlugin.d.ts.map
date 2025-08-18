@@ -1,1 +1,1 @@
-{"version":3,"file":"usePollingPlugin.d.ts","sourceRoot":"","sources":["usePollingPlugin.ts"],"names":[],"mappings":"AAGA,OAAO,KAAK,EAAE,MAAM,EAAW,MAAM,YAAY,CAAC;AAIlD,QAAA,MAAM,gBAAgB,EAAE,MAAM,CAAC,GAAG,EAAE,GAAG,EAAE,CA8DxC,CAAC;AAEF,eAAe,gBAAgB,CAAC"}
+{"version":3,"file":"usePollingPlugin.d.ts","sourceRoot":"","sources":["usePollingPlugin.ts"],"names":[],"mappings":"AAGA,OAAO,KAAK,EAAE,MAAM,EAAW,MAAM,YAAY,CAAC;AAIlD,QAAA,MAAM,gBAAgB,EAAE,MAAM,CAAC,GAAG,EAAE,GAAG,EAAE,CA+DxC,CAAC;AAEF,eAAe,gBAAgB,CAAC"}

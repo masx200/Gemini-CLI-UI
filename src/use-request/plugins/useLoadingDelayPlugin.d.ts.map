@@ -1,1 +1,1 @@
-{"version":3,"file":"useLoadingDelayPlugin.d.ts","sourceRoot":"","sources":["useLoadingDelayPlugin.ts"],"names":[],"mappings":"AAEA,OAAO,KAAK,EAAE,MAAM,EAAW,MAAM,YAAY,CAAC;AAElD,QAAA,MAAM,qBAAqB,EAAE,MAAM,CAAC,GAAG,EAAE,GAAG,EAAE,CAwC7C,CAAC;AAEF,eAAe,qBAAqB,CAAC"}
+{"version":3,"file":"useLoadingDelayPlugin.d.ts","sourceRoot":"","sources":["useLoadingDelayPlugin.ts"],"names":[],"mappings":"AAEA,OAAO,KAAK,EAAE,MAAM,EAAW,MAAM,YAAY,CAAC;AAElD,QAAA,MAAM,qBAAqB,EAAE,MAAM,CAAC,GAAG,EAAE,GAAG,EAAE,CA2C7C,CAAC;AAEF,eAAe,qBAAqB,CAAC"}
