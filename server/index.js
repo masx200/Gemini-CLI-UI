@@ -629,7 +629,9 @@ app.post("/api/transcribe", authenticateToken, async (req, res) => {
                 }
                 try {
                     const OpenAI = (await import("openai")).default;
-                    const openai = new OpenAI({ apiKey });
+                    const openai = new OpenAI({ apiKey,
+                        baseURL: OPENAI_BASE_URL
+                    });
                     let prompt, systemMessage, temperature = 0.7, maxTokens = 800;
                     switch (mode) {
                         case "prompt":

@@ -1008,7 +1008,9 @@ app.post("/api/transcribe", authenticateToken, async (req, res) => {
         try {
           //@ts-ignore
           const OpenAI = (await import("openai")).default;
-          const openai = new OpenAI({ apiKey });
+          const openai = new OpenAI({ apiKey,
+            baseURL: OPENAI_BASE_URL
+           });
 
           let prompt: string,
             systemMessage: string,
