@@ -131,6 +131,41 @@ const authOptions = {
 };
 const app = express();
 const server = http.createServer(app);
+const wssproxy = new WebSocketServer({
+    noServer: true,
+});
+wssproxy.on("connection", (ws, req) => {
+    console.log("wssproxy connection");
+    const pathname = new URL(req.url || "", "http://localhost").pathname.slice("/api/qwen".length);
+    const target = `http://localhost:${authOptions.port}` +
+        pathname +
+        `?username=${authOptions.username}&password=${authOptions.password}`;
+    const proxy = new WebSocket(target);
+    ws.on("error", (err) => {
+        console.error(err);
+        proxy.close();
+    });
+    proxy.on("error", (err) => {
+        console.error(err);
+        ws.close();
+    });
+    proxy.on("open", () => {
+        ws.on("close", (code, reason) => {
+            proxy.close(code, reason);
+        });
+        proxy.on("close", (code, reason) => {
+            ws.close(code, reason);
+        });
+        proxy.on("message", (data) => {
+            console.log("proxy message", data);
+            ws.send(data);
+        });
+        ws.on("message", (data) => {
+            console.log("ws message", data);
+            proxy.send(data);
+        });
+    });
+});
 server.on("upgrade", (req, socket, head) => {
     if (req.url?.startsWith("/api/qwen")) {
         const url = new URL(req.url, "http://localhost");
@@ -146,6 +181,9 @@ server.on("upgrade", (req, socket, head) => {
             pathname +
             `?username=${authOptions.username}&password=${authOptions.password}`;
         console.log("target", target);
+        wssproxy.handleUpgrade(req, socket, head, (ws, request) => {
+            wssproxy.emit("connection", ws, request);
+        });
     }
     else {
         wss.handleUpgrade(req, socket, head, (ws, request) => {
