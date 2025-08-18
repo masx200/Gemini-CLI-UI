@@ -584,7 +584,17 @@ router.get(
             };
 
             // Determine transport type and extract config
-            if (config.command) {
+            // Determine transport type and extract config
+            if (
+              config.httpUrl ||
+              config.type == "http" ||
+              config.transport == "http"
+            ) {
+              server.type = "http";
+              server.config.httpUrl = config.httpUrl;
+              server.config.url = config.url;
+              server.config.headers = config.headers || {};
+            } else if (config.command) {
               server.type = "stdio";
               server.config.command = config.command;
               server.config.args = config.args || [];
