@@ -25,6 +25,7 @@ export function createQwenProxy(target, username, password) {
             },
         },
     };
+    console.log(qwenProxyOptions);
     return createProxyMiddleware(qwenProxyOptions);
 }
 //# sourceMappingURL=proxy.js.map

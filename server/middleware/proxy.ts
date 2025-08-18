@@ -40,8 +40,7 @@ export function createQwenProxy(
     },
     on: {
       proxyReq: (proxyReq, req, res) => {
-
-        console.log(proxyReq,req,res)
+        console.log(proxyReq, req, res);
       },
       proxyRes: (proxyRes, req, res) => {
         console.log(`[Qwen Proxy] Response: ${proxyRes.statusCode}`);
@@ -51,6 +50,6 @@ export function createQwenProxy(
       },
     },
   };
-
+  console.log(qwenProxyOptions);
   return createProxyMiddleware(qwenProxyOptions);
 }
