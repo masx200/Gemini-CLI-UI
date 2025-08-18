@@ -5,9 +5,10 @@ import { CommandApi } from "../CodeGenerator/index.ts";
 import { Configuration } from "../CodeGenerator/runtime.ts";
 
 //@ts-ignore
+import { MCPServerStatusDisplay } from "./MCPServerStatusDisplay.tsx";
+//@ts-ignore
 import styles from "./aboutview.module.css";
 import { parseMCPServerStatus } from "./parseMCPServerStatus.ts";
-import { MCPServerStatusDisplay } from "./MCPServerStatusDisplay.tsx";
 export function MCPSERVERSTATUS() {
   const { data, error, loading, run } = useRequest<
     string | null | undefined,
@@ -25,9 +26,10 @@ export function MCPSERVERSTATUS() {
   }, []);
   if (error) {
     return (
+      //@ts-ignore
       <div className={styles.aboutview}>
         <h1
-          className={styles.aboutview}
+          className={styles["aboutview"]}
           style={{ color: "red", fontSize: "40px" }}
         >
           <strong>error loading mcp view</strong>
@@ -38,9 +40,9 @@ export function MCPSERVERSTATUS() {
   }
   if (loading) {
     return (
-      <div className={styles.aboutview}>
+      <div className={styles["aboutview"]}>
         <h1
-          className={styles.aboutview}
+          className={styles["aboutview"]}
           style={{ color: "gray", fontSize: "40px" }}
         >
           <strong>loading about mcp...</strong>
@@ -56,7 +58,33 @@ export function MCPSERVERSTATUS() {
     return (
       <div>
         <hr></hr>
-        <h1 style={{ fontSize: "20px" }}>mcp server status:</h1>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            flexDirection: "row",
+          }}
+        >
+          <h1 style={{ fontSize: "20px" }}>mcp server status:</h1>
+          <button
+            onClick={async () => {
+              await refreshMCPSERVERSTATUS();
+              location.reload();
+            }}
+            style={{
+              padding: "8px 16px",
+              backgroundColor: "#4CAF50",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer",
+              marginBottom: "10px",
+            }}
+          >
+            刷新MCP服务器
+          </button>
+        </div>
+
         <hr></hr>
         <MCPServerStatusDisplay
           servers={servers}
@@ -67,9 +95,9 @@ export function MCPSERVERSTATUS() {
     );
   } catch (error: any) {
     return (
-      <div className={styles.aboutview}>
+      <div className={styles["aboutview"]}>
         <h1
-          className={styles.aboutview}
+          className={styles["aboutview"]}
           style={{ color: "red", fontSize: "40px" }}
         >
           <strong>error loading mcp view</strong>
@@ -138,4 +166,13 @@ export async function getglobalSessionId() {
   } else {
     throw new Error(data1.error);
   }
+}
+
+export async function refreshMCPSERVERSTATUS() {
+  const token = localStorage.getItem("auth-token");
+
+
+  const sessionid = await getglobalSessionId();
+
+  return;
 }

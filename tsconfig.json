@@ -10,7 +10,9 @@
     // See also https://aka.ms/tsconfig/module
     "module": "nodenext",
     "target": "esnext",
-    "types": [],
+    "types": [
+      "vite/client"
+    ],
     // For nodejs:
     // "lib": ["esnext"],
     // "types": ["node"],

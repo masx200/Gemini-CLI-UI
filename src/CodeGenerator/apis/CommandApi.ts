@@ -73,7 +73,6 @@ export interface CommandApiInterface {
  * 
  */
 export class CommandApi extends runtime.BaseAPI implements CommandApiInterface {
-
     /**
      * 调用mcp命令获取MCP服务器列表
      * /command/mcp
@@ -104,7 +103,6 @@ export class CommandApi extends runtime.BaseAPI implements CommandApiInterface {
         const response = await this.commandMcpPostRaw(requestParameters);
         return await response.value();
     }
-
     /**
      * 调用mcp命令获取MCP服务器列表
      * /command/mcp
