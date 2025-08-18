@@ -146,7 +146,7 @@ const authOptions = {
     username: username,
     password: password,
     document: "false",
-    port: Number(Math.round(Math.random() * 10000 + 30000)),
+    port: Number(Math.round(Math.random() * 30000 + 20000)),
     host: "0.0.0.0",
 };
 app.use(createQwenProxy(`http://localhost:${authOptions.port}`, username, password));

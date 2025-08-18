@@ -15,7 +15,7 @@ export function createQwenProxy(target, username, password) {
         },
         on: {
             proxyReq: (proxyReq, req, res) => {
-                console.log(`[Qwen Proxy] ${req.method} ${req.url} -> ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`);
+                console.log(proxyReq, req, res);
             },
             proxyRes: (proxyRes, req, res) => {
                 console.log(`[Qwen Proxy] Response: ${proxyRes.statusCode}`);
