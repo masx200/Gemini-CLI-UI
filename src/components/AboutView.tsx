@@ -82,9 +82,9 @@ export default function AboutView() {
       <div className={styles.aboutview}>
         <h1
           className={styles.aboutview}
-          style={{ color: "red", fontSize: "40px" }}
+          style={{ color: "gray", fontSize: "40px" }}
         >
-          <strong>loading about view</strong>
+          <strong>loading about view...</strong>
         </h1>
       </div>
     );
