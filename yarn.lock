@@ -1377,6 +1377,7 @@ __metadata:
     "@types/crypto-js": "npm:^4"
     "@types/express": "npm:^5.0.3"
     "@types/express-serve-static-core": "npm:^5.0.7"
+    "@types/jsonwebtoken": "npm:^9.0.10"
     "@types/lodash-es": "npm:^4"
     "@types/mime-types": "npm:^3.0.1"
     "@types/multer": "npm:^2.0.0"
@@ -1992,6 +1993,16 @@ __metadata:
   version: 2.0.5
   resolution: "@types/http-errors@npm:2.0.5"
   checksum: 10c0/00f8140fbc504f47356512bd88e1910c2f07e04233d99c88c854b3600ce0523c8cd0ba7d1897667243282eb44c59abb9245959e2428b9de004f93937f52f7c15
+  languageName: node
+  linkType: hard
+
+"@types/jsonwebtoken@npm:^9.0.10":
+  version: 9.0.10
+  resolution: "@types/jsonwebtoken@npm:9.0.10"
+  dependencies:
+    "@types/ms": "npm:*"
+    "@types/node": "npm:*"
+  checksum: 10c0/0688ac8fb75f809201cb7e18a12b9d80ce539cb9dd27e1b01e11807cb1a337059e899b8ee3abc3f2c9417f02e363a3069d9eab9ef9724b1da1f0e10713514f94
   languageName: node
   linkType: hard
 
