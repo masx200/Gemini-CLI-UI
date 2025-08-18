@@ -151,18 +151,20 @@ wssproxy.on("connection", (ws, req) => {
     });
     proxy.on("open", () => {
         ws.on("close", (code, reason) => {
-            proxy.close(code, reason);
+            console.log("ws close", code, reason);
+            proxy.close();
         });
         proxy.on("close", (code, reason) => {
-            ws.close(code, reason);
+            console.log("proxy close", code, reason);
+            ws.close();
         });
         proxy.on("message", (data) => {
-            console.log("proxy message", data);
-            ws.send(data);
+            console.log("proxy message", data.toString());
+            ws.send(data.toString());
         });
         ws.on("message", (data) => {
-            console.log("ws message", data);
-            proxy.send(data);
+            console.log("ws message", data.toString());
+            proxy.send(data.toString());
         });
     });
 });
