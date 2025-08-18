@@ -120,9 +120,6 @@ async function setupProjectsWatcher() {
     catch (error) {
     }
 }
-const app = express();
-const server = http.createServer(app);
-import httpProxy from "http-proxy";
 const username = uuidv4();
 const password = uuidv4();
 const authOptions = {
@@ -132,14 +129,8 @@ const authOptions = {
     port: Number(Math.round(Math.random() * 30000 + 20000)),
     host: "0.0.0.0",
 };
-const proxy = httpProxy.createProxyServer({
-    target: {
-        host: "localhost",
-        port: Number(authOptions.port),
-    },
-    ws: true,
-    changeOrigin: true,
-});
+const app = express();
+const server = http.createServer(app);
 server.on("upgrade", (req, socket, head) => {
     if (req.url?.startsWith("/api/qwen")) {
         const url = new URL(req.url, "http://localhost");
@@ -151,13 +142,10 @@ server.on("upgrade", (req, socket, head) => {
             return;
         }
         const pathname = new URL(req.url, "http://localhost").pathname.slice("/api/qwen".length);
-        proxy.ws(req, socket, head, {
-            target: `http://localhost:${authOptions.port}` +
-                pathname +
-                `?username=${authOptions.username}&password=${authOptions.password}`,
-        }, (err) => {
-            console.error(err);
-        });
+        const target = `http://localhost:${authOptions.port}` +
+            pathname +
+            `?username=${authOptions.username}&password=${authOptions.password}`;
+        console.log("target", target);
     }
     else {
         wss.handleUpgrade(req, socket, head, (ws, request) => {
@@ -394,7 +382,7 @@ app.get("/api/projects/:projectName/files", authenticateToken, async (req, res) 
     }
 });
 wss.on("connection", (ws, request) => {
-    const url = request.url;
+    const url = request.url || "";
     const urlObj = new URL(url, "http://localhost");
     const pathname = urlObj.pathname;
     if (pathname === "/shell") {

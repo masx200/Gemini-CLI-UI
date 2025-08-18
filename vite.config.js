@@ -14,6 +14,10 @@ export default defineConfig(({ command, mode }) => {
     server: {
       port: parseInt(env.VITE_PORT) || 4009,
       proxy: {
+        "/api/qwen/command/mcp/refresh": {
+          target: `http://localhost:${env.PORT || 4008}`,
+          ws: true,
+        },
         "/api": `http://localhost:${env.PORT || 4008}`,
         "/ws": {
           target: `ws://localhost:${env.PORT || 4008}`,
