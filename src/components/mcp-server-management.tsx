@@ -50,7 +50,7 @@ export interface MCPServerData {
   config: {
     httpUrl: string;
     command: string;
-    args: never[];
+    args: any[];
     env: {};
     url: string;
     headers: {};
@@ -462,7 +462,7 @@ export default function McpServerManagement({
     config: {
       httpUrl: "",
       command: "",
-      args: [],
+      args: [] as string[],
       env: {},
       url: "",
       headers: {},

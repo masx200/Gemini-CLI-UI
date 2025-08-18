@@ -1078,7 +1078,7 @@ function GitPanel({ selectedProject, isMobile }) {
                                   )
                                   : <Sparkles className="w-4 h-4" />}
                               </button>
-                              <div style={{ display: "none" }}>
+                              <div style={{ display: "block" }}>
                                 <MicButton
                                   onTranscript={(transcript) =>
                                     setCommitMessage(transcript)}

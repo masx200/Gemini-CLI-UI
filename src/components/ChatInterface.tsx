@@ -26,11 +26,14 @@ import React, {
 } from "react";
 import { useDropzone } from "react-dropzone";
 import ReactMarkdown from "react-markdown";
-import TodoList from "./TodoList";
+//@ts-ignore
+import TodoList from "./TodoList.jsx";
 
-import { api } from "../utils/api";
-
+import { api } from "../utils/api.ts";
+//@ts-ignore
 import { MicButton } from "./MicButton.jsx";
+import QwenStatus from "./QwenStatus.tsx";
+import QwenLogo from "./QwenLogo.tsx";
 
 // Memoized message component to prevent unnecessary re-renders
 const MessageComponent = memo(
@@ -43,6 +46,15 @@ const MessageComponent = memo(
     onShowSettings,
     autoExpandTools,
     showRawParameters,
+  }: {
+    message: any;
+    index: any;
+    prevMessage: any;
+    createDiff: any;
+    onFileOpen: any;
+    onShowSettings: any;
+    autoExpandTools: any;
+    showRawParameters: any;
   }) => {
     const isGrouped =
       prevMessage &&
@@ -61,8 +73,9 @@ const MessageComponent = memo(
             if (entry.isIntersecting && !isExpanded) {
               setIsExpanded(true);
               // Find all details elements and open them
+              //@ts-ignore
               const details = messageRef.current.querySelectorAll("details");
-              details.forEach((detail) => {
+              details.forEach((detail: { open: boolean }) => {
                 detail.open = true;
               });
             }
@@ -108,15 +121,23 @@ const MessageComponent = memo(
               </div>
               {message.images && message.images.length > 0 && (
                 <div className="mt-2 grid grid-cols-2 gap-2">
-                  {message.images.map((img, idx) => (
-                    <img
-                      key={idx}
-                      src={img.data}
-                      alt={img.name}
-                      className="rounded-lg max-w-full h-auto cursor-pointer hover:opacity-90 transition-opacity"
-                      onClick={() => window.open(img.data, "_blank")}
-                    />
-                  ))}
+                  {message.images.map(
+                    (
+                      img: {
+                        data: string | URL | undefined;
+                        name: string | undefined;
+                      },
+                      idx: React.Key | null | undefined
+                    ) => (
+                      <img
+                        key={idx}
+                        src={img.data?.toString()}
+                        alt={img.name}
+                        className="rounded-lg max-w-full h-auto cursor-pointer hover:opacity-90 transition-opacity"
+                        onClick={() => window.open(img.data, "_blank")}
+                      />
+                    )
+                  )}
                 </div>
               )}
               <div className="text-xs text-blue-100 mt-1 text-right">
@@ -140,7 +161,7 @@ const MessageComponent = memo(
                   </div>
                 ) : (
                   <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm flex-shrink-0 p-1">
-                    <qwenLogo className="w-full h-full" />
+                    <QwenLogo className="w-full h-full" />
                   </div>
                 )}
                 <div className="text-sm font-medium text-gray-900 dark:text-white">
@@ -279,30 +300,50 @@ const MessageComponent = memo(
                                     {createDiff(
                                       input.old_string,
                                       input.new_string
-                                    ).map((diffLine, i) => (
-                                      <div key={i} className="flex">
-                                        <span
-                                          className={`w-8 text-center border-r ${
-                                            diffLine.type === "removed"
-                                              ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800"
-                                              : "bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border-green-200 dark:border-green-800"
-                                          }`}
-                                        >
-                                          {diffLine.type === "removed"
-                                            ? "-"
-                                            : "+"}
-                                        </span>
-                                        <span
-                                          className={`px-2 py-0.5 flex-1 whitespace-pre-wrap ${
-                                            diffLine.type === "removed"
-                                              ? "bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200"
-                                              : "bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200"
-                                          }`}
-                                        >
-                                          {diffLine.content}
-                                        </span>
-                                      </div>
-                                    ))}
+                                    ).map(
+                                      (
+                                        diffLine: {
+                                          type: string;
+                                          content:
+                                            | string
+                                            | number
+                                            | boolean
+                                            | React.ReactElement<
+                                                any,
+                                                | string
+                                                | React.JSXElementConstructor<any>
+                                              >
+                                            | Iterable<React.ReactNode>
+                                            | React.ReactPortal
+                                            | null
+                                            | undefined;
+                                        },
+                                        i: React.Key | null | undefined
+                                      ) => (
+                                        <div key={i} className="flex">
+                                          <span
+                                            className={`w-8 text-center border-r ${
+                                              diffLine.type === "removed"
+                                                ? "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800"
+                                                : "bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border-green-200 dark:border-green-800"
+                                            }`}
+                                          >
+                                            {diffLine.type === "removed"
+                                              ? "-"
+                                              : "+"}
+                                          </span>
+                                          <span
+                                            className={`px-2 py-0.5 flex-1 whitespace-pre-wrap ${
+                                              diffLine.type === "removed"
+                                                ? "bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200"
+                                                : "bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200"
+                                            }`}
+                                          >
+                                            {diffLine.content}
+                                          </span>
+                                        </div>
+                                      )
+                                    )}
                                   </div>
                                 </div>
                                 {showRawParameters && (
@@ -346,7 +387,20 @@ const MessageComponent = memo(
                       if (message.toolName === "Write") {
                         // Debug - Write tool detected
                         try {
-                          let input;
+                          let input: {
+                            file_path:
+                              | string
+                              | number
+                              | boolean
+                              | React.ReactElement<
+                                  any,
+                                  string | React.JSXElementConstructor<any>
+                                >
+                              | Iterable<React.ReactNode>
+                              | null
+                              | undefined;
+                            content: undefined;
+                          };
                           // Handle both JSON string and already parsed object
                           if (typeof message.toolInput === "string") {
                             input = JSON.parse(message.toolInput);
@@ -386,7 +440,10 @@ const MessageComponent = memo(
                                     }}
                                     className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline font-mono"
                                   >
-                                    {input.file_path.split("/").pop()}
+                                    {
+                                      //@ts-ignore
+                                      input.file_path.split("/").pop()
+                                    }
                                   </button>
                                 </summary>
                                 <div className="mt-3">
@@ -410,7 +467,25 @@ const MessageComponent = memo(
                                     </div>
                                     <div className="text-xs font-mono">
                                       {createDiff("", input.content).map(
-                                        (diffLine, i) => (
+                                        (
+                                          diffLine: {
+                                            type: string;
+                                            content:
+                                              | string
+                                              | number
+                                              | boolean
+                                              | React.ReactElement<
+                                                  any,
+                                                  | string
+                                                  | React.JSXElementConstructor<any>
+                                                >
+                                              | Iterable<React.ReactNode>
+                                              | React.ReactPortal
+                                              | null
+                                              | undefined;
+                                          },
+                                          i: React.Key | null | undefined
+                                        ) => (
                                           <div key={i} className="flex">
                                             <span
                                               className={`w-8 text-center border-r ${
@@ -824,7 +899,10 @@ const MessageComponent = memo(
                               promptLines.find((line) =>
                                 line.includes("Do you want to proceed?")
                               ) || "";
-                            const options = [];
+                            const options: {
+                              number: string | undefined;
+                              text: string;
+                            }[] = [];
 
                             // Parse numbered options (1. Yes, 2. No, etc.)
                             promptLines.forEach((line) => {
@@ -833,6 +911,7 @@ const MessageComponent = memo(
                               if (optionMatch) {
                                 options.push({
                                   number: optionMatch[1],
+                                  //@ts-ignore
                                   text: optionMatch[2].trim(),
                                 });
                               }
@@ -1122,15 +1201,21 @@ const MessageComponent = memo(
                       {(() => {
                         const lines = message.content
                           .split("\n")
-                          .filter((line) => line.trim());
+                          .filter((line: string) => line.trim());
                         const questionLine =
-                          lines.find((line) => line.includes("?")) ||
+                          lines.find((line: string | string[]) =>
+                            line.includes("?")
+                          ) ||
                           lines[0] ||
                           "";
-                        const options = [];
+                        const options: {
+                          number: any;
+                          text: any;
+                          isSelected: any;
+                        }[] = [];
 
                         // Parse the menu options
-                        lines.forEach((line) => {
+                        lines.forEach((line: string) => {
                           // Match lines like "❯ 1. Yes" or "  2. No"
                           const optionMatch =
                             line.match(/[❯\s]*(\d+)\.\s+(.+)/);
@@ -1138,6 +1223,7 @@ const MessageComponent = memo(
                             const isSelected = line.includes("❯");
                             options.push({
                               number: optionMatch[1],
+                              //@ts-ignore
                               text: optionMatch[2].trim(),
                               isSelected,
                             });
@@ -1290,6 +1376,7 @@ const MessageComponent = memo(
                         components={{
                           code: ({
                             node,
+                            //@ts-ignore
                             inline,
                             className,
                             children,
@@ -1366,11 +1453,22 @@ const MessageComponent = memo(
 );
 
 // ImageAttachment component for displaying image previews
-const ImageAttachment = ({ file, onRemove, uploadProgress, error }) => {
-  const [preview, setPreview] = useState(null);
+const ImageAttachment = ({
+  file,
+  onRemove,
+  uploadProgress,
+  error,
+}: {
+  file: any;
+  onRemove: any;
+  uploadProgress: any;
+  error: any;
+}) => {
+  const [preview, setPreview] = useState<string | null>(null);
 
   useEffect(() => {
     const url = URL.createObjectURL(file);
+    //@ts-ignore
     setPreview(url);
     return () => URL.revokeObjectURL(url);
   }, [file]);
@@ -1378,7 +1476,7 @@ const ImageAttachment = ({ file, onRemove, uploadProgress, error }) => {
   return (
     <div className="relative group">
       <img
-        src={preview}
+        src={preview?.toString()}
         alt={file.name}
         className="w-20 h-20 object-cover rounded"
       />
@@ -1450,6 +1548,22 @@ function ChatInterface({
   autoExpandTools,
   showRawParameters,
   autoScrollToBottom,
+}: {
+  selectedProject: any;
+  selectedSession: any;
+  ws: any;
+  sendMessage: any;
+  messages: any;
+  onFileOpen: any;
+  onInputFocusChange: any;
+  onSessionActive: any;
+  onSessionInactive: any;
+  onReplaceTemporarySession: any;
+  onNavigateToSession: any;
+  onShowSettings: any;
+  autoExpandTools: any;
+  showRawParameters: any;
+  autoScrollToBottom: any;
 }) {
   const [input, setInput] = useState(() => {
     if (typeof window !== "undefined" && selectedProject) {
@@ -1467,7 +1581,7 @@ function ChatInterface({
     return [];
   });
   const [isLoading, setIsLoading] = useState(false);
-  const [currentSessionId, setCurrentSessionId] = useState(null);
+  const [currentSessionId, setCurrentSessionId] = useState<any>(null);
   const [isInputFocused, setIsInputFocused] = useState(false);
   const [sessionMessages, setSessionMessages] = useState([]);
   const [isYoloMode, setIsYoloMode] = useState(() => {
@@ -1493,41 +1607,43 @@ function ChatInterface({
   const [isLoadingSessionMessages, setIsLoadingSessionMessages] =
     useState(false);
   const [isSystemSessionChange, setIsSystemSessionChange] = useState(false);
+  //@ts-ignore
   const [permissionMode, setPermissionMode] = useState("default");
-  const [attachedImages, setAttachedImages] = useState([]);
+  const [attachedImages, setAttachedImages] = useState<any>([]);
   const [uploadingImages, setUploadingImages] = useState(new Map());
   const [imageErrors, setImageErrors] = useState(new Map());
   const messagesEndRef = useRef(null);
-  const textareaRef = useRef(null);
-  const scrollContainerRef = useRef(null);
+  const textareaRef = useRef<any>(null);
+  const scrollContainerRef = useRef<any>(null);
+  //@ts-ignore
   const [debouncedInput, setDebouncedInput] = useState("");
   const [showFileDropdown, setShowFileDropdown] = useState(false);
-  const [fileList, setFileList] = useState([]);
-  const [filteredFiles, setFilteredFiles] = useState([]);
+  const [fileList, setFileList] = useState<any>([]);
+  const [filteredFiles, setFilteredFiles] = useState<any[]>([]);
   const [selectedFileIndex, setSelectedFileIndex] = useState(-1);
   const [cursorPosition, setCursorPosition] = useState(0);
   const [atSymbolPosition, setAtSymbolPosition] = useState(-1);
   const [canAbortSession, setCanAbortSession] = useState(false);
   const [isUserScrolledUp, setIsUserScrolledUp] = useState(false);
   const scrollPositionRef = useRef({ height: 0, top: 0 });
-  const [showCommandMenu, setShowCommandMenu] = useState(false);
-  const [slashCommands, setSlashCommands] = useState([]);
-  const [filteredCommands, setFilteredCommands] = useState([]);
+  // const [showCommandMenu, setShowCommandMenu] = useState(false);
+  // const [slashCommands, setSlashCommands] = useState([]);
+  // const [filteredCommands, setFilteredCommands] = useState([]);
   const [isTextareaExpanded, setIsTextareaExpanded] = useState(false);
-  const [selectedCommandIndex, setSelectedCommandIndex] = useState(-1);
-  const [slashPosition, setSlashPosition] = useState(-1);
+  // const [selectedCommandIndex, setSelectedCommandIndex] = useState(-1);
+  // const [slashPosition, setSlashPosition] = useState(-1);
   const [visibleMessageCount, setVisibleMessageCount] = useState(100);
-  const [qwenStatus, setqwenStatus] = useState(null);
+  const [qwenStatus, setQwenStatus] = useState<any>(null);
 
   // Memoized diff calculation to prevent recalculating on every render
   const createDiff = useMemo(() => {
     const cache = new Map();
-    return (oldStr, newStr) => {
+    return (oldStr: string | any[], newStr: string | any[]) => {
       const key = `${oldStr.length}-${newStr.length}-${oldStr.slice(0, 50)}`;
       if (cache.has(key)) {
         return cache.get(key);
       }
-
+      //@ts-ignore
       const result = calculateDiff(oldStr, newStr);
       cache.set(key, result);
       if (cache.size > 100) {
@@ -1539,27 +1655,30 @@ function ChatInterface({
   }, []);
 
   // Load session messages from API
-  const loadSessionMessages = useCallback(async (projectName, sessionId) => {
-    if (!projectName || !sessionId) return [];
+  const loadSessionMessages = useCallback(
+    async (projectName: any, sessionId: any) => {
+      if (!projectName || !sessionId) return [];
 
-    setIsLoadingSessionMessages(true);
-    try {
-      const response = await api.sessionMessages(projectName, sessionId);
-      if (!response.ok) {
-        throw new Error("Failed to load session messages");
+      setIsLoadingSessionMessages(true);
+      try {
+        const response = await api.sessionMessages(projectName, sessionId);
+        if (!response.ok) {
+          throw new Error("Failed to load session messages");
+        }
+        const data = await response.json();
+        return data.messages || [];
+      } catch (error) {
+        // console.error('Error loading session messages:', error);
+        return [];
+      } finally {
+        setIsLoadingSessionMessages(false);
       }
-      const data = await response.json();
-      return data.messages || [];
-    } catch (error) {
-      // console.error('Error loading session messages:', error);
-      return [];
-    } finally {
-      setIsLoadingSessionMessages(false);
-    }
-  }, []);
+    },
+    []
+  );
 
   // Actual diff calculation function
-  const calculateDiff = (oldStr, newStr) => {
+  const calculateDiff = (oldStr: string, newStr: string) => {
     const oldLines = oldStr.split("\n");
     const newLines = newStr.split("\n");
 
@@ -1612,12 +1731,13 @@ function ChatInterface({
     return diffLines;
   };
 
-  const convertSessionMessages = (rawMessages) => {
+  const convertSessionMessages = (rawMessages: any[]) => {
     const converted = [];
     const toolResults = new Map(); // Map tool_use_id to tool result
 
     // First pass: collect all tool results
     for (const msg of rawMessages) {
+      //@ts-ignore
       if (msg.message?.role === "user" && Array.isArray(msg.message?.content)) {
         for (const part of msg.message.content) {
           if (part.type === "tool_result") {
@@ -1718,23 +1838,27 @@ function ChatInterface({
   }, [sessionMessages]);
 
   // Define scroll functions early to avoid hoisting issues in useEffect dependencies
-  const scrollToBottom = useCallback((instant = false) => {
-    if (scrollContainerRef.current) {
-      if (instant) {
-        scrollContainerRef.current.classList.add("scroll-instant");
-        scrollContainerRef.current.scrollTop =
-          scrollContainerRef.current.scrollHeight;
-        // Remove instant class after scroll
-        requestAnimationFrame(() => {
-          scrollContainerRef.current?.classList.remove("scroll-instant");
-        });
-      } else {
-        scrollContainerRef.current.scrollTop =
-          scrollContainerRef.current.scrollHeight;
+  //@ts-ignore
+  const scrollToBottom = useCallback(
+    (instant: React.MouseEvent | boolean = false) => {
+      if (scrollContainerRef.current) {
+        if (instant) {
+          scrollContainerRef.current.classList.add("scroll-instant");
+          scrollContainerRef.current.scrollTop =
+            scrollContainerRef.current.scrollHeight;
+          // Remove instant class after scroll
+          requestAnimationFrame(() => {
+            scrollContainerRef.current?.classList.remove("scroll-instant");
+          });
+        } else {
+          scrollContainerRef.current.scrollTop =
+            scrollContainerRef.current.scrollHeight;
+        }
+        setIsUserScrolledUp(false);
       }
-      setIsUserScrolledUp(false);
-    }
-  }, []);
+    },
+    []
+  );
 
   // Check if user is near the bottom of the scroll container
   const isNearBottom = useCallback(() => {
@@ -1879,11 +2003,11 @@ function ChatInterface({
     // Check on mount and when storage changes
     checkSettings();
 
-    const handleStorageChange = (e) => {
+    const handleStorageChange = (e: StorageEvent) => {
       if (e.key === "qwen-tools-settings") {
         checkSettings();
         // Add a system message to notify settings have been applied
-        setChatMessages((prev) => [
+        setChatMessages((prev: any) => [
           ...prev,
           {
             id: `system-${Date.now()}`,
@@ -1999,7 +2123,7 @@ function ChatInterface({
                   const toolInput = part.input
                     ? JSON.stringify(part.input, null, 2)
                     : "";
-                  setChatMessages((prev) => [
+                  setChatMessages((prev: any) => [
                     ...prev,
                     {
                       type: "assistant",
@@ -2014,7 +2138,7 @@ function ChatInterface({
                   ]);
                 } else if (part.type === "text" && part.text?.trim()) {
                   // Add regular text message
-                  setChatMessages((prev) => [
+                  setChatMessages((prev: any) => [
                     ...prev,
                     {
                       type: "assistant",
@@ -2029,7 +2153,7 @@ function ChatInterface({
               messageData.content.trim()
             ) {
               // Add regular text message
-              setChatMessages((prev) => [
+              setChatMessages((prev: any) => [
                 ...prev,
                 {
                   type: "assistant",
@@ -2047,8 +2171,8 @@ function ChatInterface({
               for (const part of messageData.content) {
                 if (part.type === "tool_result") {
                   // Find the corresponding tool use and update it with the result
-                  setChatMessages((prev) =>
-                    prev.map((msg) => {
+                  setChatMessages((prev: any[]) =>
+                    prev.map((msg: { isToolUse: any; toolId: any }) => {
                       if (msg.isToolUse && msg.toolId === part.tool_use_id) {
                         return {
                           ...msg,
@@ -2068,7 +2192,7 @@ function ChatInterface({
             break;
 
           case "qwen-output":
-            setChatMessages((prev) => [
+            setChatMessages((prev: any) => [
               ...prev,
               {
                 type: "assistant",
@@ -2079,7 +2203,7 @@ function ChatInterface({
             break;
           case "qwen-interactive-prompt":
             // Handle interactive prompts from CLI
-            setChatMessages((prev) => [
+            setChatMessages((prev: any) => [
               ...prev,
               {
                 type: "assistant",
@@ -2092,7 +2216,7 @@ function ChatInterface({
 
           case "qwen-error":
             // console.log('qwen error, setting isLoading to false:', latestMessage.error);
-            setChatMessages((prev) => [
+            setChatMessages((prev: any) => [
               ...prev,
               {
                 type: "error",
@@ -2102,14 +2226,14 @@ function ChatInterface({
             ]);
             setIsLoading(false);
             setCanAbortSession(false);
-            setqwenStatus(null);
+            setQwenStatus(null);
             break;
 
           case "qwen-complete":
             // console.log('qwen completed, setting isLoading to false');
             setIsLoading(false);
             setCanAbortSession(false);
-            setqwenStatus(null);
+            setQwenStatus(null);
 
             const { playNotificationSound } = await import(
               //@ts-ignore
@@ -2147,7 +2271,7 @@ function ChatInterface({
           case "session-aborted":
             setIsLoading(false);
             setCanAbortSession(false);
-            setqwenStatus(null);
+            setQwenStatus(null);
 
             // Session Protection: Mark session as inactive when aborted
             // User or system aborted the conversation, re-enable project updates
@@ -2155,7 +2279,7 @@ function ChatInterface({
               onSessionInactive(currentSessionId);
             }
 
-            setChatMessages((prev) => [
+            setChatMessages((prev: any) => [
               ...prev,
               {
                 type: "assistant",
@@ -2199,7 +2323,7 @@ function ChatInterface({
               }
 
               // Debug - Setting qwen status
-              setqwenStatus(statusInfo);
+              setQwenStatus(statusInfo);
               setIsLoading(true);
               setCanAbortSession(statusInfo.can_interrupt);
             }
@@ -2231,8 +2355,8 @@ function ChatInterface({
     }
   };
 
-  const flattenFileTree = (files, basePath = "") => {
-    let result = [];
+  const flattenFileTree = (files: any, basePath = "") => {
+    let result: any[] = [];
     for (const file of files) {
       const fullPath = basePath ? `${basePath}/${file.name}` : file.name;
       if (file.type === "directory" && file.children) {
@@ -2263,6 +2387,7 @@ function ChatInterface({
         // Filter files based on the text after @
         const filtered = fileList
           .filter(
+            //@ts-ignore
             (file) =>
               file.name.toLowerCase().includes(textAfterAt.toLowerCase()) ||
               file.path.toLowerCase().includes(textAfterAt.toLowerCase())
@@ -2344,6 +2469,7 @@ function ChatInterface({
       // Always scroll to bottom when messages first load (user expects to see latest)
       // Also reset scroll state
       setIsUserScrolledUp(false);
+      //@ts-ignore
       setTimeout(() => scrollToBottom(true), 200); // Instant scroll on initial load
     }
   }, [chatMessages.length > 0, scrollToBottom]); // Trigger when messages first appear
@@ -2381,7 +2507,7 @@ function ChatInterface({
     }
   }, [input]);
 
-  const handleTranscript = useCallback((text) => {
+  const handleTranscript = useCallback((text: string) => {
     if (text.trim()) {
       setInput((prevInput) => {
         const newInput = prevInput.trim() ? `${prevInput} ${text}` : text;
@@ -2414,29 +2540,32 @@ function ChatInterface({
   }, []);
 
   // Handle image files from drag & drop or file picker
-  const handleImageFiles = useCallback((files) => {
-    const validFiles = files.filter((file) => {
-      if (!file.type.startsWith("image/")) {
-        return false;
+  const handleImageFiles = useCallback((files: any[]) => {
+    const validFiles = files.filter(
+      (file: { type: string; size: number; name: any }) => {
+        if (!file.type.startsWith("image/")) {
+          return false;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+          setImageErrors((prev) =>
+            new Map(prev).set(file.name, "File too large (max 5MB)")
+          );
+          return false;
+        }
+        return true;
       }
-      if (file.size > 5 * 1024 * 1024) {
-        setImageErrors((prev) =>
-          new Map(prev).set(file.name, "File too large (max 5MB)")
-        );
-        return false;
-      }
-      return true;
-    });
+    );
 
     if (validFiles.length > 0) {
+      //@ts-ignore
       setAttachedImages((prev) => [...prev, ...validFiles].slice(0, 5)); // Max 5 images
     }
   }, []);
 
   // Handle clipboard paste for images
   const handlePaste = useCallback(
-    async (e) => {
-      const items = Array.from(e.clipboardData.items);
+    async (e: React.ClipboardEvent ) => {
+      const items = Array.from(e.clipboardData.items) as any[];
 
       for (const item of items) {
         if (item.type.startsWith("image/")) {
@@ -2471,22 +2600,44 @@ function ChatInterface({
     noKeyboard: true,
   });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (
+    e: /*
+     * ChatInterface.jsx - Chat Component with Session Protection Integration
+     *
+     * SESSION PROTECTION INTEGRATION:
+     * ===============================
+     *
+     * This component integrates with the Session Protection System to prevent project updates
+     * from interrupting active conversations:
+     *
+     * Key Integration Points:
+     * 1. handleSubmit() - Marks session as active when user sends message (including temp ID for new sessions)
+     * 2. session-created handler - Replaces temporary session ID with real WebSocket session ID
+     * 3. qwen-complete handler - Marks session as inactive when conversation finishes
+     * 4. session-aborted handler - Marks session as inactive when conversation is aborted
+     *
+     * This ensures uninterrupted chat experience by coordinating with App.jsx to pause sidebar updates.
+     */
+    | React.MouseEvent<HTMLButtonElement, MouseEvent>
+      | React.TouchEvent<HTMLButtonElement>
+  ) => {
     e.preventDefault();
     if (!input.trim() || isLoading || !selectedProject) return;
 
     // Upload images first if any
     let uploadedImages = [];
     if (attachedImages.length > 0) {
-      const formData = new FormData();
+      const formData = new FormData() as any;
+      //@ts-ignore
       attachedImages.forEach((file) => {
         formData.append("images", file);
       });
 
       try {
         const token = localStorage.getItem("auth-token");
-        const headers = {};
+        const headers = {} as Record<any, any>;
         if (token) {
+          //@ts-ignore
           headers["Authorization"] = `Bearer ${token}`;
         }
 
@@ -2505,12 +2656,13 @@ function ChatInterface({
 
         const result = await response.json();
         uploadedImages = result.images;
-      } catch (error) {
+      } catch (error: any) {
         // console.error('Image upload failed:', error);
-        setChatMessages((prev) => [
+        setChatMessages((prev: any) => [
           ...prev,
           {
             type: "error",
+            //@ts-ignore
             content: `Failed to upload images: ${error.message}`,
             timestamp: new Date(),
           },
@@ -2526,12 +2678,12 @@ function ChatInterface({
       timestamp: new Date(),
     };
 
-    setChatMessages((prev) => [...prev, userMessage]);
+    setChatMessages((prev: any) => [...prev, userMessage]);
     // console.log('Setting isLoading to true after sending message');
     setIsLoading(true);
     setCanAbortSession(true);
     // Set a default status when starting
-    setqwenStatus({
+    setQwenStatus({
       text: "Processing",
       tokens: 0,
       can_interrupt: true,
@@ -2611,7 +2763,7 @@ function ChatInterface({
     }
   };
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     // Handle file dropdown navigation
     if (showFileDropdown && filteredFiles.length > 0) {
       if (e.key === "ArrowDown") {
@@ -2662,17 +2814,19 @@ function ChatInterface({
       if ((e.ctrlKey || e.metaKey) && !e.shiftKey) {
         // Ctrl+Enter or Cmd+Enter: Send message
         e.preventDefault();
+        //@ts-ignore
         handleSubmit(e);
       } else if (!e.shiftKey && !e.ctrlKey && !e.metaKey) {
         // Plain Enter: Also send message (keeping original behavior)
         e.preventDefault();
+        //@ts-ignore
         handleSubmit(e);
       }
       // Shift+Enter: Allow default behavior (new line)
     }
   };
 
-  const selectFile = (file) => {
+  const selectFile = (file: any) => {
     const textBeforeAt = input.slice(0, atSymbolPosition);
     const textAfterAtQuery = input.slice(atSymbolPosition);
     const spaceIndex = textAfterAtQuery.indexOf(" ");
@@ -2710,7 +2864,13 @@ function ChatInterface({
     }
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: {
+    target: {
+      value: any;
+      selectionStart: React.SetStateAction<number>;
+      style: { height: string };
+    };
+  }) => {
     const newValue = e.target.value;
     setInput(newValue);
     setCursorPosition(e.target.selectionStart);
@@ -2722,16 +2882,17 @@ function ChatInterface({
     }
   };
 
-  const handleTextareaClick = (e) => {
+  const handleTextareaClick = (e: React.MouseEvent) => {
+    //@ts-ignore
     setCursorPosition(e.target.selectionStart);
   };
 
-  const handleNewSession = () => {
-    setChatMessages([]);
-    setInput("");
-    setIsLoading(false);
-    setCanAbortSession(false);
-  };
+  // const handleNewSession = () => {
+  //   setChatMessages([]);
+  //   setInput("");
+  //   setIsLoading(false);
+  //   setCanAbortSession(false);
+  // };
 
   const handleAbortSession = () => {
     if (currentSessionId && canAbortSession) {
@@ -2742,13 +2903,13 @@ function ChatInterface({
     }
   };
 
-  const handleModeSwitch = () => {
-    // Disabled for qwen - no permission modes
-    // const modes = ['default', 'acceptEdits', 'bypassPermissions', 'plan'];
-    // const currentIndex = modes.indexOf(permissionMode);
-    // const nextIndex = (currentIndex + 1) % modes.length;
-    // setPermissionMode(modes[nextIndex]);
-  };
+  // const handleModeSwitch = () => {
+  //   // Disabled for qwen - no permission modes
+  //   // const modes = ['default', 'acceptEdits', 'bypassPermissions', 'plan'];
+  //   // const currentIndex = modes.indexOf(permissionMode);
+  //   // const nextIndex = (currentIndex + 1) % modes.length;
+  //   // setPermissionMode(modes[nextIndex]);
+  // };
 
   // Don't render if no project is selected
   if (!selectedProject) {
@@ -2816,24 +2977,26 @@ function ChatInterface({
                 </div>
               )}
 
-              {visibleMessages.map((message, index) => {
-                const prevMessage =
-                  index > 0 ? visibleMessages[index - 1] : null;
+              {visibleMessages.map(
+                (message: { id: any; timestamp: any }, index: number) => {
+                  const prevMessage =
+                    index > 0 ? visibleMessages[index - 1] : null;
 
-                return (
-                  <MessageComponent
-                    key={`${message.id || index}-${message.timestamp}`}
-                    message={message}
-                    index={index}
-                    prevMessage={prevMessage}
-                    createDiff={createDiff}
-                    onFileOpen={onFileOpen}
-                    onShowSettings={onShowSettings}
-                    autoExpandTools={autoExpandTools}
-                    showRawParameters={showRawParameters}
-                  />
-                );
-              })}
+                  return (
+                    <MessageComponent
+                      key={`${message.id || index}-${message.timestamp}`}
+                      message={message}
+                      index={index}
+                      prevMessage={prevMessage}
+                      createDiff={createDiff}
+                      onFileOpen={onFileOpen}
+                      onShowSettings={onShowSettings}
+                      autoExpandTools={autoExpandTools}
+                      showRawParameters={showRawParameters}
+                    />
+                  );
+                }
+              )}
             </>
           )}
 
@@ -2881,7 +3044,7 @@ function ChatInterface({
           }`}
         >
           {/* qwen Working Status - positioned above the input form */}
-          <qwenStatus
+          <QwenStatus
             status={qwenStatus}
             isLoading={isLoading}
             onAbort={handleAbortSession}
@@ -2911,7 +3074,11 @@ function ChatInterface({
               {/* Scroll to bottom button - positioned next to mode indicator */}
               {isUserScrolledUp && chatMessages.length > 0 && (
                 <button
-                  onClick={scrollToBottom}
+                  onClick={
+                    //@ts-ignore
+
+                    scrollToBottom
+                  }
                   className="w-8 h-8 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:ring-offset-gray-800"
                   title="Scroll to bottom"
                 >
@@ -2932,7 +3099,7 @@ function ChatInterface({
               )}
             </div>
           </div>
-
+          {/* @ts-ignore */}
           <form onSubmit={handleSubmit} className="relative max-w-4xl mx-auto">
             {/* Drag overlay */}
             {isDragActive && (
@@ -2960,12 +3127,18 @@ function ChatInterface({
             {attachedImages.length > 0 && (
               <div className="mb-2 p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
                 <div className="flex flex-wrap gap-2">
-                  {attachedImages.map((file, index) => (
+                  {attachedImages.map((
+                    
+                    
+                    //@ts-ignore
+                    file, index) => (
                     <ImageAttachment
                       key={index}
                       file={file}
                       onRemove={() => {
+                        //@ts-ignore
                         setAttachedImages((prev) =>
+                          //@ts-ignore
                           prev.filter((_, i) => i !== index)
                         );
                       }}
@@ -3026,14 +3199,19 @@ function ChatInterface({
                 onBlur={() => setIsInputFocused(false)}
                 onInput={(e) => {
                   // Immediate resize on input for better UX
+                  //@ts-ignore
                   e.target.style.height = "auto";
+                  //@ts-ignore
                   e.target.style.height = e.target.scrollHeight + "px";
+                  //@ts-ignore
                   setCursorPosition(e.target.selectionStart);
 
                   // Check if textarea is expanded (more than 2 lines worth of height)
                   const lineHeight = parseInt(
+                    //@ts-ignore
                     window.getComputedStyle(e.target).lineHeight
                   );
+                  //@ts-ignore
                   const isExpanded = e.target.scrollHeight > lineHeight * 2;
                   setIsTextareaExpanded(isExpanded);
                 }}
@@ -3110,7 +3288,7 @@ function ChatInterface({
               {/* Mic button - HIDDEN */}
               <div
                 className="absolute right-16 sm:right-16 top-1/2 transform -translate-y-1/2"
-                style={{ display: "none" }}
+                style={{ display: "block" }}
               >
                 <MicButton
                   onTranscript={handleTranscript}

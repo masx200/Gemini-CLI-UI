@@ -12,7 +12,7 @@
  */
 
 import React, { useState } from "react";
-import ChatInterface from "./ChatInterface";
+import ChatInterface from "./ChatInterface.tsx";
 import CodeEditor from "./CodeEditor";
 import FileTree from "./FileTree";
 import GitPanel from "./GitPanel";

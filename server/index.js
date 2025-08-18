@@ -882,6 +882,7 @@ async function main(authOptions) {
     });
     qwenCodeApiServer.on("error", (error) => {
         console.error(`qwen-code-api-server error: ${error}`);
+        process.exit(1);
     });
     qwenCodeApiServer.stdout?.on("data", (data) => {
         console.log(`qwen-code-api-server stdout: ${data}`);

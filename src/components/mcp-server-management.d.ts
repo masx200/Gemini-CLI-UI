@@ -27,7 +27,7 @@ export interface MCPServerData {
     config: {
         httpUrl: string;
         command: string;
-        args: never[];
+        args: any[];
         env: {};
         url: string;
         headers: {};

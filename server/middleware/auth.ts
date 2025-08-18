@@ -68,7 +68,7 @@ async function authenticateToken(
   }
 }
 
-// Generate JWT token (never expires)
+// Generate JWT token (any expires)
 const generateToken = (user: { id: any; username: any }) => {
   return jwt.sign(
     {

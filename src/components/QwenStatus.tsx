@@ -1,7 +1,16 @@
 import { useEffect, useState } from "react";
-import { cn } from "../lib/utils";
+//@ts-ignore
+import { cn } from "../lib/utils.js";
 
-function qwenStatus({ status, onAbort, isLoading }) {
+function QwenStatus({
+  status,
+  onAbort,
+  isLoading,
+}: {
+  status: any;
+  onAbort: any;
+  isLoading: any;
+}) {
   const [elapsedTime, setElapsedTime] = useState(0);
   const [animationPhase, setAnimationPhase] = useState(0);
 
@@ -107,4 +116,4 @@ function qwenStatus({ status, onAbort, isLoading }) {
   );
 }
 
-export default qwenStatus;
+export default QwenStatus;

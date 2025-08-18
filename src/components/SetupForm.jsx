@@ -47,7 +47,7 @@ const SetupForm = () => {
           {/* Logo and Title */}
           <div className="text-center">
             <div className="flex justify-center mb-4">
-              <qwenLogo size={64} />
+              <QwenLogo size={64} />
             </div>
             <h1 className="text-2xl font-bold text-foreground">
               Welcome to qwen-code-cli-UI
