@@ -15,6 +15,7 @@ import os from "os";
 import { initializeDatabase } from "./database/db.js";
 import { abortGeminiSession, spawnGemini } from "./gemini-cli.js";
 import { authenticateToken, authenticateWebSocket, validateApiKey, } from "./middleware/auth.js";
+import { createQwenProxy } from "./middleware/proxy.js";
 import { addProjectManually, clearProjectDirectoryCache, deleteProject, extractProjectDirectory, getProjects, renameProject, } from "./projects.js";
 import authRoutes from "./routes/auth.js";
 import gitRoutes from "./routes/git.js";
@@ -139,6 +140,16 @@ const wss = new WebSocketServer({
 app.use(cors());
 app.use(express.json());
 app.use("/api", validateApiKey);
+const username = uuidv4();
+const password = uuidv4();
+const authOptions = {
+    username: username,
+    password: password,
+    document: "false",
+    port: Number(Math.round(Math.random() * 10000 + 30000)),
+    host: "0.0.0.0",
+};
+app.use(createQwenProxy(`http://localhost:${authOptions.port}`, username, password));
 app.use("/api/auth", authRoutes);
 app.use("/api/git", authenticateToken, gitRoutes);
 app.use("/api/mcp", authenticateToken, mcpRoutes);
@@ -843,15 +854,6 @@ async function startServer() {
         throw error;
     }
 }
-const username = uuidv4();
-const password = uuidv4();
-const authOptions = {
-    username: username,
-    password: password,
-    document: "false",
-    port: Number(Math.round(Math.random() * 10000 + 30000)),
-    host: "0.0.0.0",
-};
 async function main(authOptions) {
     const qwenCodeApiServer = spawn(process.execPath, [
         path.join(__dirname, "../../qwen-code-api-server/index.js"),

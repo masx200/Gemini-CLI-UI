@@ -24,6 +24,7 @@ import {
   authenticateWebSocket,
   validateApiKey,
 } from "./middleware/auth.js";
+import { createQwenProxy } from "./middleware/proxy.js";
 import {
   addProjectManually,
   clearProjectDirectoryCache,
@@ -206,8 +207,8 @@ const wss = new WebSocketServer({
       info.req.headers.authorization?.split(" ")[1];
 
     // Verify token
-    
-//@ts-ignore
+
+    //@ts-ignore
     const user = authenticateWebSocket(token);
     if (!user) {
       // console.log('❌ WebSocket authentication failed');
@@ -227,6 +228,19 @@ app.use(express.json());
 // Optional API key validation (if configured)
 //@ts-ignore
 app.use("/api", validateApiKey);
+const username = uuidv4();
+const password = uuidv4();
+const authOptions: AuthOptions = {
+  username: username,
+  password: password,
+  document: "false",
+  port: Number(Math.round(Math.random() * 10000 + 30000)),
+  host: "0.0.0.0",
+} satisfies AuthOptions;
+// Qwen API 代理路由（不需要验证）
+app.use(
+  createQwenProxy(`http://localhost:${authOptions.port}`, username, password)
+);
 
 // Authentication routes (public)
 app.use("/api/auth", authRoutes);
@@ -281,8 +295,8 @@ app.get(
   async (req, res) => {
     try {
       // Extract the actual project directory path
-      
-//@ts-ignore
+
+      //@ts-ignore
       const projectPath = await extractProjectDirectory(req.params.projectName);
 
       // Get sessions from sessionManager
@@ -331,8 +345,8 @@ app.put(
   async (req, res) => {
     try {
       const { displayName } = req.body;
-      
-//@ts-ignore
+
+      //@ts-ignore
       await renameProject(req.params.projectName, displayName);
       res.json({ success: true });
     } catch (error) {
@@ -365,8 +379,8 @@ app.delete(
   async (req, res) => {
     try {
       const { projectName } = req.params;
-      
-//@ts-ignore
+
+      //@ts-ignore
       await deleteProject(projectName);
       res.json({ success: true });
     } catch (error) {
@@ -552,8 +566,8 @@ app.get(
       } catch (error) {
         // console.error('Error extracting project directory:', error);
         // Fallback to simple dash replacement
-        
-//@ts-ignore
+
+        //@ts-ignore
         actualPath = req.params.projectName.replace(/-/g, "/");
       }
 
@@ -1351,16 +1365,6 @@ async function startServer() {
     throw error;
   }
 }
-
-const username = uuidv4();
-const password = uuidv4();
-const authOptions: AuthOptions = {
-  username: username,
-  password: password,
-  document: "false",
-  port: Number(Math.round(Math.random() * 10000 + 30000)),
-  host: "0.0.0.0",
-} satisfies AuthOptions;
 
 async function main(authOptions: AuthOptions) {
   const qwenCodeApiServer = spawn(
