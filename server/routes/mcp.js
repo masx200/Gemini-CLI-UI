@@ -356,7 +356,15 @@ router.get("/config/read", async (req, res) => {
                     config: {},
                     raw: config,
                 };
-                if (config.command ||
+                if (config.httpUrl ||
+                    config.type == "http" ||
+                    config.transport == "http") {
+                    server.type = "http";
+                    server.config.httpUrl = config.httpUrl;
+                    server.config.url = config.url;
+                    server.config.headers = config.headers || {};
+                }
+                else if (config.command ||
                     config.type == "stdio" ||
                     config.transport == "stdio") {
                     server.type = "stdio";
@@ -364,18 +372,10 @@ router.get("/config/read", async (req, res) => {
                     server.config.args = config.args || [];
                     server.config.env = config.env || {};
                 }
-                else if (config.httpUrl ||
-                    config.type == "http" ||
-                    config.transport == "http") {
-                    server.type = config.transport || "http";
-                    server.config.httpUrl = config.httpUrl;
-                    server.config.url = config.url;
-                    server.config.headers = config.headers || {};
-                }
                 else if (config.url ||
                     config.type == "sse" ||
                     config.transport == "sse") {
-                    server.type = config.transport || "sse";
+                    server.type = "sse";
                     server.config.url = config.url;
                     server.config.headers = config.headers || {};
                 }

@@ -524,6 +524,15 @@ router.get(
 
           // Determine transport type and extract config
           if (
+            config.httpUrl ||
+            config.type == "http" ||
+            config.transport == "http"
+          ) {
+            server.type = "http";
+            server.config.httpUrl = config.httpUrl;
+            server.config.url = config.url;
+            server.config.headers = config.headers || {};
+          } else if (
             config.command ||
             config.type == "stdio" ||
             config.transport == "stdio"
@@ -533,20 +542,11 @@ router.get(
             server.config.args = config.args || [];
             server.config.env = config.env || {};
           } else if (
-            config.httpUrl ||
-            config.type == "http" ||
-            config.transport == "http"
-          ) {
-            server.type = config.transport || "http";
-            server.config.httpUrl = config.httpUrl;
-            server.config.url = config.url;
-            server.config.headers = config.headers || {};
-          } else if (
             config.url ||
             config.type == "sse" ||
             config.transport == "sse"
           ) {
-            server.type = config.transport || "sse";
+            server.type = "sse";
             server.config.url = config.url;
             server.config.headers = config.headers || {};
           }
