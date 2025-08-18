@@ -1393,7 +1393,7 @@ __metadata:
     "@xterm/addon-clipboard": "npm:^0.1.0"
     "@xterm/addon-webgl": "npm:^0.18.0"
     "@xterm/xterm": "npm:^5.5.0"
-    ahooks: "npm:^3.9.0"
+    ahooks: "npm:^3.9.3"
     autoprefixer: "npm:^10.4.16"
     axios: "npm:^1.11.0"
     axios-retry: "npm:^4.5.0"
@@ -2435,9 +2435,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ahooks@npm:^3.9.0":
-  version: 3.9.2
-  resolution: "ahooks@npm:3.9.2"
+"ahooks@npm:^3.9.3":
+  version: 3.9.3
+  resolution: "ahooks@npm:3.9.3"
   dependencies:
     "@babel/runtime": "npm:^7.21.0"
     dayjs: "npm:^1.9.1"
@@ -2451,7 +2451,7 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 10c0/e7d632eaee2c88bafa53b9654bcb8ac7bf5cfce4cd45e146558c820afc2b0d1fa2b8519044e0ed7f2ff4bd2783e77a4041d835121c53a2c4de63de07786f6cb2
+  checksum: 10c0/035cc530e5b390a705c26237b5a0ed8e5bc4a5a540cb9046e2837b962073f96473c0707a15c27494ef4a280e241d4fb5dc31cb5b58bebfc6e6a60df5c9a840e1
   languageName: node
   linkType: hard
 
