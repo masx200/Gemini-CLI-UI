@@ -15,6 +15,7 @@ import {
   type ReactElement,
   type ReactNode,
   type ReactPortal,
+  type JSX,
 } from "react";
 
 //@ts-ignore
