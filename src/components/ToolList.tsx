@@ -26,8 +26,12 @@ export const ToolList: React.FC<ToolListProps> = ({ tools }) => {
             )}
           </div>
           <details>
-            <summary>查看工具详情描述</summary>{" "}
-            <p className="text-gray-600 text-sm">{tool.description}</p>
+            <summary>查看工具详情描述</summary>
+            <p className="text-gray-600 text-sm">
+              {tool.description.split("\n").map((line) => {
+                return <div><div key={line}>{line}</div><br></br></div>;
+              })}
+            </p>
           </details>
         </div>
       ))}
