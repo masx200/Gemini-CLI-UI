@@ -25,7 +25,7 @@ RUN apk add   sudo  --no-cache \
     tree
 
 # Set working directory
-WORKDIR /app
+WORKDIR /root/easy-llm-cli-ui
 
 # Copy package files (both package.json and package-lock.json)
 COPY package.json package-lock.json ./
@@ -108,14 +108,14 @@ COPY .env.example ./
 
 RUN corepack up 
 # Create directory for SQLite database
-RUN mkdir -p /app/data
+RUN mkdir -p /root/easy-llm-cli-ui/data
 copy . .
 # 构建后端
 run yarn install
 RUN npm run build
 
 # Create default .env file for Docker deployment
-RUN echo "PORT=4008\nNODE_ENV=production\nDB_PATH=/app/data/auth.db\nHOME=/opt/docker" > .env
+RUN echo "PORT=4008\nNODE_ENV=production\nDB_PATH=/root/easy-llm-cli-ui/data/auth.db\nHOME=/opt/docker" > .env
 env HOME=/opt/docker
 
 
@@ -149,3 +149,4 @@ run pnpm i -g @qwen-code/qwen-code
 
 RUN cnpm install -g @qwen-code/qwen-code 
 
+run cd /root && git clone https://github.com/masx200/qwen-code-api-server && cd qwen-code-api-server && yarn install && yarn run build
