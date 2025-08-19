@@ -74,7 +74,7 @@ everywhere.
 1. **Clone the repository:**
 
 ```bash
-git clone https://github.com/masx200/qwen-code-cli-UI.git
+git clone https://github.com/masx200/qwen-code-cli-ui.git
 cd qwen-code-cli-UI
 ```
 

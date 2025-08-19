@@ -70,7 +70,7 @@
 1. **リポジトリをクローン：**
 
 ```bash
-git clone https://github.com/masx200/qwen-code-cli-UI.git
+git clone https://github.com/masx200/qwen-code-cli-ui.git
 cd qwencliui
 ```
 

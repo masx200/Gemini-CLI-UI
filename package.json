@@ -5,7 +5,7 @@
   "type": "module",
   "main": "server/index.js",
   "scripts": {
-    "test":"vitest run",
+    "test": "vitest run",
     "watch": "tsc --watch",
     "watch:server": "tsc --watch -p tsconfig-server.json",
     "dev": "concurrently --kill-others \"nodemon server/index.js\" \"yarn run client\" \"yarn run watch\" \"yarn run watch:server\"",
@@ -113,7 +113,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/masx200/qwen-code-cli-UI.git"
+    "url": "https://github.com/masx200/qwen-code-cli-ui.git"
   },
   "packageManager": "yarn@4.9.2+sha512.1fc009bc09d13cfd0e19efa44cbfc2b9cf6ca61482725eb35bbc5e257e093ebf4130db6dfe15d604ff4b79efd8e1e8e99b25fa7d0a6197c9f9826358d4d65c3c"
 }
