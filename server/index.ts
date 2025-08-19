@@ -1515,9 +1515,9 @@ async function main(authOptions: AuthOptions) {
   });
   qwenCodeApiServer.on("exit", (code, signal) => {
     console.log(`qwen-code-api-server exit: code ${code}, signal ${signal}`);
-    if (code !== 0) {
+  //  if (code !== 0) {
       process.exit(code);
-    }
+    //}
   });
 }
 await Promise.all([
