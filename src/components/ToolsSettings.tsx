@@ -34,6 +34,7 @@ import { getModelsbyProvidername } from "../utils/getModelProvidersbyname.ts";
 //@ts-ignore
 import { Input } from "./ui/input.jsx";
 import AboutView from "./AboutView.tsx";
+import { ToolsViewer } from "./toolsviewer.tsx";
 export interface ToolsSettingsLocal {
   allowedTools: string[];
   disallowedTools: string[];
@@ -784,6 +785,10 @@ function ToolsSettings({
                     </li>
                   </ul>
                 </div>
+
+
+
+                <ToolsViewer></ToolsViewer>
               </div>
             )}
 

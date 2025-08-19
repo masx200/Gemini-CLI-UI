@@ -152,11 +152,11 @@ wssproxy.on("connection", (ws, req) => {
     proxy.on("open", () => {
         ws.on("close", (code, reason) => {
             console.log("ws close", code, reason);
-            proxy.close();
+            proxy.close(code, reason);
         });
         proxy.on("close", (code, reason) => {
             console.log("proxy close", code, reason);
-            ws.close();
+            ws.close(code, reason);
         });
         proxy.on("message", (data) => {
             console.log("proxy message", data.toString());
