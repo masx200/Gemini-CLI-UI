@@ -12,6 +12,11 @@ projects and sessions in qwen CLI and make changes to them the same way you
 would do it in qwen CLI. This gives you a proper interface that works
 everywhere.
 
+
+
+https://gitee.com/masx200/qwen-code-api-server
+
+
 ## Screenshots
 
 <div align="center">
