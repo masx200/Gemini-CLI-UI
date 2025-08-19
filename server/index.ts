@@ -1086,11 +1086,13 @@ app.post("/api/transcribe", authenticateToken, async (req, res) => {
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           throw new Error(
+            //@ts-ignore
             errorData.error?.message || `Whisper API error: ${response.status}`
           );
         }
 
         const data = await response.json();
+        //@ts-ignore
         let transcribedText = data.text || "";
 
         // Check if enhancement mode is enabled
